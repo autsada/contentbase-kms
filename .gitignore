@@ -1,0 +1,7 @@
+dist
+node_modules
+.env
+test.js
+src/abi
+src/typechain-types
+kmsServiceAccount.json
