@@ -10,13 +10,13 @@ import fs from 'fs'
 import * as router from './routes'
 import type { Environment, EnvConfig } from './types'
 
-const { DEV_PORT, PROD_PORT, NODE_ENV } = process.env
+const { PORT, NODE_ENV } = process.env
 
 const configurations: Record<Environment, EnvConfig> = {
-  production: { ssl: true, port: Number(PROD_PORT) || 443, hostname: '' },
+  production: { ssl: true, port: Number(PORT) || 8000, hostname: '' },
   development: {
     ssl: false,
-    port: Number(DEV_PORT) || 4000,
+    port: Number(PORT) || 8000,
     hostname: 'localhost',
   },
 }
