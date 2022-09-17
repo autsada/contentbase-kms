@@ -4,12 +4,12 @@ import crypto from 'crypto'
 import { encrypt } from './kms'
 import { encryptString } from './utils'
 
-const { TESTNET_URL, NODE_ENV, ALCHEMY_API_KEY } = process.env
+const { BLOCKHAIN_TESTNET_URL, NODE_ENV, ALCHEMY_API_KEY } = process.env
 
 export function getJsonRpcProvider() {
   const url =
     NODE_ENV === 'development'
-      ? TESTNET_URL!
+      ? BLOCKHAIN_TESTNET_URL!
       : NODE_ENV === 'production'
       ? ''
       : ''
@@ -20,7 +20,7 @@ export function getJsonRpcProvider() {
 export function getDefaultProvider() {
   const url =
     NODE_ENV === 'development'
-      ? TESTNET_URL!
+      ? BLOCKHAIN_TESTNET_URL!
       : NODE_ENV === 'production'
       ? ''
       : ''
