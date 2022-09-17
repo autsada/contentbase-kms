@@ -31,7 +31,7 @@ export function getDefaultProvider() {
 }
 
 export function getSigner(privateKey: string) {
-  const provider = getDefaultProvider()
+  const provider = getJsonRpcProvider()
 
   return new ethers.Wallet(privateKey, provider)
 }
@@ -43,7 +43,7 @@ export function getContractByProvider({
   address: string
   contractInterface: ethers.ContractInterface
 }) {
-  const provider = getDefaultProvider()
+  const provider = getJsonRpcProvider()
 
   return new ethers.Contract(address, contractInterface, provider)
 }
@@ -67,7 +67,7 @@ export function getContractBySigner({
  *
  */
 export async function getBalance(address: string) {
-  const provider = getDefaultProvider()
+  const provider = getJsonRpcProvider()
 
   const balanceInWei = await provider.getBalance(address)
 
