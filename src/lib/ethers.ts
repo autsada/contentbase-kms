@@ -7,23 +7,25 @@ import { encryptString } from './utils'
 const { BLOCKHAIN_TESTNET_URL, NODE_ENV, ALCHEMY_API_KEY } = process.env
 
 export function getJsonRpcProvider() {
-  const url =
-    NODE_ENV === 'development'
-      ? BLOCKHAIN_TESTNET_URL!
-      : NODE_ENV === 'production'
-      ? ''
-      : ''
+  // const url =
+  //   NODE_ENV === 'development'
+  //     ? BLOCKHAIN_TESTNET_URL!
+  //     : NODE_ENV === 'production'
+  //     ? ''
+  //     : ''
+  const url = BLOCKHAIN_TESTNET_URL!
 
   return new ethers.providers.JsonRpcProvider(url)
 }
 
 export function getDefaultProvider() {
-  const url =
-    NODE_ENV === 'development'
-      ? BLOCKHAIN_TESTNET_URL!
-      : NODE_ENV === 'production'
-      ? ''
-      : ''
+  // const url =
+  //   NODE_ENV === 'development'
+  //     ? BLOCKHAIN_TESTNET_URL!
+  //     : NODE_ENV === 'production'
+  //     ? ''
+  //     : ''
+  const url = BLOCKHAIN_TESTNET_URL!
 
   return ethers.providers.getDefaultProvider(url, { ALCHEMY_API_KEY })
 }
