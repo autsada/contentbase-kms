@@ -13,7 +13,10 @@ export function getJsonRpcProvider() {
   //     : NODE_ENV === 'production'
   //     ? ''
   //     : ''
-  const url = BLOCKHAIN_TESTNET_URL!
+  const url =
+    NODE_ENV === 'development' || NODE_ENV === 'staging'
+      ? BLOCKHAIN_TESTNET_URL!
+      : ''
 
   return new ethers.providers.JsonRpcProvider(url)
 }
@@ -25,7 +28,10 @@ export function getDefaultProvider() {
   //     : NODE_ENV === 'production'
   //     ? ''
   //     : ''
-  const url = BLOCKHAIN_TESTNET_URL!
+  const url =
+    NODE_ENV === 'development' || NODE_ENV === 'staging'
+      ? BLOCKHAIN_TESTNET_URL!
+      : ''
 
   return ethers.providers.getDefaultProvider(url, { ALCHEMY_API_KEY })
 }
