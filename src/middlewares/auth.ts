@@ -7,12 +7,12 @@ export function authMiddleware(
   res: Response,
   next: NextFunction
 ) {
-  // Get authorization header
-  const token = req.headers['authorization']
-
-  if (!token) {
+  // Get x-access-key header
+  const accessKey = req.headers['x-access-key']
+  if (!accessKey) {
     res.status(401).send('Un Authorized')
   } else {
+    const token = typeof accessKey === 'string' ? accessKey : accessKey[0]
     const hasAuth = checkAuth(token)
 
     if (hasAuth) {
