@@ -4,40 +4,19 @@ import crypto from 'crypto'
 import { encrypt } from './kms'
 import { encryptString } from './utils'
 
-const { BLOCKHAIN_TESTNET_URL, NODE_ENV, ALCHEMY_API_KEY } = process.env
+const { NODE_ENV, ALCHEMY_API_KEY } = process.env
 
-export function getJsonRpcProvider() {
-  // const url =
-  //   NODE_ENV === 'development'
-  //     ? BLOCKHAIN_TESTNET_URL!
-  //     : NODE_ENV === 'production'
-  //     ? ''
-  //     : ''
-  const url =
+export function getAlchemyProvider() {
+  const network =
     NODE_ENV === 'development' || NODE_ENV === 'staging'
-      ? BLOCKHAIN_TESTNET_URL!
-      : ''
+      ? 'goerli'
+      : 'homestead'
 
-  return new ethers.providers.JsonRpcProvider(url)
-}
-
-export function getDefaultProvider() {
-  // const url =
-  //   NODE_ENV === 'development'
-  //     ? BLOCKHAIN_TESTNET_URL!
-  //     : NODE_ENV === 'production'
-  //     ? ''
-  //     : ''
-  const url =
-    NODE_ENV === 'development' || NODE_ENV === 'staging'
-      ? BLOCKHAIN_TESTNET_URL!
-      : ''
-
-  return ethers.providers.getDefaultProvider(url, { ALCHEMY_API_KEY })
+  return new ethers.providers.AlchemyProvider(network, ALCHEMY_API_KEY)
 }
 
 export function getSigner(privateKey: string) {
-  const provider = getJsonRpcProvider()
+  const provider = getAlchemyProvider()
 
   return new ethers.Wallet(privateKey, provider)
 }
@@ -49,7 +28,7 @@ export function getContractByProvider({
   address: string
   contractInterface: ethers.ContractInterface
 }) {
-  const provider = getJsonRpcProvider()
+  const provider = getAlchemyProvider()
 
   return new ethers.Contract(address, contractInterface, provider)
 }
@@ -73,7 +52,7 @@ export function getContractBySigner({
  *
  */
 export async function getBalance(address: string) {
-  const provider = getJsonRpcProvider()
+  const provider = getAlchemyProvider()
 
   const balanceInWei = await provider.getBalance(address)
 
