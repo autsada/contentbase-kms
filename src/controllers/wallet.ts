@@ -11,7 +11,7 @@ export async function createWallet(req: Request, res: Response) {
 
     res.status(200).json({ ...wallet })
   } catch (error) {
-    res.status(500).send(`Error occurred`)
+    res.status(500).send((error as any).message)
   }
 }
 
@@ -25,6 +25,6 @@ export async function getWalletBalance(req: Request, res: Response) {
 
     res.status(200).json({ balance })
   } catch (error) {
-    res.status(500).send(`Error occurred`)
+    res.status(500).send((error as any).message)
   }
 }
