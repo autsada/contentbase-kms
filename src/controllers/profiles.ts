@@ -11,6 +11,7 @@ import {
 } from '../lib/contentBaseProfileContract'
 import { decrypt } from '../lib/kms'
 import { decryptString } from '../lib/utils'
+import type { CreateProfileInput } from '../lib/contentBaseProfileContract'
 
 /**
  * @param req.body.handle a handle of the user
@@ -81,13 +82,10 @@ export async function getProfilesByAddress(req: Request, res: Response) {
  */
 export async function createProfileNft(req: Request, res: Response) {
   try {
-    const { key, uid, handle, imageURI, isDefault } = req.body as {
-      key: string
-      uid: string
-      handle: string
-      imageURI: string
-      isDefault: boolean
-    }
+    const {
+      key,
+      data: { uid, handle, imageURI1, imageURI2, isDefault },
+    } = req.body as CreateProfileInput
 
     if (!handle || !key || !uid || typeof isDefault !== 'boolean')
       throw new Error('User input error')
@@ -105,7 +103,8 @@ export async function createProfileNft(req: Request, res: Response) {
       data: {
         uid,
         handle,
-        imageURI,
+        imageURI1,
+        imageURI2,
         isDefault,
       },
     })
@@ -157,13 +156,10 @@ export async function checkRole(req: Request, res: Response) {
  */
 export async function estimateCreateProfileNftGas(req: Request, res: Response) {
   try {
-    const { key, uid, handle, imageURI, isDefault } = req.body as {
-      key: string
-      uid: string
-      handle: string
-      imageURI: string
-      isDefault: boolean
-    }
+    const {
+      key,
+      data: { uid, handle, imageURI1, imageURI2, isDefault },
+    } = req.body as CreateProfileInput
 
     // Check if all required parameters are availble
     if (!key || !uid || !handle || typeof isDefault !== 'boolean')
@@ -178,7 +174,7 @@ export async function estimateCreateProfileNftGas(req: Request, res: Response) {
 
     const estimatedGas = await estimateCreateProfileGas({
       key: decryptedKey,
-      data: { uid, handle, imageURI, isDefault },
+      data: { uid, handle, imageURI1, imageURI2, isDefault },
     })
 
     res.status(200).json({ gas: estimatedGas })

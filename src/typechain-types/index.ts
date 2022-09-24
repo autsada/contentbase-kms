@@ -36,3 +36,5 @@ export type { IERC165Upgradeable } from "./@openzeppelin/contracts-upgradeable/u
 export { IERC165Upgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/utils/introspection/IERC165Upgradeable__factory";
 export type { ContentBaseProfile } from "./contracts/ContentBaseProfile";
 export { ContentBaseProfile__factory } from "./factories/contracts/ContentBaseProfile__factory";
+export type { ContentBaseProfileV2 } from "./contracts/ContentBaseProfileV2";
+export { ContentBaseProfileV2__factory } from "./factories/contracts/ContentBaseProfileV2__factory";

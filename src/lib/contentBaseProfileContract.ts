@@ -1,7 +1,7 @@
 import { utils, ethers } from 'ethers'
 
-import ContentBaseProfileContract from '../abi/ContentBaseProfile.json'
-import { ContentBaseProfile } from '../typechain-types'
+import ContentBaseProfileContract from '../abi/ContentBaseProfileV2.json'
+import { ContentBaseProfileV2 } from '../typechain-types'
 import { getContractBySigner, getContractByProvider } from './ethers'
 
 export interface CreateProfileInput {
@@ -9,7 +9,8 @@ export interface CreateProfileInput {
   data: {
     uid: string
     handle: string
-    imageURI: string
+    imageURI1: string
+    imageURI2: string
     isDefault: boolean
   }
 }
@@ -29,7 +30,7 @@ export function getProfileContract(key: string) {
     address: ContentBaseProfileContract.address,
     privateKey: key,
     contractInterface: ContentBaseProfileContract.abi,
-  }) as ContentBaseProfile
+  }) as ContentBaseProfileV2
 }
 
 /**
@@ -40,7 +41,7 @@ export async function verifyHandle(handle: string) {
   const profileContract = getContractByProvider({
     address: ContentBaseProfileContract.address,
     contractInterface: ContentBaseProfileContract.abi,
-  }) as ContentBaseProfile
+  }) as ContentBaseProfileV2
   const isUnique = await profileContract.validateHandle(handle)
 
   return isUnique
@@ -50,7 +51,7 @@ export async function getTotalProfilesCount() {
   const profileContract = getContractByProvider({
     address: ContentBaseProfileContract.address,
     contractInterface: ContentBaseProfileContract.abi,
-  }) as ContentBaseProfile
+  }) as ContentBaseProfileV2
   const countBigNumber = await profileContract.totalProfiles()
 
   return countBigNumber.toNumber()
@@ -65,12 +66,13 @@ export async function fetchMyProfiles(address: string, key: string) {
   const profileContract = getProfileContract(key)
   const profiles = await profileContract.fetchMyProfiles(address)
   const formattedProfiles = profiles.map(
-    ({ profileId, handle, imageURI, isDefault, uid, owner }) => {
+    ({ profileId, handle, imageURI1, imageURI2, isDefault, uid, owner }) => {
       return {
         profileId: profileId.toNumber(),
         uid,
         handle,
-        imageURI,
+        imageURI1,
+        imageURI2,
         owner,
         isDefault,
       }
@@ -84,14 +86,15 @@ export async function fetchMyProfiles(address: string, key: string) {
  * @param input.key a wallet private key
  * @param input.data.uid a uid of the user
  * @param input.data.handle a handle
- * @param input.data.imageURI a profile image uri
+ * @param input.data.imageURI1 a profile image uri saved on ipfs
+ * @param input.data.imageURI2 a profile image uri save on cloud storage
  * @param input.data.isDefault a boolean to indicate the profile is default or not
  *
  */
 export async function createProfile(input: CreateProfileInput) {
   const {
     key,
-    data: { uid, handle, imageURI, isDefault },
+    data: { uid, handle, imageURI1, imageURI2, isDefault },
   } = input
 
   // Validate the handle
@@ -101,12 +104,13 @@ export async function createProfile(input: CreateProfileInput) {
 
   const profileContract = getProfileContract(key)
 
-  const transaction = await profileContract.createProfile(
+  const transaction = await profileContract.createProfile({
     uid,
     handle,
-    imageURI,
-    isDefault
-  )
+    imageURI1,
+    imageURI2,
+    isDefault,
+  })
 
   const tx = await transaction.wait()
   let profileId
@@ -156,23 +160,25 @@ export async function checkUserRole({
  * @param input.key a wallet private key
  * @param input.data.uid a uid of the user
  * @param input.data.handle a handle
- * @param input.data.imageURI a profile image uri
+ * @param input.data.imageURI1 a profile image uri saved on ipfs
+ * @param input.data.imageURI2 a profile image uri save on cloud storage
  * @param input.data.isDefault a boolean to indicate the profile is default or not
  *
  */
 export async function estimateCreateProfileGas(input: CreateProfileInput) {
   const {
     key,
-    data: { uid, handle, imageURI, isDefault },
+    data: { uid, handle, imageURI1, imageURI2, isDefault },
   } = input
   const profileContract = getProfileContract(key)
 
-  const gasInWei = await profileContract.estimateGas.createProfile(
+  const gasInWei = await profileContract.estimateGas.createProfile({
     uid,
     handle,
-    imageURI,
-    isDefault
-  )
+    imageURI1,
+    imageURI2,
+    isDefault,
+  })
 
   return ethers.utils.formatEther(gasInWei)
 }

@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { ContentBaseProfile } from "./ContentBaseProfile";
+export type { ContentBaseProfileV2 } from "./ContentBaseProfileV2";
