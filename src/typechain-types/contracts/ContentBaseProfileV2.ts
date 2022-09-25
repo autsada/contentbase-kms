@@ -29,7 +29,7 @@ import type {
 } from "../common";
 
 export declare namespace ContentBaseProfileV2 {
-  export type CreateProfileArgsStruct = {
+  export type CreateProfileParamsStruct = {
     uid: PromiseOrValue<string>;
     handle: PromiseOrValue<string>;
     imageURI1: PromiseOrValue<string>;
@@ -37,7 +37,7 @@ export declare namespace ContentBaseProfileV2 {
     isDefault: PromiseOrValue<boolean>;
   };
 
-  export type CreateProfileArgsStructOutput = [
+  export type CreateProfileParamsStructOutput = [
     string,
     string,
     string,
@@ -168,7 +168,7 @@ export interface ContentBaseProfileV2Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "createProfile",
-    values: [ContentBaseProfileV2.CreateProfileArgsStruct]
+    values: [ContentBaseProfileV2.CreateProfileParamsStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "fetchMyProfiles",
@@ -357,7 +357,7 @@ export interface ContentBaseProfileV2Interface extends utils.Interface {
     "ApprovalForAll(address,address,bool)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "ProfileCreated(uint256,address)": EventFragment;
+    "ProfileCreated(uint256,string,address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
@@ -432,10 +432,11 @@ export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export interface ProfileCreatedEventObject {
   profileId: BigNumber;
+  handle: string;
   owner: string;
 }
 export type ProfileCreatedEvent = TypedEvent<
-  [BigNumber, string],
+  [BigNumber, string, string],
   ProfileCreatedEventObject
 >;
 
@@ -542,7 +543,7 @@ export interface ContentBaseProfileV2 extends BaseContract {
     ): Promise<[BigNumber]>;
 
     createProfile(
-      createProfileArgs: ContentBaseProfileV2.CreateProfileArgsStruct,
+      createProfileParams: ContentBaseProfileV2.CreateProfileParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -681,7 +682,7 @@ export interface ContentBaseProfileV2 extends BaseContract {
   ): Promise<BigNumber>;
 
   createProfile(
-    createProfileArgs: ContentBaseProfileV2.CreateProfileArgsStruct,
+    createProfileParams: ContentBaseProfileV2.CreateProfileParamsStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -820,7 +821,7 @@ export interface ContentBaseProfileV2 extends BaseContract {
     ): Promise<BigNumber>;
 
     createProfile(
-      createProfileArgs: ContentBaseProfileV2.CreateProfileArgsStruct,
+      createProfileParams: ContentBaseProfileV2.CreateProfileParamsStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -981,11 +982,16 @@ export interface ContentBaseProfileV2 extends BaseContract {
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
-    "ProfileCreated(uint256,address)"(
+    "ProfileCreated(uint256,string,address)"(
       profileId?: null,
+      handle?: null,
       owner?: null
     ): ProfileCreatedEventFilter;
-    ProfileCreated(profileId?: null, owner?: null): ProfileCreatedEventFilter;
+    ProfileCreated(
+      profileId?: null,
+      handle?: null,
+      owner?: null
+    ): ProfileCreatedEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: PromiseOrValue<BytesLike> | null,
@@ -1058,7 +1064,7 @@ export interface ContentBaseProfileV2 extends BaseContract {
     ): Promise<BigNumber>;
 
     createProfile(
-      createProfileArgs: ContentBaseProfileV2.CreateProfileArgsStruct,
+      createProfileParams: ContentBaseProfileV2.CreateProfileParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1200,7 +1206,7 @@ export interface ContentBaseProfileV2 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     createProfile(
-      createProfileArgs: ContentBaseProfileV2.CreateProfileArgsStruct,
+      createProfileParams: ContentBaseProfileV2.CreateProfileParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
