@@ -127,7 +127,6 @@ export async function createProfile(input: CreateProfileInput) {
       }
     }
   }
-  console.log('id -->', profileId)
 
   return profileId
 }

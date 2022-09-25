@@ -109,12 +109,10 @@ export async function createProfileNft(req: Request, res: Response) {
       },
     })
 
-    console.log('created id -->', profileId)
     if (!profileId) throw new Error('Create profile failed.')
 
     res.status(200).json({ profileId })
   } catch (error) {
-    console.log('create profile error -->', error)
     res.status(500).send((error as any).message)
   }
 }
