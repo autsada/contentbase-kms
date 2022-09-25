@@ -357,7 +357,7 @@ export interface ContentBaseProfileV2Interface extends utils.Interface {
     "ApprovalForAll(address,address,bool)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "ProfileCreated(uint256,string,address)": EventFragment;
+    "ProfileCreated(uint256,address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
@@ -432,11 +432,10 @@ export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export interface ProfileCreatedEventObject {
   profileId: BigNumber;
-  handle: string;
   owner: string;
 }
 export type ProfileCreatedEvent = TypedEvent<
-  [BigNumber, string, string],
+  [BigNumber, string],
   ProfileCreatedEventObject
 >;
 
@@ -982,16 +981,11 @@ export interface ContentBaseProfileV2 extends BaseContract {
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
-    "ProfileCreated(uint256,string,address)"(
+    "ProfileCreated(uint256,address)"(
       profileId?: null,
-      handle?: null,
       owner?: null
     ): ProfileCreatedEventFilter;
-    ProfileCreated(
-      profileId?: null,
-      handle?: null,
-      owner?: null
-    ): ProfileCreatedEventFilter;
+    ProfileCreated(profileId?: null, owner?: null): ProfileCreatedEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: PromiseOrValue<BytesLike> | null,
