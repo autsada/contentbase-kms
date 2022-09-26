@@ -3,3 +3,4 @@
 /* eslint-disable */
 export type { ContentBaseProfile } from "./ContentBaseProfile";
 export type { ContentBaseProfileV2 } from "./ContentBaseProfileV2";
+export type { ContentBaseProfileV3 } from "./ContentBaseProfileV3";

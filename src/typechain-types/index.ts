@@ -38,3 +38,5 @@ export type { ContentBaseProfile } from "./contracts/ContentBaseProfile";
 export { ContentBaseProfile__factory } from "./factories/contracts/ContentBaseProfile__factory";
 export type { ContentBaseProfileV2 } from "./contracts/ContentBaseProfileV2";
 export { ContentBaseProfileV2__factory } from "./factories/contracts/ContentBaseProfileV2__factory";
+export type { ContentBaseProfileV3 } from "./contracts/ContentBaseProfileV3";
+export { ContentBaseProfileV3__factory } from "./factories/contracts/ContentBaseProfileV3__factory";

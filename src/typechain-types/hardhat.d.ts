@@ -76,6 +76,10 @@ declare module "hardhat/types/runtime" {
       name: "ContentBaseProfileV2",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ContentBaseProfileV2__factory>;
+    getContractFactory(
+      name: "ContentBaseProfileV3",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ContentBaseProfileV3__factory>;
 
     getContractAt(
       name: "AccessControlUpgradeable",
@@ -157,6 +161,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ContentBaseProfileV2>;
+    getContractAt(
+      name: "ContentBaseProfileV3",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ContentBaseProfileV3>;
 
     // default types
     getContractFactory(

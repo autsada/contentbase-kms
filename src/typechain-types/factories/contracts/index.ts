@@ -3,3 +3,4 @@
 /* eslint-disable */
 export { ContentBaseProfile__factory } from "./ContentBaseProfile__factory";
 export { ContentBaseProfileV2__factory } from "./ContentBaseProfileV2__factory";
+export { ContentBaseProfileV3__factory } from "./ContentBaseProfileV3__factory";

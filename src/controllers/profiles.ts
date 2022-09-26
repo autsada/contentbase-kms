@@ -75,16 +75,18 @@ export async function getProfilesByAddress(req: Request, res: Response) {
 /**
  * @param req.body.key an encrypted key of the user saved in Firestore
  * @param req.body.uid an auth uid of the user
- * @param req.body.handle a handle of the user
- * @param req.body.imageURL a imageURL
  * @param req.body.isDefault whether or not the profile is default
+ * @param req.body.handle a handle of the user
+ * @param req.body.tokenURI a url point to json metadata save on ipfs - metadata = (handle: string, url: string - a url of the image on ipfs)
+ * @param req.body.imageURI a url point to an image saved on cloud storage, can be empty string
+ *
  *
  */
 export async function createProfileNft(req: Request, res: Response) {
   try {
     const {
       key,
-      data: { uid, handle, imageURI1, imageURI2, isDefault },
+      data: { uid, handle, tokenURI, imageURI, isDefault },
     } = req.body as CreateProfileInput
 
     if (!handle || !key || !uid || typeof isDefault !== 'boolean')
@@ -102,10 +104,10 @@ export async function createProfileNft(req: Request, res: Response) {
       key: decryptedKey,
       data: {
         uid,
-        handle,
-        imageURI1,
-        imageURI2,
         isDefault,
+        handle,
+        tokenURI,
+        imageURI,
       },
     })
 
@@ -147,18 +149,20 @@ export async function checkRole(req: Request, res: Response) {
 }
 
 /**
- * @param req.params.key user's wallet encrypted key
+ * @param req.body.key an encrypted key of the user saved in Firestore
  * @param req.body.uid an auth uid of the user
- * @param req.body.handle a handle of the user
- * @param req.body.imageURL a imageURL
  * @param req.body.isDefault whether or not the profile is default
+ * @param req.body.handle a handle of the user
+ * @param req.body.tokenURI a url point to json metadata save on ipfs - metadata = (handle: string, url: string - a url of the image on ipfs)
+ * @param req.body.imageURI a url point to an image saved on cloud storage, can be empty string
+ *
  *
  */
 export async function estimateCreateProfileNftGas(req: Request, res: Response) {
   try {
     const {
       key,
-      data: { uid, handle, imageURI1, imageURI2, isDefault },
+      data: { uid, handle, tokenURI, imageURI, isDefault },
     } = req.body as CreateProfileInput
 
     // Check if all required parameters are availble
@@ -174,7 +178,7 @@ export async function estimateCreateProfileNftGas(req: Request, res: Response) {
 
     const estimatedGas = await estimateCreateProfileGas({
       key: decryptedKey,
-      data: { uid, handle, imageURI1, imageURI2, isDefault },
+      data: { uid, handle, tokenURI, imageURI, isDefault },
     })
 
     res.status(200).json({ gas: estimatedGas })
