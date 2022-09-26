@@ -68,7 +68,8 @@ export async function getProfilesByAddress(req: Request, res: Response) {
 
     res.status(200).json({ profiles })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    // In case NOT FOUND, fetchMyProfiles will throw so it's needed to return 200 - empty array so the process can continue
+    res.status(200).json({ profiles: [] })
   }
 }
 
