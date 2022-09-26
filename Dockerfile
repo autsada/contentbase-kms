@@ -1,5 +1,6 @@
 # Build stage
-FROM node:16-alpine as builder
+FROM node:latest AS build
+RUN apt-get update && apt-get install -y dumb-init
 WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install
@@ -7,13 +8,15 @@ COPY . .
 RUN npm run build
 
 # Final stage
-FROM node:16-alpine
+FROM node:16.17-bullseye-slim
 
 ENV NODE_ENV=production
-
+COPY --from=build /usr/bin/dumb-init /usr/bin/dumb-init
 WORKDIR /usr/src/app
-COPY package*.json ./
-COPY --from=builder /usr/src/app/dist ./
-RUN npm ci --only=production
+RUN chown -R node:node /usr/src/app/
+USER node
+COPY --chown=node:node --from=build /usr/src/app/package*.json ./
+COPY --chown=node:node --from=build /usr/src/app/dist ./
+RUN npm ci --omit=dev
 EXPOSE 8000
-CMD ["app.js"]
+CMD ["dumb-init", "node", "app.js"]
