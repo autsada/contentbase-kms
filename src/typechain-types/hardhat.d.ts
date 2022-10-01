@@ -45,6 +45,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC721Upgradeable__factory>;
     getContractFactory(
+      name: "ERC721BurnableUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC721BurnableUpgradeable__factory>;
+    getContractFactory(
+      name: "ERC721URIStorageUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC721URIStorageUpgradeable__factory>;
+    getContractFactory(
       name: "IERC721MetadataUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC721MetadataUpgradeable__factory>;
@@ -69,17 +77,13 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC165Upgradeable__factory>;
     getContractFactory(
+      name: "ContentBase",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ContentBase__factory>;
+    getContractFactory(
       name: "ContentBaseProfile",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ContentBaseProfile__factory>;
-    getContractFactory(
-      name: "ContentBaseProfileV2",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ContentBaseProfileV2__factory>;
-    getContractFactory(
-      name: "ContentBaseProfileV3",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ContentBaseProfileV3__factory>;
 
     getContractAt(
       name: "AccessControlUpgradeable",
@@ -122,6 +126,16 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ERC721Upgradeable>;
     getContractAt(
+      name: "ERC721BurnableUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC721BurnableUpgradeable>;
+    getContractAt(
+      name: "ERC721URIStorageUpgradeable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC721URIStorageUpgradeable>;
+    getContractAt(
       name: "IERC721MetadataUpgradeable",
       address: string,
       signer?: ethers.Signer
@@ -152,20 +166,15 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC165Upgradeable>;
     getContractAt(
+      name: "ContentBase",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ContentBase>;
+    getContractAt(
       name: "ContentBaseProfile",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ContentBaseProfile>;
-    getContractAt(
-      name: "ContentBaseProfileV2",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ContentBaseProfileV2>;
-    getContractAt(
-      name: "ContentBaseProfileV3",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ContentBaseProfileV3>;
 
     // default types
     getContractFactory(

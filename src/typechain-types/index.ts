@@ -22,6 +22,10 @@ export type { UUPSUpgradeable } from "./@openzeppelin/contracts-upgradeable/prox
 export { UUPSUpgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable__factory";
 export type { ERC721Upgradeable } from "./@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable";
 export { ERC721Upgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable__factory";
+export type { ERC721BurnableUpgradeable } from "./@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable";
+export { ERC721BurnableUpgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable__factory";
+export type { ERC721URIStorageUpgradeable } from "./@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721URIStorageUpgradeable";
+export { ERC721URIStorageUpgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721URIStorageUpgradeable__factory";
 export type { IERC721MetadataUpgradeable } from "./@openzeppelin/contracts-upgradeable/token/ERC721/extensions/IERC721MetadataUpgradeable";
 export { IERC721MetadataUpgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/token/ERC721/extensions/IERC721MetadataUpgradeable__factory";
 export type { IERC721ReceiverUpgradeable } from "./@openzeppelin/contracts-upgradeable/token/ERC721/IERC721ReceiverUpgradeable";
@@ -34,9 +38,7 @@ export type { ERC165Upgradeable } from "./@openzeppelin/contracts-upgradeable/ut
 export { ERC165Upgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable__factory";
 export type { IERC165Upgradeable } from "./@openzeppelin/contracts-upgradeable/utils/introspection/IERC165Upgradeable";
 export { IERC165Upgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/utils/introspection/IERC165Upgradeable__factory";
+export type { ContentBase } from "./contracts/ContentBaseMain.sol/ContentBase";
+export { ContentBase__factory } from "./factories/contracts/ContentBaseMain.sol/ContentBase__factory";
 export type { ContentBaseProfile } from "./contracts/ContentBaseProfile";
 export { ContentBaseProfile__factory } from "./factories/contracts/ContentBaseProfile__factory";
-export type { ContentBaseProfileV2 } from "./contracts/ContentBaseProfileV2";
-export { ContentBaseProfileV2__factory } from "./factories/contracts/ContentBaseProfileV2__factory";
-export type { ContentBaseProfileV3 } from "./contracts/ContentBaseProfileV3";
-export { ContentBaseProfileV3__factory } from "./factories/contracts/ContentBaseProfileV3__factory";

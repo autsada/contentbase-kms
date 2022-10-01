@@ -4,19 +4,26 @@ import crypto from 'crypto'
 import { encrypt } from './kms'
 import { encryptString } from './utils'
 
-const { NODE_ENV, ALCHEMY_API_KEY } = process.env
+const { BLOCKCHAIN_LOCAL_URL, NODE_ENV, ALCHEMY_API_KEY } = process.env
+
+const localChainPrivatKey =
+  '0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d'
+
+export function getJsonRpcProvider() {
+  const url = BLOCKCHAIN_LOCAL_URL!
+
+  return new ethers.providers.JsonRpcProvider(url)
+}
 
 export function getAlchemyProvider() {
-  const network =
-    NODE_ENV === 'development' || NODE_ENV === 'staging'
-      ? 'goerli'
-      : 'homestead'
+  const network = NODE_ENV === 'production' ? 'homestead' : 'goerli'
 
   return new ethers.providers.AlchemyProvider(network, ALCHEMY_API_KEY)
 }
 
 export function getSigner(privateKey: string) {
-  const provider = getAlchemyProvider()
+  const provider =
+    NODE_ENV === 'development' ? getJsonRpcProvider() : getAlchemyProvider()
 
   return new ethers.Wallet(privateKey, provider)
 }
@@ -28,7 +35,8 @@ export function getContractByProvider({
   address: string
   contractInterface: ethers.ContractInterface
 }) {
-  const provider = getAlchemyProvider()
+  const provider =
+    NODE_ENV === 'development' ? getJsonRpcProvider() : getAlchemyProvider()
 
   return new ethers.Contract(address, contractInterface, provider)
 }
@@ -42,7 +50,10 @@ export function getContractBySigner({
   privateKey: string
   contractInterface: ethers.ContractInterface
 }) {
-  const signer = getSigner(privateKey)
+  const signer =
+    NODE_ENV === 'development'
+      ? getSigner(localChainPrivatKey)
+      : getSigner(privateKey)
 
   return new ethers.Contract(address, contractInterface, signer)
 }
@@ -52,7 +63,8 @@ export function getContractBySigner({
  *
  */
 export async function getBalance(address: string) {
-  const provider = getAlchemyProvider()
+  const provider =
+    NODE_ENV === 'development' ? getJsonRpcProvider() : getAlchemyProvider()
 
   const balanceInWei = await provider.getBalance(address)
 

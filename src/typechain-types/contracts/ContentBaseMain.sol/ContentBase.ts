@@ -26,70 +26,66 @@ import type {
   TypedListener,
   OnEvent,
   PromiseOrValue,
-} from "../common";
+} from "../../common";
 
-export declare namespace ContentBaseProfileV2 {
+export declare namespace DataTypes {
   export type CreateProfileParamsStruct = {
-    uid: PromiseOrValue<string>;
     handle: PromiseOrValue<string>;
-    imageURI1: PromiseOrValue<string>;
-    imageURI2: PromiseOrValue<string>;
-    isDefault: PromiseOrValue<boolean>;
+    imageURI: PromiseOrValue<string>;
   };
 
-  export type CreateProfileParamsStructOutput = [
-    string,
-    string,
-    string,
-    string,
-    boolean
-  ] & {
-    uid: string;
+  export type CreateProfileParamsStructOutput = [string, string] & {
     handle: string;
-    imageURI1: string;
-    imageURI2: string;
-    isDefault: boolean;
+    imageURI: string;
   };
 
   export type ProfileStruct = {
     profileId: PromiseOrValue<BigNumberish>;
-    owner: PromiseOrValue<string>;
-    uid: PromiseOrValue<string>;
-    handle: PromiseOrValue<string>;
-    imageURI1: PromiseOrValue<string>;
-    imageURI2: PromiseOrValue<string>;
     isDefault: PromiseOrValue<boolean>;
+    owner: PromiseOrValue<string>;
+    handle: PromiseOrValue<string>;
+    imageURI: PromiseOrValue<string>;
   };
 
   export type ProfileStructOutput = [
     BigNumber,
+    boolean,
     string,
     string,
-    string,
-    string,
-    string,
-    boolean
+    string
   ] & {
     profileId: BigNumber;
-    owner: string;
-    uid: string;
-    handle: string;
-    imageURI1: string;
-    imageURI2: string;
     isDefault: boolean;
+    owner: string;
+    handle: string;
+    imageURI: string;
   };
+
+  export type UpdateProfileImageParamsStruct = {
+    profileId: PromiseOrValue<BigNumberish>;
+    imageURI: PromiseOrValue<string>;
+    tokenURI: PromiseOrValue<string>;
+  };
+
+  export type UpdateProfileImageParamsStructOutput = [
+    BigNumber,
+    string,
+    string
+  ] & { profileId: BigNumber; imageURI: string; tokenURI: string };
 }
 
-export interface ContentBaseProfileV2Interface extends utils.Interface {
+export interface ContentBaseInterface extends utils.Interface {
   functions: {
     "ADMIN_ROLE()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "UPGRADER_ROLE()": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
-    "createProfile((string,string,string,string,bool))": FunctionFragment;
-    "fetchMyProfiles(address)": FunctionFragment;
+    "burn(uint256)": FunctionFragment;
+    "createProfile(string,(string,string))": FunctionFragment;
+    "fetchProfilesByAddress(address)": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
+    "getProfileById(uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
@@ -103,11 +99,13 @@ export interface ContentBaseProfileV2Interface extends utils.Interface {
     "safeTransferFrom(address,address,uint256)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
+    "setDefaultProfile(uint256)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
     "tokenURI(uint256)": FunctionFragment;
-    "totalProfiles()": FunctionFragment;
+    "totalNFTs()": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
+    "updateProfileImage((uint256,string,string))": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
     "validateHandle(string)": FunctionFragment;
@@ -120,9 +118,11 @@ export interface ContentBaseProfileV2Interface extends utils.Interface {
       | "UPGRADER_ROLE"
       | "approve"
       | "balanceOf"
+      | "burn"
       | "createProfile"
-      | "fetchMyProfiles"
+      | "fetchProfilesByAddress"
       | "getApproved"
+      | "getProfileById"
       | "getRoleAdmin"
       | "grantRole"
       | "hasRole"
@@ -136,11 +136,13 @@ export interface ContentBaseProfileV2Interface extends utils.Interface {
       | "safeTransferFrom(address,address,uint256)"
       | "safeTransferFrom(address,address,uint256,bytes)"
       | "setApprovalForAll"
+      | "setDefaultProfile"
       | "supportsInterface"
       | "symbol"
       | "tokenURI"
-      | "totalProfiles"
+      | "totalNFTs"
       | "transferFrom"
+      | "updateProfileImage"
       | "upgradeTo"
       | "upgradeToAndCall"
       | "validateHandle"
@@ -167,15 +169,23 @@ export interface ContentBaseProfileV2Interface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "createProfile",
-    values: [ContentBaseProfileV2.CreateProfileParamsStruct]
+    functionFragment: "burn",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "fetchMyProfiles",
+    functionFragment: "createProfile",
+    values: [PromiseOrValue<string>, DataTypes.CreateProfileParamsStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "fetchProfilesByAddress",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getApproved",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getProfileById",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -237,6 +247,10 @@ export interface ContentBaseProfileV2Interface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<boolean>]
   ): string;
   encodeFunctionData(
+    functionFragment: "setDefaultProfile",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [PromiseOrValue<BytesLike>]
   ): string;
@@ -245,10 +259,7 @@ export interface ContentBaseProfileV2Interface extends utils.Interface {
     functionFragment: "tokenURI",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(
-    functionFragment: "totalProfiles",
-    values?: undefined
-  ): string;
+  encodeFunctionData(functionFragment: "totalNFTs", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferFrom",
     values: [
@@ -256,6 +267,10 @@ export interface ContentBaseProfileV2Interface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updateProfileImage",
+    values: [DataTypes.UpdateProfileImageParamsStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "upgradeTo",
@@ -281,16 +296,21 @@ export interface ContentBaseProfileV2Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "createProfile",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "fetchMyProfiles",
+    functionFragment: "fetchProfilesByAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getApproved",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getProfileById",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -328,17 +348,22 @@ export interface ContentBaseProfileV2Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setDefaultProfile",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "tokenURI", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "totalNFTs", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "totalProfiles",
+    functionFragment: "transferFrom",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "transferFrom",
+    functionFragment: "updateProfileImage",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
@@ -356,8 +381,10 @@ export interface ContentBaseProfileV2Interface extends utils.Interface {
     "Approval(address,address,uint256)": EventFragment;
     "ApprovalForAll(address,address,bool)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
+    "DefaultProfileUpdated(uint256,address)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "ProfileCreated(uint256,address)": EventFragment;
+    "ProfileCreated(uint256,bool,address)": EventFragment;
+    "ProfileImageUpdated(uint256,string,address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
@@ -369,8 +396,10 @@ export interface ContentBaseProfileV2Interface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DefaultProfileUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProfileCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ProfileImageUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
@@ -423,6 +452,18 @@ export type BeaconUpgradedEvent = TypedEvent<
 
 export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
 
+export interface DefaultProfileUpdatedEventObject {
+  tokenId: BigNumber;
+  owner: string;
+}
+export type DefaultProfileUpdatedEvent = TypedEvent<
+  [BigNumber, string],
+  DefaultProfileUpdatedEventObject
+>;
+
+export type DefaultProfileUpdatedEventFilter =
+  TypedEventFilter<DefaultProfileUpdatedEvent>;
+
 export interface InitializedEventObject {
   version: number;
 }
@@ -431,15 +472,29 @@ export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export interface ProfileCreatedEventObject {
-  profileId: BigNumber;
+  tokenId: BigNumber;
+  isDefault: boolean;
   owner: string;
 }
 export type ProfileCreatedEvent = TypedEvent<
-  [BigNumber, string],
+  [BigNumber, boolean, string],
   ProfileCreatedEventObject
 >;
 
 export type ProfileCreatedEventFilter = TypedEventFilter<ProfileCreatedEvent>;
+
+export interface ProfileImageUpdatedEventObject {
+  tokenId: BigNumber;
+  imageURI: string;
+  owner: string;
+}
+export type ProfileImageUpdatedEvent = TypedEvent<
+  [BigNumber, string, string],
+  ProfileImageUpdatedEventObject
+>;
+
+export type ProfileImageUpdatedEventFilter =
+  TypedEventFilter<ProfileImageUpdatedEvent>;
 
 export interface RoleAdminChangedEventObject {
   role: string;
@@ -497,12 +552,12 @@ export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
 
 export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
 
-export interface ContentBaseProfileV2 extends BaseContract {
+export interface ContentBase extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ContentBaseProfileV2Interface;
+  interface: ContentBaseInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -541,20 +596,31 @@ export interface ContentBaseProfileV2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    createProfile(
-      createProfileParams: ContentBaseProfileV2.CreateProfileParamsStruct,
+    burn(
+      tokenId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    fetchMyProfiles(
+    createProfile(
+      uri: PromiseOrValue<string>,
+      createProfileParams: DataTypes.CreateProfileParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    fetchProfilesByAddress(
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[ContentBaseProfileV2.ProfileStructOutput[]]>;
+    ): Promise<[DataTypes.ProfileStructOutput[]]>;
 
     getApproved(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
+
+    getProfileById(
+      profileId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[DataTypes.ProfileStructOutput]>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -625,6 +691,11 @@ export interface ContentBaseProfileV2 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setDefaultProfile(
+      profileId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     supportsInterface(
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -637,12 +708,17 @@ export interface ContentBaseProfileV2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    totalProfiles(overrides?: CallOverrides): Promise<[BigNumber]>;
+    totalNFTs(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     transferFrom(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    updateProfileImage(
+      updateProfileImageParams: DataTypes.UpdateProfileImageParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -680,20 +756,31 @@ export interface ContentBaseProfileV2 extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  createProfile(
-    createProfileParams: ContentBaseProfileV2.CreateProfileParamsStruct,
+  burn(
+    tokenId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  fetchMyProfiles(
+  createProfile(
+    uri: PromiseOrValue<string>,
+    createProfileParams: DataTypes.CreateProfileParamsStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  fetchProfilesByAddress(
     owner: PromiseOrValue<string>,
     overrides?: CallOverrides
-  ): Promise<ContentBaseProfileV2.ProfileStructOutput[]>;
+  ): Promise<DataTypes.ProfileStructOutput[]>;
 
   getApproved(
     tokenId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
+
+  getProfileById(
+    profileId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<DataTypes.ProfileStructOutput>;
 
   getRoleAdmin(
     role: PromiseOrValue<BytesLike>,
@@ -764,6 +851,11 @@ export interface ContentBaseProfileV2 extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setDefaultProfile(
+    profileId: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   supportsInterface(
     interfaceId: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
@@ -776,12 +868,17 @@ export interface ContentBaseProfileV2 extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  totalProfiles(overrides?: CallOverrides): Promise<BigNumber>;
+  totalNFTs(overrides?: CallOverrides): Promise<BigNumber>;
 
   transferFrom(
     from: PromiseOrValue<string>,
     to: PromiseOrValue<string>,
     tokenId: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  updateProfileImage(
+    updateProfileImageParams: DataTypes.UpdateProfileImageParamsStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -819,20 +916,31 @@ export interface ContentBaseProfileV2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    burn(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     createProfile(
-      createProfileParams: ContentBaseProfileV2.CreateProfileParamsStruct,
+      uri: PromiseOrValue<string>,
+      createProfileParams: DataTypes.CreateProfileParamsStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    fetchMyProfiles(
+    fetchProfilesByAddress(
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<ContentBaseProfileV2.ProfileStructOutput[]>;
+    ): Promise<DataTypes.ProfileStructOutput[]>;
 
     getApproved(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    getProfileById(
+      profileId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<DataTypes.ProfileStructOutput>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -901,6 +1009,11 @@ export interface ContentBaseProfileV2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setDefaultProfile(
+      profileId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     supportsInterface(
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -913,7 +1026,7 @@ export interface ContentBaseProfileV2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    totalProfiles(overrides?: CallOverrides): Promise<BigNumber>;
+    totalNFTs(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferFrom(
       from: PromiseOrValue<string>,
@@ -921,6 +1034,11 @@ export interface ContentBaseProfileV2 extends BaseContract {
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    updateProfileImage(
+      updateProfileImageParams: DataTypes.UpdateProfileImageParamsStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     upgradeTo(
       newImplementation: PromiseOrValue<string>,
@@ -978,14 +1096,39 @@ export interface ContentBaseProfileV2 extends BaseContract {
       beacon?: PromiseOrValue<string> | null
     ): BeaconUpgradedEventFilter;
 
+    "DefaultProfileUpdated(uint256,address)"(
+      tokenId?: null,
+      owner?: null
+    ): DefaultProfileUpdatedEventFilter;
+    DefaultProfileUpdated(
+      tokenId?: null,
+      owner?: null
+    ): DefaultProfileUpdatedEventFilter;
+
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
-    "ProfileCreated(uint256,address)"(
-      profileId?: null,
+    "ProfileCreated(uint256,bool,address)"(
+      tokenId?: null,
+      isDefault?: null,
       owner?: null
     ): ProfileCreatedEventFilter;
-    ProfileCreated(profileId?: null, owner?: null): ProfileCreatedEventFilter;
+    ProfileCreated(
+      tokenId?: null,
+      isDefault?: null,
+      owner?: null
+    ): ProfileCreatedEventFilter;
+
+    "ProfileImageUpdated(uint256,string,address)"(
+      tokenId?: null,
+      imageURI?: null,
+      owner?: null
+    ): ProfileImageUpdatedEventFilter;
+    ProfileImageUpdated(
+      tokenId?: null,
+      imageURI?: null,
+      owner?: null
+    ): ProfileImageUpdatedEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: PromiseOrValue<BytesLike> | null,
@@ -1057,18 +1200,29 @@ export interface ContentBaseProfileV2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    createProfile(
-      createProfileParams: ContentBaseProfileV2.CreateProfileParamsStruct,
+    burn(
+      tokenId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    fetchMyProfiles(
+    createProfile(
+      uri: PromiseOrValue<string>,
+      createProfileParams: DataTypes.CreateProfileParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    fetchProfilesByAddress(
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getApproved(
       tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getProfileById(
+      profileId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1141,6 +1295,11 @@ export interface ContentBaseProfileV2 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setDefaultProfile(
+      profileId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     supportsInterface(
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -1153,12 +1312,17 @@ export interface ContentBaseProfileV2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    totalProfiles(overrides?: CallOverrides): Promise<BigNumber>;
+    totalNFTs(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferFrom(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    updateProfileImage(
+      updateProfileImageParams: DataTypes.UpdateProfileImageParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1199,18 +1363,29 @@ export interface ContentBaseProfileV2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    createProfile(
-      createProfileParams: ContentBaseProfileV2.CreateProfileParamsStruct,
+    burn(
+      tokenId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    fetchMyProfiles(
+    createProfile(
+      uri: PromiseOrValue<string>,
+      createProfileParams: DataTypes.CreateProfileParamsStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    fetchProfilesByAddress(
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getApproved(
       tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getProfileById(
+      profileId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1283,6 +1458,11 @@ export interface ContentBaseProfileV2 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    setDefaultProfile(
+      profileId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     supportsInterface(
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -1295,12 +1475,17 @@ export interface ContentBaseProfileV2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    totalProfiles(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    totalNFTs(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transferFrom(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updateProfileImage(
+      updateProfileImageParams: DataTypes.UpdateProfileImageParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

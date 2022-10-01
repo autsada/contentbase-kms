@@ -14,6 +14,7 @@ app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 app.use(cors())
 
+app.use('/tokens', router.tokensRouter)
 app.use('/profiles', router.profilesRouter)
 app.use('/wallet', router.walletRouter)
 
