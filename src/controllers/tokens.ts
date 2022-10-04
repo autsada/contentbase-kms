@@ -18,10 +18,10 @@ import { decryptString } from '../lib/utils'
  */
 export async function checkRole(req: Request, res: Response) {
   try {
-    const { role, address, key } = req.body as {
+    const { key } = req.params as { key: string }
+    const { role, address } = req.body as {
       role: Role
       address: string
-      key: string
     }
     if (!role || !address || !key) throw new Error('User input error')
     // // 1. Decrypt the key
@@ -50,6 +50,7 @@ export async function getTokensCount(req: Request, res: Response) {
 
     res.status(200).json({ tokensCount })
   } catch (error) {
+    console.log('error -->', error)
     res.status(500).send((error as any).message)
   }
 }
@@ -92,7 +93,7 @@ export async function burnNFT(req: Request, res: Response) {
     // const decryptedKey = decryptString(kmsDecryptedKey)
 
     // await burnToken(tokenId, decryptedKey)
-    await burnToken(tokenId, key)
+    await burnToken(key, tokenId)
 
     res.status(200).json({ status: 'Ok' })
   } catch (error) {

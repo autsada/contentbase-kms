@@ -12,6 +12,7 @@ import {
   ProfileImageUpdatedEvent,
   DefaultProfileUpdatedEvent,
 } from '../typechain-types/contracts/ContentBaseProfile'
+import { DataTypes } from '../typechain-types/contracts/ContentBaseProfile'
 import { getContractByProvider } from './ethers'
 
 export interface CreateProfileInput {
@@ -26,47 +27,10 @@ export interface CreateProfileInput {
 export interface UpdateProfileImageInput {
   key: string
   data: {
-    profileId: number
+    tokenId: number
     imageURI: string
     tokenURI: string
   }
-}
-
-/**
- * @param handle user's handle
- *
- */
-export async function verifyHandle(handle: string) {
-  const contentBaseContract = getContractByProvider({
-    address: ContentBaseContract.address,
-    contractInterface: ContentBaseContract.abi,
-  }) as ContentBase
-  const isUnique = await contentBaseContract.validateHandle(handle)
-
-  return isUnique
-}
-
-/**
- * @param address a wallet address
- * @param key a wallet private key
- *
- */
-export async function fetchMyProfiles(address: string, key: string) {
-  const contentBaseContract = getContentBaseContract(key)
-  const profiles = await contentBaseContract.fetchProfilesByAddress(address)
-  const formattedProfiles = profiles.map(
-    ({ profileId, isDefault, handle, owner, imageURI }) => {
-      return {
-        profileId: profileId.toNumber(),
-        handle,
-        isDefault,
-        imageURI,
-        owner,
-      }
-    }
-  )
-
-  return formattedProfiles
 }
 
 /**
@@ -96,8 +60,7 @@ export async function createProfile(input: CreateProfileInput) {
 
   const tx = await transaction.wait()
 
-  let profileId
-  let isDefault
+  let token
 
   if (tx.events) {
     const profileCreatedEvent = tx.events.find(
@@ -106,21 +69,40 @@ export async function createProfile(input: CreateProfileInput) {
 
     if (profileCreatedEvent) {
       if (profileCreatedEvent.args) {
-        const [tokenId, d, _] =
-          profileCreatedEvent.args as ProfileCreatedEvent['args']
+        const [
+          {
+            tokenId,
+            associatedId,
+            owner,
+            tokenType,
+            visibility,
+            handle,
+            imageURI,
+            contentURI,
+          },
+          _,
+        ] = profileCreatedEvent.args as ProfileCreatedEvent['args']
 
-        profileId = tokenId.toNumber()
-        isDefault = d
+        token = {
+          tokenId: tokenId.toNumber(),
+          associatedId: associatedId.toNumber(),
+          owner,
+          tokenType: getTokenTypeString(tokenType),
+          visibility: getVisibilityString(visibility),
+          handle,
+          imageURI,
+          contentURI,
+        }
       }
     }
   }
 
-  return { profileId, isDefault }
+  return token
 }
 
 /**
  * @param input.key a wallet private key
- * @param input.data.profileId an id of the profile
+ * @param input.data.tokenId an id of the profile token
  * @param input.data.imageURI a uri of the profile image
  * @param input.data.tokenURI a uri of the token's metadata file
  *
@@ -128,19 +110,19 @@ export async function createProfile(input: CreateProfileInput) {
 export async function updateProfile(input: UpdateProfileImageInput) {
   const {
     key,
-    data: { profileId, imageURI, tokenURI },
+    data: { tokenId, imageURI, tokenURI },
   } = input
 
   const contentBaseContract = getContentBaseContract(key)
 
-  const transaction = await contentBaseContract.updateProfileImage({
-    profileId,
-    imageURI,
+  const transaction = await contentBaseContract.updateProfileImage(
+    tokenId,
     tokenURI,
-  })
+    imageURI
+  )
 
   const tx = await transaction.wait()
-  let updatedProfileId
+  let updatedToken
 
   if (tx.events) {
     const profileCreatedEvent = tx.events.find(
@@ -149,35 +131,55 @@ export async function updateProfile(input: UpdateProfileImageInput) {
 
     if (profileCreatedEvent) {
       if (profileCreatedEvent.args) {
-        const [tokenId, _] =
-          profileCreatedEvent.args as ProfileImageUpdatedEvent['args']
+        const [
+          {
+            tokenId,
+            associatedId,
+            owner,
+            tokenType,
+            visibility,
+            handle,
+            imageURI,
+            contentURI,
+          },
+          _,
+        ] = profileCreatedEvent.args as ProfileImageUpdatedEvent['args']
 
-        updatedProfileId = tokenId.toNumber()
+        updatedToken = {
+          tokenId: tokenId.toNumber(),
+          associatedId: associatedId.toNumber(),
+          owner,
+          tokenType: getTokenTypeString(tokenType),
+          visibility: getVisibilityString(visibility),
+          handle,
+          imageURI,
+          contentURI,
+        }
       }
     }
   }
 
-  return updatedProfileId
+  return updatedToken
 }
 
 /**
  * @param input.key a wallet private key
- * @param input.data.profileId an id of the profile
+ * @param input.data.tokenId an id of the profile token
  *
  */
 export async function setDefaultProfile({
   key,
-  profileId,
+  tokenId,
 }: {
   key: string
-  profileId: number
+  tokenId: number
 }) {
   const contentBaseContract = getContentBaseContract(key)
 
-  const transaction = await contentBaseContract.setDefaultProfile(profileId)
+  const transaction = await contentBaseContract.setDefaultProfile(tokenId)
 
   const tx = await transaction.wait()
-  let id
+  let token
 
   if (tx.events) {
     const profileCreatedEvent = tx.events.find(
@@ -186,18 +188,149 @@ export async function setDefaultProfile({
 
     if (profileCreatedEvent) {
       if (profileCreatedEvent.args) {
-        const [tokenId, _] =
-          profileCreatedEvent.args as DefaultProfileUpdatedEvent['args']
+        const [
+          {
+            tokenId,
+            associatedId,
+            owner,
+            tokenType,
+            visibility,
+            handle,
+            imageURI,
+            contentURI,
+          },
+          _,
+        ] = profileCreatedEvent.args as DefaultProfileUpdatedEvent['args']
 
-        id = tokenId.toNumber()
+        token = {
+          tokenId: tokenId.toNumber(),
+          associatedId: associatedId.toNumber(),
+          owner,
+          tokenType: getTokenTypeString(tokenType),
+          visibility: getVisibilityString(visibility),
+          handle,
+          imageURI,
+          contentURI,
+        }
       }
     }
   }
 
-  return id
+  return token
 }
 
 /**
+ * @param key a wallet private key
+ * @param tokenIds an array of profile token ids
+ *
+ */
+export async function fetchMyProfiles(key: string, tokenIds: number[]) {
+  const contentBaseContract = getContentBaseContract(key)
+  const profiles = await contentBaseContract.ownerProfiles(tokenIds)
+  const formattedProfiles = profiles.map(
+    ({
+      tokenId,
+      associatedId,
+      owner,
+      tokenType,
+      visibility,
+      handle,
+      imageURI,
+      contentURI,
+    }) => {
+      return {
+        tokenId: tokenId.toNumber(),
+        associatedId: associatedId.toNumber(),
+        owner,
+        tokenType: getTokenTypeString(tokenType),
+        visibility: getVisibilityString(visibility),
+        handle,
+        imageURI,
+        contentURI,
+      }
+    }
+  )
+
+  return formattedProfiles
+}
+
+/**
+ * @param key {string} a wallet private key
+ * @param id {number} an id of the profile token
+ *
+ */
+export async function getProfileById(key: string, id: number) {
+  const contentBaseContract = getContentBaseContract(key)
+  const {
+    tokenId,
+    associatedId,
+    owner,
+    tokenType,
+    visibility,
+    handle,
+    imageURI,
+    contentURI,
+  } = await contentBaseContract.profileById(id)
+
+  return {
+    tokenId: tokenId.toNumber(),
+    associatedId: associatedId.toNumber(),
+    owner,
+    tokenType: getTokenTypeString(tokenType),
+    visibility: getVisibilityString(visibility),
+    handle,
+    imageURI,
+    contentURI,
+  }
+}
+
+/**
+ * A function get user's default profile
+ * @param key a wallet private key
+ *
+ */
+export async function getDefaultProfile(key: string) {
+  const contentBaseContract = getContentBaseContract(key)
+  const {
+    tokenId,
+    associatedId,
+    owner,
+    tokenType,
+    visibility,
+    handle,
+    imageURI,
+    contentURI,
+  } = await contentBaseContract.defaultProfile()
+
+  return {
+    tokenId: tokenId.toNumber(),
+    associatedId: associatedId.toNumber(),
+    owner,
+    tokenType: getTokenTypeString(tokenType),
+    visibility: getVisibilityString(visibility),
+    handle,
+    imageURI,
+    contentURI,
+  }
+}
+
+/**
+ * A function to verify if handle is valid
+ * @param handle user's handle
+ *
+ */
+export async function verifyHandle(handle: string) {
+  const contentBaseContract = getContractByProvider({
+    address: ContentBaseContract.address,
+    contractInterface: ContentBaseContract.abi,
+  }) as ContentBase
+  const isUnique = await contentBaseContract.validateHandle(handle)
+
+  return isUnique
+}
+
+/**
+ * A function to estimate gas used to create a profile token
  * @param input.key a wallet private key
  * @param input.data.handle a handle
  * @param input.data.imageURI a uri of the profile image
@@ -222,22 +355,19 @@ export async function estimateCreateProfileGas(input: CreateProfileInput) {
   return ethers.utils.formatEther(gasInWei)
 }
 
-/**
- * @param tokenId {number} a profile id
- * @param key {string} a wallet private key
- *
- */
-export async function getProfileById(tokenId: number, key: string) {
-  const contentBaseContract = getContentBaseContract(key)
-  const profile = await contentBaseContract.getProfileById(tokenId)
+export function getTokenTypeString(tokenType: number) {
+  if (tokenType < 0 || tokenType > 3) return ''
 
-  const { profileId, owner, handle, imageURI, isDefault } = profile
+  if (tokenType === 0) return 'Profile'
+  if (tokenType === 1) return 'Publish'
+  if (tokenType === 2) return 'Follow'
+  if (tokenType === 3) return 'Like'
+}
 
-  return {
-    profileId: profileId.toNumber(),
-    owner,
-    handle,
-    imageURI,
-    isDefault,
-  }
+export function getVisibilityString(visibility: number) {
+  if (visibility < 0 || visibility > 2) return ''
+
+  if (visibility === 0) return 'UNSET'
+  if (visibility === 1) return 'OFF'
+  if (visibility === 2) return 'ON'
 }

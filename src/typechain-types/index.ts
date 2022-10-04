@@ -42,3 +42,5 @@ export type { ContentBase } from "./contracts/ContentBaseMain.sol/ContentBase";
 export { ContentBase__factory } from "./factories/contracts/ContentBaseMain.sol/ContentBase__factory";
 export type { ContentBaseProfile } from "./contracts/ContentBaseProfile";
 export { ContentBaseProfile__factory } from "./factories/contracts/ContentBaseProfile__factory";
+export type { ContentBasePublish } from "./contracts/ContentBasePublish";
+export { ContentBasePublish__factory } from "./factories/contracts/ContentBasePublish__factory";

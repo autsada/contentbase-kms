@@ -4,3 +4,4 @@
 import type * as contentBaseMainSol from "./ContentBaseMain.sol";
 export type { contentBaseMainSol };
 export type { ContentBaseProfile } from "./ContentBaseProfile";
+export type { ContentBasePublish } from "./ContentBasePublish";

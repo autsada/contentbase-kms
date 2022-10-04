@@ -28,74 +28,65 @@ import type {
 } from "../common";
 
 export declare namespace DataTypes {
-  export type CreateProfileParamsStruct = {
-    handle: PromiseOrValue<string>;
-    imageURI: PromiseOrValue<string>;
-  };
-
-  export type CreateProfileParamsStructOutput = [string, string] & {
-    handle: string;
-    imageURI: string;
-  };
-
-  export type ProfileStruct = {
-    profileId: PromiseOrValue<BigNumberish>;
-    isDefault: PromiseOrValue<boolean>;
+  export type TokenStruct = {
+    tokenId: PromiseOrValue<BigNumberish>;
+    associatedId: PromiseOrValue<BigNumberish>;
     owner: PromiseOrValue<string>;
+    tokenType: PromiseOrValue<BigNumberish>;
+    visibility: PromiseOrValue<BigNumberish>;
     handle: PromiseOrValue<string>;
     imageURI: PromiseOrValue<string>;
+    contentURI: PromiseOrValue<string>;
   };
 
-  export type ProfileStructOutput = [
+  export type TokenStructOutput = [
     BigNumber,
-    boolean,
+    BigNumber,
+    string,
+    number,
+    number,
     string,
     string,
     string
   ] & {
-    profileId: BigNumber;
-    isDefault: boolean;
+    tokenId: BigNumber;
+    associatedId: BigNumber;
     owner: string;
+    tokenType: number;
+    visibility: number;
+    handle: string;
+    imageURI: string;
+    contentURI: string;
+  };
+
+  export type CreateProfileDataStruct = {
+    handle: PromiseOrValue<string>;
+    imageURI: PromiseOrValue<string>;
+  };
+
+  export type CreateProfileDataStructOutput = [string, string] & {
     handle: string;
     imageURI: string;
   };
-
-  export type UpdateProfileImageParamsStruct = {
-    profileId: PromiseOrValue<BigNumberish>;
-    imageURI: PromiseOrValue<string>;
-    tokenURI: PromiseOrValue<string>;
-  };
-
-  export type UpdateProfileImageParamsStructOutput = [
-    BigNumber,
-    string,
-    string
-  ] & { profileId: BigNumber; imageURI: string; tokenURI: string };
 }
 
 export interface ContentBaseProfileInterface extends utils.Interface {
   functions: {
     "createProfile(string,(string,string))": FunctionFragment;
-    "fetchProfilesByAddress(address)": FunctionFragment;
     "setDefaultProfile(uint256)": FunctionFragment;
-    "updateProfileImage((uint256,string,string))": FunctionFragment;
+    "updateProfileImage(uint256,string,string)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "createProfile"
-      | "fetchProfilesByAddress"
       | "setDefaultProfile"
       | "updateProfileImage"
   ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "createProfile",
-    values: [PromiseOrValue<string>, DataTypes.CreateProfileParamsStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "fetchProfilesByAddress",
-    values: [PromiseOrValue<string>]
+    values: [PromiseOrValue<string>, DataTypes.CreateProfileDataStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "setDefaultProfile",
@@ -103,15 +94,15 @@ export interface ContentBaseProfileInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "updateProfileImage",
-    values: [DataTypes.UpdateProfileImageParamsStruct]
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
   ): string;
 
   decodeFunctionResult(
     functionFragment: "createProfile",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "fetchProfilesByAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -124,9 +115,9 @@ export interface ContentBaseProfileInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "DefaultProfileUpdated(uint256,address)": EventFragment;
-    "ProfileCreated(uint256,bool,address)": EventFragment;
-    "ProfileImageUpdated(uint256,string,address)": EventFragment;
+    "DefaultProfileUpdated(tuple,address)": EventFragment;
+    "ProfileCreated(tuple,address)": EventFragment;
+    "ProfileImageUpdated(tuple,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "DefaultProfileUpdated"): EventFragment;
@@ -135,11 +126,11 @@ export interface ContentBaseProfileInterface extends utils.Interface {
 }
 
 export interface DefaultProfileUpdatedEventObject {
-  tokenId: BigNumber;
+  token: DataTypes.TokenStructOutput;
   owner: string;
 }
 export type DefaultProfileUpdatedEvent = TypedEvent<
-  [BigNumber, string],
+  [DataTypes.TokenStructOutput, string],
   DefaultProfileUpdatedEventObject
 >;
 
@@ -147,24 +138,22 @@ export type DefaultProfileUpdatedEventFilter =
   TypedEventFilter<DefaultProfileUpdatedEvent>;
 
 export interface ProfileCreatedEventObject {
-  tokenId: BigNumber;
-  isDefault: boolean;
+  token: DataTypes.TokenStructOutput;
   owner: string;
 }
 export type ProfileCreatedEvent = TypedEvent<
-  [BigNumber, boolean, string],
+  [DataTypes.TokenStructOutput, string],
   ProfileCreatedEventObject
 >;
 
 export type ProfileCreatedEventFilter = TypedEventFilter<ProfileCreatedEvent>;
 
 export interface ProfileImageUpdatedEventObject {
-  tokenId: BigNumber;
-  imageURI: string;
+  token: DataTypes.TokenStructOutput;
   owner: string;
 }
 export type ProfileImageUpdatedEvent = TypedEvent<
-  [BigNumber, string, string],
+  [DataTypes.TokenStructOutput, string],
   ProfileImageUpdatedEventObject
 >;
 
@@ -199,146 +188,124 @@ export interface ContentBaseProfile extends BaseContract {
 
   functions: {
     createProfile(
-      tokenURI: PromiseOrValue<string>,
-      createProfileParams: DataTypes.CreateProfileParamsStruct,
+      uri: PromiseOrValue<string>,
+      createProfileData: DataTypes.CreateProfileDataStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    fetchProfilesByAddress(
-      owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[DataTypes.ProfileStructOutput[]]>;
-
     setDefaultProfile(
-      profileId: PromiseOrValue<BigNumberish>,
+      tokenId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     updateProfileImage(
-      updateProfileImageParams: DataTypes.UpdateProfileImageParamsStruct,
+      tokenId: PromiseOrValue<BigNumberish>,
+      uri: PromiseOrValue<string>,
+      imageURI: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   createProfile(
-    tokenURI: PromiseOrValue<string>,
-    createProfileParams: DataTypes.CreateProfileParamsStruct,
+    uri: PromiseOrValue<string>,
+    createProfileData: DataTypes.CreateProfileDataStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  fetchProfilesByAddress(
-    owner: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<DataTypes.ProfileStructOutput[]>;
-
   setDefaultProfile(
-    profileId: PromiseOrValue<BigNumberish>,
+    tokenId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   updateProfileImage(
-    updateProfileImageParams: DataTypes.UpdateProfileImageParamsStruct,
+    tokenId: PromiseOrValue<BigNumberish>,
+    uri: PromiseOrValue<string>,
+    imageURI: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     createProfile(
-      tokenURI: PromiseOrValue<string>,
-      createProfileParams: DataTypes.CreateProfileParamsStruct,
+      uri: PromiseOrValue<string>,
+      createProfileData: DataTypes.CreateProfileDataStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    fetchProfilesByAddress(
-      owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<DataTypes.ProfileStructOutput[]>;
-
     setDefaultProfile(
-      profileId: PromiseOrValue<BigNumberish>,
+      tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     updateProfileImage(
-      updateProfileImageParams: DataTypes.UpdateProfileImageParamsStruct,
+      tokenId: PromiseOrValue<BigNumberish>,
+      uri: PromiseOrValue<string>,
+      imageURI: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   filters: {
-    "DefaultProfileUpdated(uint256,address)"(
-      tokenId?: null,
+    "DefaultProfileUpdated(tuple,address)"(
+      token?: null,
       owner?: null
     ): DefaultProfileUpdatedEventFilter;
     DefaultProfileUpdated(
-      tokenId?: null,
+      token?: null,
       owner?: null
     ): DefaultProfileUpdatedEventFilter;
 
-    "ProfileCreated(uint256,bool,address)"(
-      tokenId?: null,
-      isDefault?: null,
+    "ProfileCreated(tuple,address)"(
+      token?: null,
       owner?: null
     ): ProfileCreatedEventFilter;
-    ProfileCreated(
-      tokenId?: null,
-      isDefault?: null,
-      owner?: null
-    ): ProfileCreatedEventFilter;
+    ProfileCreated(token?: null, owner?: null): ProfileCreatedEventFilter;
 
-    "ProfileImageUpdated(uint256,string,address)"(
-      tokenId?: null,
-      imageURI?: null,
+    "ProfileImageUpdated(tuple,address)"(
+      token?: null,
       owner?: null
     ): ProfileImageUpdatedEventFilter;
     ProfileImageUpdated(
-      tokenId?: null,
-      imageURI?: null,
+      token?: null,
       owner?: null
     ): ProfileImageUpdatedEventFilter;
   };
 
   estimateGas: {
     createProfile(
-      tokenURI: PromiseOrValue<string>,
-      createProfileParams: DataTypes.CreateProfileParamsStruct,
+      uri: PromiseOrValue<string>,
+      createProfileData: DataTypes.CreateProfileDataStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    fetchProfilesByAddress(
-      owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     setDefaultProfile(
-      profileId: PromiseOrValue<BigNumberish>,
+      tokenId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     updateProfileImage(
-      updateProfileImageParams: DataTypes.UpdateProfileImageParamsStruct,
+      tokenId: PromiseOrValue<BigNumberish>,
+      uri: PromiseOrValue<string>,
+      imageURI: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     createProfile(
-      tokenURI: PromiseOrValue<string>,
-      createProfileParams: DataTypes.CreateProfileParamsStruct,
+      uri: PromiseOrValue<string>,
+      createProfileData: DataTypes.CreateProfileDataStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    fetchProfilesByAddress(
-      owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     setDefaultProfile(
-      profileId: PromiseOrValue<BigNumberish>,
+      tokenId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     updateProfileImage(
-      updateProfileImageParams: DataTypes.UpdateProfileImageParamsStruct,
+      tokenId: PromiseOrValue<BigNumberish>,
+      uri: PromiseOrValue<string>,
+      imageURI: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

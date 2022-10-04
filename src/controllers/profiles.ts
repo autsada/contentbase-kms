@@ -7,92 +7,12 @@ import {
   verifyHandle,
   fetchMyProfiles,
   getProfileById,
+  getDefaultProfile,
   estimateCreateProfileGas,
 } from '../lib/contentBaseProfile'
 import { decrypt } from '../lib/kms'
 import { decryptString } from '../lib/utils'
-import type {
-  CreateProfileInput,
-  UpdateProfileImageInput,
-} from '../lib/contentBaseProfile'
-
-/**
- * @param req.body.handle a handle of the user
- *
- */
-export async function verifyProfileHandle(req: Request, res: Response) {
-  try {
-    const { handle } = req.body as {
-      handle: string
-    }
-    if (!handle) throw new Error('Handle is required.')
-    const isHandleUnique = await verifyHandle(handle)
-
-    res.status(200).json({ isHandleUnique })
-  } catch (error) {
-    res.status(500).send((error as any).message)
-  }
-}
-
-/**
- * @param req.params.key an encrypted key of the user saved in Firestore
- * @param req.params.address an address that own profiles
- *
- */
-export async function getProfilesByAddress(req: Request, res: Response) {
-  try {
-    const { address, key } = req.params as { address: string; key: string }
-
-    if (!address || !key) throw new Error('User input error.')
-
-    // // 1. Decrypt the key
-    // const kmsDecryptedKey = await decrypt(key)
-    // if (!kmsDecryptedKey) throw new Error('Forbidden')
-
-    // // 2. Decrypt the kms decrypted string
-    // const decryptedKey = decryptString(kmsDecryptedKey)
-
-    // // 3. Get profiles
-    // const profiles = await fetchMyProfiles(address, decryptedKey)
-    const profiles = await fetchMyProfiles(address, key)
-
-    res.status(200).json({ profiles })
-  } catch (error) {
-    // In case NOT FOUND, fetchMyProfiles will throw so it's needed to return 200 - empty array so the process can continue
-    res.status(200).json({ profiles: [] })
-  }
-}
-
-/**
- * @param req.body.key an encrypted key of the user saved in Firestore
- * @param req.body.profileId an id of the profile
- *
- */
-export async function getOneProfile(req: Request, res: Response) {
-  try {
-    const { profileId, key } = req.params as unknown as {
-      profileId: number
-      key: string
-    }
-
-    if (!profileId || !key) throw new Error('User input error.')
-
-    // // 1. Decrypt the key
-    // const kmsDecryptedKey = await decrypt(key)
-    // if (!kmsDecryptedKey) throw new Error('Forbidden')
-
-    // // 2. Decrypt the kms decrypted string
-    // const decryptedKey = decryptString(kmsDecryptedKey)
-
-    // // 3. Get profiles
-    // const profile = await getProfileById(profileId, decryptedKey)
-    const profile = await getProfileById(profileId, key)
-
-    res.status(200).json({ profile })
-  } catch (error) {
-    res.status(500).send((error as any).message)
-  }
-}
+import type { CreateProfileInput } from '../lib/contentBaseProfile'
 
 /**
  * @param req.body.key an encrypted key of the user saved in Firestore
@@ -103,10 +23,9 @@ export async function getOneProfile(req: Request, res: Response) {
  */
 export async function createProfileNft(req: Request, res: Response) {
   try {
-    const {
-      key,
-      data: { handle, imageURI, tokenURI },
-    } = req.body as CreateProfileInput
+    const { key } = req.params as { key: string }
+    const { handle, imageURI, tokenURI } =
+      req.body as CreateProfileInput['data']
 
     if (!handle || !key) throw new Error('User input error')
 
@@ -118,7 +37,7 @@ export async function createProfileNft(req: Request, res: Response) {
     // const decryptedKey = decryptString(kmsDecryptedKey)
 
     // 3. Create profile
-    const { profileId, isDefault } = await createProfile({
+    const token = await createProfile({
       // key: decryptedKey,
       key,
       data: {
@@ -128,11 +47,10 @@ export async function createProfileNft(req: Request, res: Response) {
       },
     })
 
-    if (!profileId) throw new Error('Create profile failed.')
+    if (!token) throw new Error('Create profile failed.')
 
-    res.status(200).json({ profileId, isDefault })
+    res.status(200).json({ token })
   } catch (error) {
-    console.log('error -->', error)
     res.status(500).send((error as any).message)
   }
 }
@@ -164,19 +82,19 @@ export async function updateProfileImage(req: Request, res: Response) {
     // const decryptedKey = decryptString(kmsDecryptedKey)
 
     // 3. Update profile
-    const updatedProfileId = await updateProfile({
+    const token = await updateProfile({
       // key: decryptedKey,
       key,
       data: {
-        profileId,
+        tokenId: profileId,
         imageURI,
         tokenURI,
       },
     })
 
-    if (!updatedProfileId) throw new Error('Updated profile failed.')
+    if (!token) throw new Error('Updated profile failed.')
 
-    res.status(200).json({ profileId: updatedProfileId })
+    res.status(200).json({ token })
   } catch (error) {
     res.status(500).send((error as any).message)
   }
@@ -202,22 +120,133 @@ export async function setProfileAsDefault(req: Request, res: Response) {
     // const decryptedKey = decryptString(kmsDecryptedKey)
 
     // 3. Update profile
-    const updatedProfileId = await setDefaultProfile({
+    const token = await setDefaultProfile({
       // key: decryptedKey,
       key,
-      profileId,
+      tokenId: profileId,
     })
 
-    if (!updatedProfileId) throw new Error('Updated profile failed.')
+    if (!token) throw new Error('Updated profile failed.')
 
-    res.status(200).json({ profileId: updatedProfileId })
+    res.status(200).json({ token })
   } catch (error) {
     res.status(500).send((error as any).message)
   }
 }
 
 /**
- * @param req.body.key an encrypted key of the user saved in Firestore
+ * A route to get user's profiles
+ * @dev token ids array is required
+ * @param req.params.key an encrypted key of the user saved in Firestore
+ * @param req.body.tokenIds an encrypted key of the user saved in Firestore
+ *
+ */
+export async function getMyProfiles(req: Request, res: Response) {
+  try {
+    const { key } = req.params as { key: string }
+    const { tokenIds } = req.body as { tokenIds: number[] }
+
+    if (!key) throw new Error('User input error.')
+
+    // // 1. Decrypt the key
+    // const kmsDecryptedKey = await decrypt(key)
+    // if (!kmsDecryptedKey) throw new Error('Forbidden')
+
+    // // 2. Decrypt the kms decrypted string
+    // const decryptedKey = decryptString(kmsDecryptedKey)
+
+    // // 3. Get profiles
+    // const profiles = await fetchMyProfiles(address, decryptedKey)
+    const profiles = await fetchMyProfiles(key, tokenIds)
+
+    res.status(200).json({ tokens: profiles })
+  } catch (error) {
+    console.log('error -->', error)
+    // In case NOT FOUND, fetchMyProfiles will throw so it's needed to return 200 - empty array so the process can continue
+    res.status(200).json({ tokens: [] })
+  }
+}
+
+/**
+ * A route to get one profile token
+ * @dev token id is required
+ * @param req.params.key an encrypted key of the user saved in Firestore
+ * @param req.params.tokenId an id of the profile token
+ *
+ */
+export async function getProfile(req: Request, res: Response) {
+  try {
+    const { key, profileId } = req.params as unknown as {
+      key: string
+      profileId: number
+    }
+
+    if (!profileId || !key) throw new Error('User input error.')
+
+    // // 1. Decrypt the key
+    // const kmsDecryptedKey = await decrypt(key)
+    // if (!kmsDecryptedKey) throw new Error('Forbidden')
+
+    // // 2. Decrypt the kms decrypted string
+    // const decryptedKey = decryptString(kmsDecryptedKey)
+
+    // // 3. Get profiles
+    // const token = await getProfileById(profileId, decryptedKey)
+    const token = await getProfileById(key, profileId)
+
+    res.status(200).json({ token })
+  } catch (error) {
+    res.status(500).send((error as any).message)
+  }
+}
+
+/**
+ * A route to get user's default profile
+ * @param req.params.key an encrypted key of the user saved in Firestore
+ *
+ */
+export async function getUserDefaultProfile(req: Request, res: Response) {
+  try {
+    const { key } = req.params as unknown as { key: string }
+
+    if (!key) throw new Error('User input error.')
+
+    // // 1. Decrypt the key
+    // const kmsDecryptedKey = await decrypt(key)
+    // if (!kmsDecryptedKey) throw new Error('Forbidden')
+
+    // // 2. Decrypt the kms decrypted string
+    // const decryptedKey = decryptString(kmsDecryptedKey)
+
+    // // 3. Get profiles
+    // const token = await getDefaultProfile(decryptedKey)
+    const token = await getDefaultProfile(key)
+
+    res.status(200).json({ token })
+  } catch (error) {
+    res.status(500).send((error as any).message)
+  }
+}
+
+/**
+ * A route to validate handle
+ * @param req.body.handle a handle
+ *
+ */
+export async function verifyProfileHandle(req: Request, res: Response) {
+  try {
+    const { handle } = req.body as { handle: string }
+    if (!handle) throw new Error('Handle is required.')
+    const isHandleUnique = await verifyHandle(handle)
+
+    res.status(200).json({ isHandleUnique })
+  } catch (error) {
+    res.status(200).json({ isHandleUnique: false })
+  }
+}
+
+/**
+ * @param req.params.key an encrypted key of the user saved in Firestore
  * @param req.body.data.handle a handle of the user
  * @param req.body.data.imageURI a uri of the profile image
  * @param req.body.data.tokenURI a uri of the token's metadata file
@@ -226,10 +255,9 @@ export async function setProfileAsDefault(req: Request, res: Response) {
  */
 export async function estimateCreateProfileNftGas(req: Request, res: Response) {
   try {
-    const {
-      key,
-      data: { handle, imageURI, tokenURI },
-    } = req.body as CreateProfileInput
+    const { key } = req.params as { key: string }
+    const { handle, imageURI, tokenURI } =
+      req.body as CreateProfileInput['data']
 
     // Check if all required parameters are availble
     if (!key || !handle) throw new Error('User input error')

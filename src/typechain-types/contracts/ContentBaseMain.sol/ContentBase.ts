@@ -29,49 +29,77 @@ import type {
 } from "../../common";
 
 export declare namespace DataTypes {
-  export type CreateProfileParamsStruct = {
-    handle: PromiseOrValue<string>;
-    imageURI: PromiseOrValue<string>;
-  };
-
-  export type CreateProfileParamsStructOutput = [string, string] & {
-    handle: string;
-    imageURI: string;
-  };
-
-  export type ProfileStruct = {
-    profileId: PromiseOrValue<BigNumberish>;
-    isDefault: PromiseOrValue<boolean>;
+  export type TokenStruct = {
+    tokenId: PromiseOrValue<BigNumberish>;
+    associatedId: PromiseOrValue<BigNumberish>;
     owner: PromiseOrValue<string>;
+    tokenType: PromiseOrValue<BigNumberish>;
+    visibility: PromiseOrValue<BigNumberish>;
     handle: PromiseOrValue<string>;
     imageURI: PromiseOrValue<string>;
+    contentURI: PromiseOrValue<string>;
   };
 
-  export type ProfileStructOutput = [
+  export type TokenStructOutput = [
     BigNumber,
-    boolean,
+    BigNumber,
+    string,
+    number,
+    number,
     string,
     string,
     string
   ] & {
-    profileId: BigNumber;
-    isDefault: boolean;
+    tokenId: BigNumber;
+    associatedId: BigNumber;
     owner: string;
+    tokenType: number;
+    visibility: number;
+    handle: string;
+    imageURI: string;
+    contentURI: string;
+  };
+
+  export type CreateProfileDataStruct = {
+    handle: PromiseOrValue<string>;
+    imageURI: PromiseOrValue<string>;
+  };
+
+  export type CreateProfileDataStructOutput = [string, string] & {
     handle: string;
     imageURI: string;
   };
 
-  export type UpdateProfileImageParamsStruct = {
-    profileId: PromiseOrValue<BigNumberish>;
+  export type CreatePublishDataStruct = {
+    visibility: PromiseOrValue<BigNumberish>;
+    handle: PromiseOrValue<string>;
     imageURI: PromiseOrValue<string>;
-    tokenURI: PromiseOrValue<string>;
+    contentURI: PromiseOrValue<string>;
   };
 
-  export type UpdateProfileImageParamsStructOutput = [
-    BigNumber,
+  export type CreatePublishDataStructOutput = [
+    number,
+    string,
     string,
     string
-  ] & { profileId: BigNumber; imageURI: string; tokenURI: string };
+  ] & {
+    visibility: number;
+    handle: string;
+    imageURI: string;
+    contentURI: string;
+  };
+
+  export type UpdatePublishDataStruct = {
+    visibility: PromiseOrValue<BigNumberish>;
+    imageURI: PromiseOrValue<string>;
+    contentURI: PromiseOrValue<string>;
+  };
+
+  export type UpdatePublishDataStructOutput = [number, string, string] & {
+    visibility: number;
+    imageURI: string;
+    contentURI: string;
+  };
 }
 
 export interface ContentBaseInterface extends utils.Interface {
@@ -83,9 +111,9 @@ export interface ContentBaseInterface extends utils.Interface {
     "balanceOf(address)": FunctionFragment;
     "burn(uint256)": FunctionFragment;
     "createProfile(string,(string,string))": FunctionFragment;
-    "fetchProfilesByAddress(address)": FunctionFragment;
+    "createPublish(string,(uint8,string,string,string))": FunctionFragment;
+    "defaultProfile()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
-    "getProfileById(uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
@@ -93,7 +121,13 @@ export interface ContentBaseInterface extends utils.Interface {
     "isApprovedForAll(address,address)": FunctionFragment;
     "name()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
+    "ownerProfiles(uint256[])": FunctionFragment;
+    "ownerPublish(uint256)": FunctionFragment;
+    "ownerPublishes(uint256[])": FunctionFragment;
+    "profileById(uint256)": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
+    "publishById(uint256)": FunctionFragment;
+    "publishesByIds(uint256[])": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "safeTransferFrom(address,address,uint256)": FunctionFragment;
@@ -105,7 +139,8 @@ export interface ContentBaseInterface extends utils.Interface {
     "tokenURI(uint256)": FunctionFragment;
     "totalNFTs()": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
-    "updateProfileImage((uint256,string,string))": FunctionFragment;
+    "updateProfileImage(uint256,string,string)": FunctionFragment;
+    "updatePublish(uint256,string,(uint8,string,string))": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
     "validateHandle(string)": FunctionFragment;
@@ -120,9 +155,9 @@ export interface ContentBaseInterface extends utils.Interface {
       | "balanceOf"
       | "burn"
       | "createProfile"
-      | "fetchProfilesByAddress"
+      | "createPublish"
+      | "defaultProfile"
       | "getApproved"
-      | "getProfileById"
       | "getRoleAdmin"
       | "grantRole"
       | "hasRole"
@@ -130,7 +165,13 @@ export interface ContentBaseInterface extends utils.Interface {
       | "isApprovedForAll"
       | "name"
       | "ownerOf"
+      | "ownerProfiles"
+      | "ownerPublish"
+      | "ownerPublishes"
+      | "profileById"
       | "proxiableUUID"
+      | "publishById"
+      | "publishesByIds"
       | "renounceRole"
       | "revokeRole"
       | "safeTransferFrom(address,address,uint256)"
@@ -143,6 +184,7 @@ export interface ContentBaseInterface extends utils.Interface {
       | "totalNFTs"
       | "transferFrom"
       | "updateProfileImage"
+      | "updatePublish"
       | "upgradeTo"
       | "upgradeToAndCall"
       | "validateHandle"
@@ -174,18 +216,18 @@ export interface ContentBaseInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "createProfile",
-    values: [PromiseOrValue<string>, DataTypes.CreateProfileParamsStruct]
+    values: [PromiseOrValue<string>, DataTypes.CreateProfileDataStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "fetchProfilesByAddress",
-    values: [PromiseOrValue<string>]
+    functionFragment: "createPublish",
+    values: [PromiseOrValue<string>, DataTypes.CreatePublishDataStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "defaultProfile",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getApproved",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getProfileById",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -214,8 +256,32 @@ export interface ContentBaseInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "ownerProfiles",
+    values: [PromiseOrValue<BigNumberish>[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "ownerPublish",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "ownerPublishes",
+    values: [PromiseOrValue<BigNumberish>[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "profileById",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "proxiableUUID",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "publishById",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "publishesByIds",
+    values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
@@ -270,7 +336,19 @@ export interface ContentBaseInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "updateProfileImage",
-    values: [DataTypes.UpdateProfileImageParamsStruct]
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updatePublish",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      DataTypes.UpdatePublishDataStruct
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "upgradeTo",
@@ -302,15 +380,15 @@ export interface ContentBaseInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "fetchProfilesByAddress",
+    functionFragment: "createPublish",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "defaultProfile",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getApproved",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getProfileById",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -327,7 +405,31 @@ export interface ContentBaseInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "ownerProfiles",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "ownerPublish",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "ownerPublishes",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "profileById",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "proxiableUUID",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "publishById",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "publishesByIds",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -366,6 +468,10 @@ export interface ContentBaseInterface extends utils.Interface {
     functionFragment: "updateProfileImage",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "updatePublish",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "upgradeToAndCall",
@@ -381,10 +487,12 @@ export interface ContentBaseInterface extends utils.Interface {
     "Approval(address,address,uint256)": EventFragment;
     "ApprovalForAll(address,address,bool)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
-    "DefaultProfileUpdated(uint256,address)": EventFragment;
+    "DefaultProfileUpdated(tuple,address)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "ProfileCreated(uint256,bool,address)": EventFragment;
-    "ProfileImageUpdated(uint256,string,address)": EventFragment;
+    "ProfileCreated(tuple,address)": EventFragment;
+    "ProfileImageUpdated(tuple,address)": EventFragment;
+    "PublishCreated(uint256,address)": EventFragment;
+    "PublishUpdated(uint256,address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
@@ -400,6 +508,8 @@ export interface ContentBaseInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProfileCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProfileImageUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PublishCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PublishUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
@@ -453,11 +563,11 @@ export type BeaconUpgradedEvent = TypedEvent<
 export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
 
 export interface DefaultProfileUpdatedEventObject {
-  tokenId: BigNumber;
+  token: DataTypes.TokenStructOutput;
   owner: string;
 }
 export type DefaultProfileUpdatedEvent = TypedEvent<
-  [BigNumber, string],
+  [DataTypes.TokenStructOutput, string],
   DefaultProfileUpdatedEventObject
 >;
 
@@ -472,29 +582,49 @@ export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export interface ProfileCreatedEventObject {
-  tokenId: BigNumber;
-  isDefault: boolean;
+  token: DataTypes.TokenStructOutput;
   owner: string;
 }
 export type ProfileCreatedEvent = TypedEvent<
-  [BigNumber, boolean, string],
+  [DataTypes.TokenStructOutput, string],
   ProfileCreatedEventObject
 >;
 
 export type ProfileCreatedEventFilter = TypedEventFilter<ProfileCreatedEvent>;
 
 export interface ProfileImageUpdatedEventObject {
-  tokenId: BigNumber;
-  imageURI: string;
+  token: DataTypes.TokenStructOutput;
   owner: string;
 }
 export type ProfileImageUpdatedEvent = TypedEvent<
-  [BigNumber, string, string],
+  [DataTypes.TokenStructOutput, string],
   ProfileImageUpdatedEventObject
 >;
 
 export type ProfileImageUpdatedEventFilter =
   TypedEventFilter<ProfileImageUpdatedEvent>;
+
+export interface PublishCreatedEventObject {
+  tokenId: BigNumber;
+  owner: string;
+}
+export type PublishCreatedEvent = TypedEvent<
+  [BigNumber, string],
+  PublishCreatedEventObject
+>;
+
+export type PublishCreatedEventFilter = TypedEventFilter<PublishCreatedEvent>;
+
+export interface PublishUpdatedEventObject {
+  tokenId: BigNumber;
+  owner: string;
+}
+export type PublishUpdatedEvent = TypedEvent<
+  [BigNumber, string],
+  PublishUpdatedEventObject
+>;
+
+export type PublishUpdatedEventFilter = TypedEventFilter<PublishUpdatedEvent>;
 
 export interface RoleAdminChangedEventObject {
   role: string;
@@ -603,24 +733,24 @@ export interface ContentBase extends BaseContract {
 
     createProfile(
       uri: PromiseOrValue<string>,
-      createProfileParams: DataTypes.CreateProfileParamsStruct,
+      createProfileData: DataTypes.CreateProfileDataStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    fetchProfilesByAddress(
-      owner: PromiseOrValue<string>,
+    createPublish(
+      uri: PromiseOrValue<string>,
+      createPublishData: DataTypes.CreatePublishDataStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    defaultProfile(
       overrides?: CallOverrides
-    ): Promise<[DataTypes.ProfileStructOutput[]]>;
+    ): Promise<[DataTypes.TokenStructOutput]>;
 
     getApproved(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
-
-    getProfileById(
-      profileId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[DataTypes.ProfileStructOutput]>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -656,7 +786,37 @@ export interface ContentBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    ownerProfiles(
+      tokenIds: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<[DataTypes.TokenStructOutput[]]>;
+
+    ownerPublish(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[DataTypes.TokenStructOutput]>;
+
+    ownerPublishes(
+      tokenIds: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<[DataTypes.TokenStructOutput[]]>;
+
+    profileById(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[DataTypes.TokenStructOutput]>;
+
     proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
+
+    publishById(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[DataTypes.TokenStructOutput]>;
+
+    publishesByIds(
+      tokenIds: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<[DataTypes.TokenStructOutput[]]>;
 
     renounceRole(
       role: PromiseOrValue<BytesLike>,
@@ -692,7 +852,7 @@ export interface ContentBase extends BaseContract {
     ): Promise<ContractTransaction>;
 
     setDefaultProfile(
-      profileId: PromiseOrValue<BigNumberish>,
+      tokenId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -718,7 +878,16 @@ export interface ContentBase extends BaseContract {
     ): Promise<ContractTransaction>;
 
     updateProfileImage(
-      updateProfileImageParams: DataTypes.UpdateProfileImageParamsStruct,
+      tokenId: PromiseOrValue<BigNumberish>,
+      uri: PromiseOrValue<string>,
+      imageURI: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    updatePublish(
+      tokenId: PromiseOrValue<BigNumberish>,
+      uri: PromiseOrValue<string>,
+      updatePublishData: DataTypes.UpdatePublishDataStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -763,24 +932,24 @@ export interface ContentBase extends BaseContract {
 
   createProfile(
     uri: PromiseOrValue<string>,
-    createProfileParams: DataTypes.CreateProfileParamsStruct,
+    createProfileData: DataTypes.CreateProfileDataStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  fetchProfilesByAddress(
-    owner: PromiseOrValue<string>,
+  createPublish(
+    uri: PromiseOrValue<string>,
+    createPublishData: DataTypes.CreatePublishDataStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  defaultProfile(
     overrides?: CallOverrides
-  ): Promise<DataTypes.ProfileStructOutput[]>;
+  ): Promise<DataTypes.TokenStructOutput>;
 
   getApproved(
     tokenId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
-
-  getProfileById(
-    profileId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<DataTypes.ProfileStructOutput>;
 
   getRoleAdmin(
     role: PromiseOrValue<BytesLike>,
@@ -816,7 +985,37 @@ export interface ContentBase extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  ownerProfiles(
+    tokenIds: PromiseOrValue<BigNumberish>[],
+    overrides?: CallOverrides
+  ): Promise<DataTypes.TokenStructOutput[]>;
+
+  ownerPublish(
+    tokenId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<DataTypes.TokenStructOutput>;
+
+  ownerPublishes(
+    tokenIds: PromiseOrValue<BigNumberish>[],
+    overrides?: CallOverrides
+  ): Promise<DataTypes.TokenStructOutput[]>;
+
+  profileById(
+    tokenId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<DataTypes.TokenStructOutput>;
+
   proxiableUUID(overrides?: CallOverrides): Promise<string>;
+
+  publishById(
+    tokenId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<DataTypes.TokenStructOutput>;
+
+  publishesByIds(
+    tokenIds: PromiseOrValue<BigNumberish>[],
+    overrides?: CallOverrides
+  ): Promise<DataTypes.TokenStructOutput[]>;
 
   renounceRole(
     role: PromiseOrValue<BytesLike>,
@@ -852,7 +1051,7 @@ export interface ContentBase extends BaseContract {
   ): Promise<ContractTransaction>;
 
   setDefaultProfile(
-    profileId: PromiseOrValue<BigNumberish>,
+    tokenId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -878,7 +1077,16 @@ export interface ContentBase extends BaseContract {
   ): Promise<ContractTransaction>;
 
   updateProfileImage(
-    updateProfileImageParams: DataTypes.UpdateProfileImageParamsStruct,
+    tokenId: PromiseOrValue<BigNumberish>,
+    uri: PromiseOrValue<string>,
+    imageURI: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  updatePublish(
+    tokenId: PromiseOrValue<BigNumberish>,
+    uri: PromiseOrValue<string>,
+    updatePublishData: DataTypes.UpdatePublishDataStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -923,24 +1131,24 @@ export interface ContentBase extends BaseContract {
 
     createProfile(
       uri: PromiseOrValue<string>,
-      createProfileParams: DataTypes.CreateProfileParamsStruct,
+      createProfileData: DataTypes.CreateProfileDataStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    fetchProfilesByAddress(
-      owner: PromiseOrValue<string>,
+    createPublish(
+      uri: PromiseOrValue<string>,
+      createPublishData: DataTypes.CreatePublishDataStruct,
       overrides?: CallOverrides
-    ): Promise<DataTypes.ProfileStructOutput[]>;
+    ): Promise<BigNumber>;
+
+    defaultProfile(
+      overrides?: CallOverrides
+    ): Promise<DataTypes.TokenStructOutput>;
 
     getApproved(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
-
-    getProfileById(
-      profileId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<DataTypes.ProfileStructOutput>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -974,7 +1182,37 @@ export interface ContentBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    ownerProfiles(
+      tokenIds: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<DataTypes.TokenStructOutput[]>;
+
+    ownerPublish(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<DataTypes.TokenStructOutput>;
+
+    ownerPublishes(
+      tokenIds: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<DataTypes.TokenStructOutput[]>;
+
+    profileById(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<DataTypes.TokenStructOutput>;
+
     proxiableUUID(overrides?: CallOverrides): Promise<string>;
+
+    publishById(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<DataTypes.TokenStructOutput>;
+
+    publishesByIds(
+      tokenIds: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<DataTypes.TokenStructOutput[]>;
 
     renounceRole(
       role: PromiseOrValue<BytesLike>,
@@ -1010,7 +1248,7 @@ export interface ContentBase extends BaseContract {
     ): Promise<void>;
 
     setDefaultProfile(
-      profileId: PromiseOrValue<BigNumberish>,
+      tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1036,7 +1274,16 @@ export interface ContentBase extends BaseContract {
     ): Promise<void>;
 
     updateProfileImage(
-      updateProfileImageParams: DataTypes.UpdateProfileImageParamsStruct,
+      tokenId: PromiseOrValue<BigNumberish>,
+      uri: PromiseOrValue<string>,
+      imageURI: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    updatePublish(
+      tokenId: PromiseOrValue<BigNumberish>,
+      uri: PromiseOrValue<string>,
+      updatePublishData: DataTypes.UpdatePublishDataStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1096,39 +1343,44 @@ export interface ContentBase extends BaseContract {
       beacon?: PromiseOrValue<string> | null
     ): BeaconUpgradedEventFilter;
 
-    "DefaultProfileUpdated(uint256,address)"(
-      tokenId?: null,
+    "DefaultProfileUpdated(tuple,address)"(
+      token?: null,
       owner?: null
     ): DefaultProfileUpdatedEventFilter;
     DefaultProfileUpdated(
-      tokenId?: null,
+      token?: null,
       owner?: null
     ): DefaultProfileUpdatedEventFilter;
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
-    "ProfileCreated(uint256,bool,address)"(
-      tokenId?: null,
-      isDefault?: null,
+    "ProfileCreated(tuple,address)"(
+      token?: null,
       owner?: null
     ): ProfileCreatedEventFilter;
-    ProfileCreated(
-      tokenId?: null,
-      isDefault?: null,
-      owner?: null
-    ): ProfileCreatedEventFilter;
+    ProfileCreated(token?: null, owner?: null): ProfileCreatedEventFilter;
 
-    "ProfileImageUpdated(uint256,string,address)"(
-      tokenId?: null,
-      imageURI?: null,
+    "ProfileImageUpdated(tuple,address)"(
+      token?: null,
       owner?: null
     ): ProfileImageUpdatedEventFilter;
     ProfileImageUpdated(
-      tokenId?: null,
-      imageURI?: null,
+      token?: null,
       owner?: null
     ): ProfileImageUpdatedEventFilter;
+
+    "PublishCreated(uint256,address)"(
+      tokenId?: null,
+      owner?: null
+    ): PublishCreatedEventFilter;
+    PublishCreated(tokenId?: null, owner?: null): PublishCreatedEventFilter;
+
+    "PublishUpdated(uint256,address)"(
+      tokenId?: null,
+      owner?: null
+    ): PublishUpdatedEventFilter;
+    PublishUpdated(tokenId?: null, owner?: null): PublishUpdatedEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: PromiseOrValue<BytesLike> | null,
@@ -1207,22 +1459,20 @@ export interface ContentBase extends BaseContract {
 
     createProfile(
       uri: PromiseOrValue<string>,
-      createProfileParams: DataTypes.CreateProfileParamsStruct,
+      createProfileData: DataTypes.CreateProfileDataStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    fetchProfilesByAddress(
-      owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
+    createPublish(
+      uri: PromiseOrValue<string>,
+      createPublishData: DataTypes.CreatePublishDataStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    defaultProfile(overrides?: CallOverrides): Promise<BigNumber>;
 
     getApproved(
       tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getProfileById(
-      profileId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1260,7 +1510,37 @@ export interface ContentBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    ownerProfiles(
+      tokenIds: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    ownerPublish(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    ownerPublishes(
+      tokenIds: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    profileById(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    publishById(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    publishesByIds(
+      tokenIds: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     renounceRole(
       role: PromiseOrValue<BytesLike>,
@@ -1296,7 +1576,7 @@ export interface ContentBase extends BaseContract {
     ): Promise<BigNumber>;
 
     setDefaultProfile(
-      profileId: PromiseOrValue<BigNumberish>,
+      tokenId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1322,7 +1602,16 @@ export interface ContentBase extends BaseContract {
     ): Promise<BigNumber>;
 
     updateProfileImage(
-      updateProfileImageParams: DataTypes.UpdateProfileImageParamsStruct,
+      tokenId: PromiseOrValue<BigNumberish>,
+      uri: PromiseOrValue<string>,
+      imageURI: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    updatePublish(
+      tokenId: PromiseOrValue<BigNumberish>,
+      uri: PromiseOrValue<string>,
+      updatePublishData: DataTypes.UpdatePublishDataStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1370,22 +1659,20 @@ export interface ContentBase extends BaseContract {
 
     createProfile(
       uri: PromiseOrValue<string>,
-      createProfileParams: DataTypes.CreateProfileParamsStruct,
+      createProfileData: DataTypes.CreateProfileDataStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    fetchProfilesByAddress(
-      owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
+    createPublish(
+      uri: PromiseOrValue<string>,
+      createPublishData: DataTypes.CreatePublishDataStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    defaultProfile(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getApproved(
       tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getProfileById(
-      profileId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1423,7 +1710,37 @@ export interface ContentBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    ownerProfiles(
+      tokenIds: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    ownerPublish(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    ownerPublishes(
+      tokenIds: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    profileById(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    publishById(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    publishesByIds(
+      tokenIds: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     renounceRole(
       role: PromiseOrValue<BytesLike>,
@@ -1459,7 +1776,7 @@ export interface ContentBase extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     setDefaultProfile(
-      profileId: PromiseOrValue<BigNumberish>,
+      tokenId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1485,7 +1802,16 @@ export interface ContentBase extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     updateProfileImage(
-      updateProfileImageParams: DataTypes.UpdateProfileImageParamsStruct,
+      tokenId: PromiseOrValue<BigNumberish>,
+      uri: PromiseOrValue<string>,
+      imageURI: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updatePublish(
+      tokenId: PromiseOrValue<BigNumberish>,
+      uri: PromiseOrValue<string>,
+      updatePublishData: DataTypes.UpdatePublishDataStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

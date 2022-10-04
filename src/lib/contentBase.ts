@@ -84,10 +84,11 @@ export async function getTokenURI(tokenId: number) {
 
 /**
  * A function to burn token
+ * @param key {string} - wallet's key
  * @param tokenId {number} - a token id
  *
  */
-export async function burnToken(tokenId: number, key: string) {
+export async function burnToken(key: string, tokenId: number) {
   const contentBaseContract = getContentBaseContract(key)
   await contentBaseContract.burn(tokenId)
 }
