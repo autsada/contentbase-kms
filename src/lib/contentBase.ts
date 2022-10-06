@@ -26,6 +26,17 @@ export function getContentBaseContract(key: string) {
 }
 
 /**
+ * Get contract without key
+ *
+ */
+export function getContentBaseContractByProvider() {
+  return getContractByProvider({
+    address: ContentBaseContract.address,
+    contractInterface: ContentBaseContract.abi,
+  }) as ContentBase
+}
+
+/**
  * @param input.role a role name to check
  * @param input.address a wallet address
  * @param input.key a wallet private key
@@ -92,3 +103,29 @@ export async function burnToken(key: string, tokenId: number) {
   const contentBaseContract = getContentBaseContract(key)
   await contentBaseContract.burn(tokenId)
 }
+
+/**
+ * A function to convert token type enum to string
+ * @param tokenType number
+ * @returns void
+ */
+export function getTokenTypeString(tokenType: number) {
+  if (tokenType < 0 || tokenType > 3) return ''
+
+  if (tokenType === 0) return 'Profile'
+  if (tokenType === 1) return 'Publish'
+  if (tokenType === 2) return 'Follow'
+  if (tokenType === 3) return 'Like'
+}
+
+// /**
+//  * A function to convert token type string to number
+//  * @param tokenType string
+//  * @returns void
+//  */
+// export function getTokenTypeNumber(tokenType: string) {
+//   if (tokenType === 'Profile') return 0
+//   if (tokenType === 'Publish') return 1
+//   if (tokenType === 'Follow') return 2
+//   if (tokenType === 'Like') return 3
+// }

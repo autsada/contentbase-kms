@@ -1,10 +1,14 @@
 /**
- * This file contains the functions that are  specific to Profile
+ * This file contains the functions that are  specific to Profile token
  */
 
 import { ethers } from 'ethers'
 
-import { getContentBaseContract } from './contentBase'
+import {
+  getContentBaseContract,
+  getContentBaseContractByProvider,
+  getTokenTypeString,
+} from './contentBase'
 import ContentBaseContract from '../abi/ContentBase.json'
 import { ContentBase } from '../typechain-types'
 import {
@@ -13,7 +17,6 @@ import {
   DefaultProfileUpdatedEvent,
 } from '../typechain-types/contracts/ContentBaseProfile'
 import { DataTypes } from '../typechain-types/contracts/ContentBaseProfile'
-import { getContractByProvider } from './ethers'
 
 export interface CreateProfileInput {
   key: string
@@ -75,7 +78,6 @@ export async function createProfile(input: CreateProfileInput) {
             associatedId,
             owner,
             tokenType,
-            visibility,
             handle,
             imageURI,
             contentURI,
@@ -88,7 +90,6 @@ export async function createProfile(input: CreateProfileInput) {
           associatedId: associatedId.toNumber(),
           owner,
           tokenType: getTokenTypeString(tokenType),
-          visibility: getVisibilityString(visibility),
           handle,
           imageURI,
           contentURI,
@@ -137,7 +138,6 @@ export async function updateProfile(input: UpdateProfileImageInput) {
             associatedId,
             owner,
             tokenType,
-            visibility,
             handle,
             imageURI,
             contentURI,
@@ -150,7 +150,6 @@ export async function updateProfile(input: UpdateProfileImageInput) {
           associatedId: associatedId.toNumber(),
           owner,
           tokenType: getTokenTypeString(tokenType),
-          visibility: getVisibilityString(visibility),
           handle,
           imageURI,
           contentURI,
@@ -194,7 +193,6 @@ export async function setDefaultProfile({
             associatedId,
             owner,
             tokenType,
-            visibility,
             handle,
             imageURI,
             contentURI,
@@ -207,7 +205,6 @@ export async function setDefaultProfile({
           associatedId: associatedId.toNumber(),
           owner,
           tokenType: getTokenTypeString(tokenType),
-          visibility: getVisibilityString(visibility),
           handle,
           imageURI,
           contentURI,
@@ -222,6 +219,7 @@ export async function setDefaultProfile({
 /**
  * @param key a wallet private key
  * @param tokenIds an array of profile token ids
+ * @dev tokenIds array length must not greater than 40
  *
  */
 export async function fetchMyProfiles(key: string, tokenIds: number[]) {
@@ -233,7 +231,6 @@ export async function fetchMyProfiles(key: string, tokenIds: number[]) {
       associatedId,
       owner,
       tokenType,
-      visibility,
       handle,
       imageURI,
       contentURI,
@@ -243,7 +240,6 @@ export async function fetchMyProfiles(key: string, tokenIds: number[]) {
         associatedId: associatedId.toNumber(),
         owner,
         tokenType: getTokenTypeString(tokenType),
-        visibility: getVisibilityString(visibility),
         handle,
         imageURI,
         contentURI,
@@ -255,29 +251,26 @@ export async function fetchMyProfiles(key: string, tokenIds: number[]) {
 }
 
 /**
- * @param key {string} a wallet private key
- * @param id {number} an id of the profile token
+ * @param profileId {number} a token id of the profile token
  *
  */
-export async function getProfileById(key: string, id: number) {
-  const contentBaseContract = getContentBaseContract(key)
+export async function getProfileById(profileId: number) {
+  const contentBaseContract = getContentBaseContractByProvider()
   const {
     tokenId,
     associatedId,
     owner,
     tokenType,
-    visibility,
     handle,
     imageURI,
     contentURI,
-  } = await contentBaseContract.profileById(id)
+  } = await contentBaseContract.profileById(profileId)
 
   return {
     tokenId: tokenId.toNumber(),
     associatedId: associatedId.toNumber(),
     owner,
     tokenType: getTokenTypeString(tokenType),
-    visibility: getVisibilityString(visibility),
     handle,
     imageURI,
     contentURI,
@@ -296,7 +289,6 @@ export async function getDefaultProfile(key: string) {
     associatedId,
     owner,
     tokenType,
-    visibility,
     handle,
     imageURI,
     contentURI,
@@ -307,7 +299,6 @@ export async function getDefaultProfile(key: string) {
     associatedId: associatedId.toNumber(),
     owner,
     tokenType: getTokenTypeString(tokenType),
-    visibility: getVisibilityString(visibility),
     handle,
     imageURI,
     contentURI,
@@ -320,10 +311,7 @@ export async function getDefaultProfile(key: string) {
  *
  */
 export async function verifyHandle(handle: string) {
-  const contentBaseContract = getContractByProvider({
-    address: ContentBaseContract.address,
-    contractInterface: ContentBaseContract.abi,
-  }) as ContentBase
+  const contentBaseContract = getContentBaseContractByProvider()
   const isUnique = await contentBaseContract.validateHandle(handle)
 
   return isUnique
@@ -353,21 +341,4 @@ export async function estimateCreateProfileGas(input: CreateProfileInput) {
   )
 
   return ethers.utils.formatEther(gasInWei)
-}
-
-export function getTokenTypeString(tokenType: number) {
-  if (tokenType < 0 || tokenType > 3) return ''
-
-  if (tokenType === 0) return 'Profile'
-  if (tokenType === 1) return 'Publish'
-  if (tokenType === 2) return 'Follow'
-  if (tokenType === 3) return 'Like'
-}
-
-export function getVisibilityString(visibility: number) {
-  if (visibility < 0 || visibility > 2) return ''
-
-  if (visibility === 0) return 'UNSET'
-  if (visibility === 1) return 'OFF'
-  if (visibility === 2) return 'ON'
 }

@@ -28,33 +28,52 @@ import type {
 } from "../common";
 
 export declare namespace DataTypes {
-  export type CreatePublishDataStruct = {
-    visibility: PromiseOrValue<BigNumberish>;
+  export type TokenStruct = {
+    tokenId: PromiseOrValue<BigNumberish>;
+    associatedId: PromiseOrValue<BigNumberish>;
+    owner: PromiseOrValue<string>;
+    tokenType: PromiseOrValue<BigNumberish>;
     handle: PromiseOrValue<string>;
     imageURI: PromiseOrValue<string>;
     contentURI: PromiseOrValue<string>;
   };
 
-  export type CreatePublishDataStructOutput = [
+  export type TokenStructOutput = [
+    BigNumber,
+    BigNumber,
+    string,
     number,
     string,
     string,
     string
   ] & {
-    visibility: number;
+    tokenId: BigNumber;
+    associatedId: BigNumber;
+    owner: string;
+    tokenType: number;
     handle: string;
     imageURI: string;
     contentURI: string;
   };
 
-  export type UpdatePublishDataStruct = {
-    visibility: PromiseOrValue<BigNumberish>;
+  export type CreatePublishDataStruct = {
+    profileId: PromiseOrValue<BigNumberish>;
     imageURI: PromiseOrValue<string>;
     contentURI: PromiseOrValue<string>;
   };
 
-  export type UpdatePublishDataStructOutput = [number, string, string] & {
-    visibility: number;
+  export type CreatePublishDataStructOutput = [BigNumber, string, string] & {
+    profileId: BigNumber;
+    imageURI: string;
+    contentURI: string;
+  };
+
+  export type UpdatePublishDataStruct = {
+    imageURI: PromiseOrValue<string>;
+    contentURI: PromiseOrValue<string>;
+  };
+
+  export type UpdatePublishDataStructOutput = [string, string] & {
     imageURI: string;
     contentURI: string;
   };
@@ -62,8 +81,8 @@ export declare namespace DataTypes {
 
 export interface ContentBasePublishInterface extends utils.Interface {
   functions: {
-    "createPublish(string,(uint8,string,string,string))": FunctionFragment;
-    "updatePublish(uint256,string,(uint8,string,string))": FunctionFragment;
+    "createPublish(string,(uint256,string,string))": FunctionFragment;
+    "updatePublish(uint256,string,(string,string))": FunctionFragment;
   };
 
   getFunction(
@@ -93,8 +112,8 @@ export interface ContentBasePublishInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "PublishCreated(uint256,address)": EventFragment;
-    "PublishUpdated(uint256,address)": EventFragment;
+    "PublishCreated(tuple,address)": EventFragment;
+    "PublishUpdated(tuple,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "PublishCreated"): EventFragment;
@@ -102,22 +121,22 @@ export interface ContentBasePublishInterface extends utils.Interface {
 }
 
 export interface PublishCreatedEventObject {
-  tokenId: BigNumber;
+  token: DataTypes.TokenStructOutput;
   owner: string;
 }
 export type PublishCreatedEvent = TypedEvent<
-  [BigNumber, string],
+  [DataTypes.TokenStructOutput, string],
   PublishCreatedEventObject
 >;
 
 export type PublishCreatedEventFilter = TypedEventFilter<PublishCreatedEvent>;
 
 export interface PublishUpdatedEventObject {
-  tokenId: BigNumber;
+  token: DataTypes.TokenStructOutput;
   owner: string;
 }
 export type PublishUpdatedEvent = TypedEvent<
-  [BigNumber, string],
+  [DataTypes.TokenStructOutput, string],
   PublishUpdatedEventObject
 >;
 
@@ -193,17 +212,17 @@ export interface ContentBasePublish extends BaseContract {
   };
 
   filters: {
-    "PublishCreated(uint256,address)"(
-      tokenId?: null,
+    "PublishCreated(tuple,address)"(
+      token?: null,
       owner?: null
     ): PublishCreatedEventFilter;
-    PublishCreated(tokenId?: null, owner?: null): PublishCreatedEventFilter;
+    PublishCreated(token?: null, owner?: null): PublishCreatedEventFilter;
 
-    "PublishUpdated(uint256,address)"(
-      tokenId?: null,
+    "PublishUpdated(tuple,address)"(
+      token?: null,
       owner?: null
     ): PublishUpdatedEventFilter;
-    PublishUpdated(tokenId?: null, owner?: null): PublishUpdatedEventFilter;
+    PublishUpdated(token?: null, owner?: null): PublishUpdatedEventFilter;
   };
 
   estimateGas: {

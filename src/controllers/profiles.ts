@@ -15,10 +15,10 @@ import { decryptString } from '../lib/utils'
 import type { CreateProfileInput } from '../lib/contentBaseProfile'
 
 /**
- * @param req.body.key an encrypted key of the user saved in Firestore
- * @param req.body.data.handle a handle of the user
- * @param req.body.data.imageURI a uri of the profile image
- * @param req.body.data.tokenURI a uri of the token's metadata file
+ * @param req.params.key an encrypted key of the user's wallet
+ * @param req.body.handle a handle of the user
+ * @param req.body.imageURI a uri of the profile image
+ * @param req.body.tokenURI a uri of the token's metadata file
  *
  */
 export async function createProfileNft(req: Request, res: Response) {
@@ -56,10 +56,10 @@ export async function createProfileNft(req: Request, res: Response) {
 }
 
 /**
- * @param req.body.key an encrypted key of the user saved in Firestore
+ * @param req.params.key an encrypted key of the user saved in Firestore
  * @param req.params.profileId an id of the profile
- * @param req.body.data.imageURI a uri of the profile image
- * @param req.body.data.tokenURI a uri of the token's metadata file
+ * @param req.body.imageURI a uri of the profile image, can be empty
+ * @param req.body.tokenURI a uri of the token's metadata file
  *
  */
 export async function updateProfileImage(req: Request, res: Response) {
@@ -70,7 +70,7 @@ export async function updateProfileImage(req: Request, res: Response) {
     }
 
     const { imageURI, tokenURI } = req.body as {
-      imageURI: string
+      imageURI?: string
       tokenURI: string
     }
 
@@ -87,7 +87,7 @@ export async function updateProfileImage(req: Request, res: Response) {
       key,
       data: {
         tokenId: profileId,
-        imageURI,
+        imageURI: imageURI || '',
         tokenURI,
       },
     })
@@ -138,7 +138,7 @@ export async function setProfileAsDefault(req: Request, res: Response) {
  * A route to get user's profiles
  * @dev token ids array is required
  * @param req.params.key an encrypted key of the user saved in Firestore
- * @param req.body.tokenIds an encrypted key of the user saved in Firestore
+ * @param req.body.tokenIds a profile token ids array
  *
  */
 export async function getMyProfiles(req: Request, res: Response) {
@@ -161,7 +161,6 @@ export async function getMyProfiles(req: Request, res: Response) {
 
     res.status(200).json({ tokens: profiles })
   } catch (error) {
-    console.log('error -->', error)
     // In case NOT FOUND, fetchMyProfiles will throw so it's needed to return 200 - empty array so the process can continue
     res.status(200).json({ tokens: [] })
   }
@@ -170,29 +169,18 @@ export async function getMyProfiles(req: Request, res: Response) {
 /**
  * A route to get one profile token
  * @dev token id is required
- * @param req.params.key an encrypted key of the user saved in Firestore
  * @param req.params.tokenId an id of the profile token
  *
  */
 export async function getProfile(req: Request, res: Response) {
   try {
-    const { key, profileId } = req.params as unknown as {
-      key: string
+    const { profileId } = req.params as unknown as {
       profileId: number
     }
 
-    if (!profileId || !key) throw new Error('User input error.')
+    if (!profileId) throw new Error('User input error.')
 
-    // // 1. Decrypt the key
-    // const kmsDecryptedKey = await decrypt(key)
-    // if (!kmsDecryptedKey) throw new Error('Forbidden')
-
-    // // 2. Decrypt the kms decrypted string
-    // const decryptedKey = decryptString(kmsDecryptedKey)
-
-    // // 3. Get profiles
-    // const token = await getProfileById(profileId, decryptedKey)
-    const token = await getProfileById(key, profileId)
+    const token = await getProfileById(profileId)
 
     res.status(200).json({ token })
   } catch (error) {

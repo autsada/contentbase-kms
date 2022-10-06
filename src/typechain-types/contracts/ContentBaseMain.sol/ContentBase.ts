@@ -34,7 +34,6 @@ export declare namespace DataTypes {
     associatedId: PromiseOrValue<BigNumberish>;
     owner: PromiseOrValue<string>;
     tokenType: PromiseOrValue<BigNumberish>;
-    visibility: PromiseOrValue<BigNumberish>;
     handle: PromiseOrValue<string>;
     imageURI: PromiseOrValue<string>;
     contentURI: PromiseOrValue<string>;
@@ -45,7 +44,6 @@ export declare namespace DataTypes {
     BigNumber,
     string,
     number,
-    number,
     string,
     string,
     string
@@ -54,7 +52,6 @@ export declare namespace DataTypes {
     associatedId: BigNumber;
     owner: string;
     tokenType: number;
-    visibility: number;
     handle: string;
     imageURI: string;
     contentURI: string;
@@ -71,32 +68,23 @@ export declare namespace DataTypes {
   };
 
   export type CreatePublishDataStruct = {
-    visibility: PromiseOrValue<BigNumberish>;
-    handle: PromiseOrValue<string>;
+    profileId: PromiseOrValue<BigNumberish>;
     imageURI: PromiseOrValue<string>;
     contentURI: PromiseOrValue<string>;
   };
 
-  export type CreatePublishDataStructOutput = [
-    number,
-    string,
-    string,
-    string
-  ] & {
-    visibility: number;
-    handle: string;
+  export type CreatePublishDataStructOutput = [BigNumber, string, string] & {
+    profileId: BigNumber;
     imageURI: string;
     contentURI: string;
   };
 
   export type UpdatePublishDataStruct = {
-    visibility: PromiseOrValue<BigNumberish>;
     imageURI: PromiseOrValue<string>;
     contentURI: PromiseOrValue<string>;
   };
 
-  export type UpdatePublishDataStructOutput = [number, string, string] & {
-    visibility: number;
+  export type UpdatePublishDataStructOutput = [string, string] & {
     imageURI: string;
     contentURI: string;
   };
@@ -111,7 +99,7 @@ export interface ContentBaseInterface extends utils.Interface {
     "balanceOf(address)": FunctionFragment;
     "burn(uint256)": FunctionFragment;
     "createProfile(string,(string,string))": FunctionFragment;
-    "createPublish(string,(uint8,string,string,string))": FunctionFragment;
+    "createPublish(string,(uint256,string,string))": FunctionFragment;
     "defaultProfile()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
@@ -140,7 +128,7 @@ export interface ContentBaseInterface extends utils.Interface {
     "totalNFTs()": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
     "updateProfileImage(uint256,string,string)": FunctionFragment;
-    "updatePublish(uint256,string,(uint8,string,string))": FunctionFragment;
+    "updatePublish(uint256,string,(string,string))": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
     "validateHandle(string)": FunctionFragment;
@@ -491,8 +479,8 @@ export interface ContentBaseInterface extends utils.Interface {
     "Initialized(uint8)": EventFragment;
     "ProfileCreated(tuple,address)": EventFragment;
     "ProfileImageUpdated(tuple,address)": EventFragment;
-    "PublishCreated(uint256,address)": EventFragment;
-    "PublishUpdated(uint256,address)": EventFragment;
+    "PublishCreated(tuple,address)": EventFragment;
+    "PublishUpdated(tuple,address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
@@ -605,22 +593,22 @@ export type ProfileImageUpdatedEventFilter =
   TypedEventFilter<ProfileImageUpdatedEvent>;
 
 export interface PublishCreatedEventObject {
-  tokenId: BigNumber;
+  token: DataTypes.TokenStructOutput;
   owner: string;
 }
 export type PublishCreatedEvent = TypedEvent<
-  [BigNumber, string],
+  [DataTypes.TokenStructOutput, string],
   PublishCreatedEventObject
 >;
 
 export type PublishCreatedEventFilter = TypedEventFilter<PublishCreatedEvent>;
 
 export interface PublishUpdatedEventObject {
-  tokenId: BigNumber;
+  token: DataTypes.TokenStructOutput;
   owner: string;
 }
 export type PublishUpdatedEvent = TypedEvent<
-  [BigNumber, string],
+  [DataTypes.TokenStructOutput, string],
   PublishUpdatedEventObject
 >;
 
@@ -1370,17 +1358,17 @@ export interface ContentBase extends BaseContract {
       owner?: null
     ): ProfileImageUpdatedEventFilter;
 
-    "PublishCreated(uint256,address)"(
-      tokenId?: null,
+    "PublishCreated(tuple,address)"(
+      token?: null,
       owner?: null
     ): PublishCreatedEventFilter;
-    PublishCreated(tokenId?: null, owner?: null): PublishCreatedEventFilter;
+    PublishCreated(token?: null, owner?: null): PublishCreatedEventFilter;
 
-    "PublishUpdated(uint256,address)"(
-      tokenId?: null,
+    "PublishUpdated(tuple,address)"(
+      token?: null,
       owner?: null
     ): PublishUpdatedEventFilter;
-    PublishUpdated(tokenId?: null, owner?: null): PublishUpdatedEventFilter;
+    PublishUpdated(token?: null, owner?: null): PublishUpdatedEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: PromiseOrValue<BytesLike> | null,

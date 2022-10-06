@@ -27,7 +27,7 @@ profilesRouter.post(
 )
 // Has to be a post route as the route has to receive an array from request body
 profilesRouter.post('/my-profiles/key/:key', authMiddleware, getMyProfiles)
-profilesRouter.get('/profileId/:profileId/key/:key', getProfile)
+profilesRouter.get('/profileId/:profileId', getProfile)
 profilesRouter.get('/default/key/:key', getUserDefaultProfile)
 profilesRouter.post('/verifyHandle', authMiddleware, verifyProfileHandle)
 profilesRouter.post(

@@ -14,10 +14,47 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
+        components: [
+          {
+            internalType: "uint256",
+            name: "tokenId",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "associatedId",
+            type: "uint256",
+          },
+          {
+            internalType: "address",
+            name: "owner",
+            type: "address",
+          },
+          {
+            internalType: "enum DataTypes.TokenType",
+            name: "tokenType",
+            type: "uint8",
+          },
+          {
+            internalType: "string",
+            name: "handle",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "imageURI",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "contentURI",
+            type: "string",
+          },
+        ],
         indexed: false,
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
+        internalType: "struct DataTypes.Token",
+        name: "token",
+        type: "tuple",
       },
       {
         indexed: false,
@@ -33,10 +70,47 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
+        components: [
+          {
+            internalType: "uint256",
+            name: "tokenId",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "associatedId",
+            type: "uint256",
+          },
+          {
+            internalType: "address",
+            name: "owner",
+            type: "address",
+          },
+          {
+            internalType: "enum DataTypes.TokenType",
+            name: "tokenType",
+            type: "uint8",
+          },
+          {
+            internalType: "string",
+            name: "handle",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "imageURI",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "contentURI",
+            type: "string",
+          },
+        ],
         indexed: false,
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
+        internalType: "struct DataTypes.Token",
+        name: "token",
+        type: "tuple",
       },
       {
         indexed: false,
@@ -58,14 +132,9 @@ const _abi = [
       {
         components: [
           {
-            internalType: "enum DataTypes.Visibility",
-            name: "visibility",
-            type: "uint8",
-          },
-          {
-            internalType: "string",
-            name: "handle",
-            type: "string",
+            internalType: "uint256",
+            name: "profileId",
+            type: "uint256",
           },
           {
             internalType: "string",
@@ -108,11 +177,6 @@ const _abi = [
       },
       {
         components: [
-          {
-            internalType: "enum DataTypes.Visibility",
-            name: "visibility",
-            type: "uint8",
-          },
           {
             internalType: "string",
             name: "imageURI",

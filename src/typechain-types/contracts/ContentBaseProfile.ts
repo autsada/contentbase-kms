@@ -33,7 +33,6 @@ export declare namespace DataTypes {
     associatedId: PromiseOrValue<BigNumberish>;
     owner: PromiseOrValue<string>;
     tokenType: PromiseOrValue<BigNumberish>;
-    visibility: PromiseOrValue<BigNumberish>;
     handle: PromiseOrValue<string>;
     imageURI: PromiseOrValue<string>;
     contentURI: PromiseOrValue<string>;
@@ -44,7 +43,6 @@ export declare namespace DataTypes {
     BigNumber,
     string,
     number,
-    number,
     string,
     string,
     string
@@ -53,7 +51,6 @@ export declare namespace DataTypes {
     associatedId: BigNumber;
     owner: string;
     tokenType: number;
-    visibility: number;
     handle: string;
     imageURI: string;
     contentURI: string;

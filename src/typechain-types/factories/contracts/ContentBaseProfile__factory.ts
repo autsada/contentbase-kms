@@ -36,11 +36,6 @@ const _abi = [
             type: "uint8",
           },
           {
-            internalType: "enum DataTypes.Visibility",
-            name: "visibility",
-            type: "uint8",
-          },
-          {
             internalType: "string",
             name: "handle",
             type: "string",
@@ -97,11 +92,6 @@ const _abi = [
             type: "uint8",
           },
           {
-            internalType: "enum DataTypes.Visibility",
-            name: "visibility",
-            type: "uint8",
-          },
-          {
             internalType: "string",
             name: "handle",
             type: "string",
@@ -155,11 +145,6 @@ const _abi = [
           {
             internalType: "enum DataTypes.TokenType",
             name: "tokenType",
-            type: "uint8",
-          },
-          {
-            internalType: "enum DataTypes.Visibility",
-            name: "visibility",
             type: "uint8",
           },
           {
