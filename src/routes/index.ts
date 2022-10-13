@@ -1,3 +1,4 @@
-export * from './wallet'
-export * from './profiles'
-export * from './publishes'
+export * from "./wallet"
+export * from "./profiles"
+export * from "./publishes"
+export * from "./follows"

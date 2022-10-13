@@ -169,9 +169,10 @@ export async function getMyPublishes(req: Request, res: Response) {
 export async function getPublishes(req: Request, res: Response) {
   try {
     const { tokenIds } = req.body as { tokenIds: number[] }
-    const publishes = await fetchPublishes(tokenIds)
 
     if (tokenIds.length === 0) throw new Error("User input error.")
+
+    const publishes = await fetchPublishes(tokenIds)
 
     res.status(200).json({ tokens: publishes })
   } catch (error) {
