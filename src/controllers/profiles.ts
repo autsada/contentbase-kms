@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { Request, Response } from "express"
 
 import {
   checkUserRole,
@@ -10,38 +10,33 @@ import {
   getProfileById,
   totalProfilesCount,
   verifyHandle,
+  getTokenURI,
   estimateCreateProfileGas,
-} from '../lib/ProfileNFT'
-import { decrypt } from '../lib/kms'
-import { decryptString } from '../lib/utils'
+} from "../lib/ProfileNFT"
+import { decrypt } from "../lib/kms"
 import type {
   CreateProfileInput,
   UpdateProfileImageInput,
-} from '../lib/ProfileNFT'
-import type { CheckRoleParams } from '../types'
+} from "../lib/ProfileNFT"
+import type { CheckRoleParams } from "../types"
 
 /**
  * The route to check role.
  * @dev see CheckRoleParams
- * key received in params
  * other values received in body
  */
 export async function checkRole(req: Request, res: Response) {
   try {
-    const { key } = req.params as { key: string }
+    const { uid } = req.params
     const { role, address } = req.body as Pick<
       CheckRoleParams,
-      'role' | 'address'
+      "role" | "address"
     >
 
-    if (!key || !role || !address) throw new Error('User input error')
+    if (!role || !address) throw new Error("User input error")
 
-    // // 1. Decrypt the key
-    // const kmsDecryptedKey = await decrypt(key)
-    // if (!kmsDecryptedKey) throw new Error('Forbidden')
-
-    // // 2. Decrypt the kms decrypted string
-    // const decryptedKey = decryptString(kmsDecryptedKey)
+    // 1. Decrypt the key
+    const key = await decrypt(uid)
 
     const hasRole = await checkUserRole({ key, role, address })
 
@@ -54,28 +49,21 @@ export async function checkRole(req: Request, res: Response) {
 /**
  * The route to create Profile NFT.
  * @dev see CreateProfileInput
- * key received in params
- * other values receive in body
  */
 export async function createProfileNft(req: Request, res: Response) {
   try {
-    const { key } = req.params as { key: string }
+    const { uid } = req.params as { uid: string }
     const { handle, imageURI, tokenURI } =
-      req.body as CreateProfileInput['data']
+      req.body as CreateProfileInput["data"]
 
     // imageURI can be empty.
-    if (!key || !handle || !tokenURI) throw new Error('User input error')
+    if (!uid || !handle || !tokenURI) throw new Error("User input error")
 
-    // // 1. Decrypt the key
-    // const kmsDecryptedKey = await decrypt(key)
-    // if (!kmsDecryptedKey) throw new Error('Forbidden')
-
-    // // 2. Decrypt the kms decrypted string
-    // const decryptedKey = decryptString(kmsDecryptedKey)
+    // 1. Decrypt the key
+    const key = await decrypt(uid)
 
     // 3. Create profile
     const token = await createProfile({
-      // key: decryptedKey,
       key,
       data: {
         handle,
@@ -84,7 +72,7 @@ export async function createProfileNft(req: Request, res: Response) {
       },
     })
 
-    if (!token) throw new Error('Create profile failed.')
+    if (!token) throw new Error("Create profile failed.")
 
     res.status(200).json({ token })
   } catch (error) {
@@ -98,38 +86,33 @@ export async function createProfileNft(req: Request, res: Response) {
  */
 export async function updateProfileImage(req: Request, res: Response) {
   try {
-    const { profileId, key } = req.params as {
+    const { profileId, uid } = req.params as {
       profileId: string
-      key: string
+      uid: string
     }
 
     const { imageURI, tokenURI } = req.body as Pick<
-      UpdateProfileImageInput['data'],
-      'imageURI' | 'tokenURI'
+      UpdateProfileImageInput["data"],
+      "imageURI" | "tokenURI"
     >
 
     // imageURI can be empty.
-    if (!key || !profileId || !tokenURI) throw new Error('User input error')
+    if (!uid || !profileId || !tokenURI) throw new Error("User input error")
 
     // // 1. Decrypt the key
-    // const kmsDecryptedKey = await decrypt(key)
-    // if (!kmsDecryptedKey) throw new Error('Forbidden')
-
-    // // 2. Decrypt the kms decrypted string
-    // const decryptedKey = decryptString(kmsDecryptedKey)
+    const key = await decrypt(uid)
 
     // 3. Update profile
     const token = await updateProfile({
-      // key: decryptedKey,
       key,
       data: {
         tokenId: Number(profileId),
-        imageURI: imageURI || '',
+        imageURI: imageURI || "",
         tokenURI,
       },
     })
 
-    if (!token) throw new Error('Updated profile failed.')
+    if (!token) throw new Error("Updated profile failed.")
 
     res.status(200).json({ token })
   } catch (error) {
@@ -143,25 +126,20 @@ export async function updateProfileImage(req: Request, res: Response) {
  */
 export async function setProfileAsDefault(req: Request, res: Response) {
   try {
-    const { profileId, key } = req.params as {
+    const { profileId, uid } = req.params as {
       profileId: string
-      key: string
+      uid: string
     }
 
-    if (!key || !profileId) throw new Error('User input error')
+    if (!uid || !profileId) throw new Error("User input error")
 
-    // // 1. Decrypt the key
-    // const kmsDecryptedKey = await decrypt(key)
-    // if (!kmsDecryptedKey) throw new Error('Forbidden')
+    // 1. Decrypt the key
+    const key = await decrypt(uid)
 
-    // // 2. Decrypt the kms decrypted string
-    // const decryptedKey = decryptString(kmsDecryptedKey)
-
-    // 3. Update profile
-    // const token = await setDefaultProfile(decryptedKey, Number(profileId))
+    // 2. Update profile
     const token = await setDefaultProfile(key, Number(profileId))
 
-    if (!token) throw new Error('Updated profile failed.')
+    if (!token) throw new Error("Updated profile failed.")
 
     res.status(200).json({ token })
   } catch (error) {
@@ -175,20 +153,15 @@ export async function setProfileAsDefault(req: Request, res: Response) {
  */
 export async function getMyProfiles(req: Request, res: Response) {
   try {
-    const { key } = req.params as { key: string }
+    const { uid } = req.params as { uid: string }
     const { tokenIds } = req.body as { tokenIds: number[] }
 
-    if (!key) throw new Error('User input error.')
+    if (!uid || tokenIds.length === 0) throw new Error("User input error.")
 
-    // // 1. Decrypt the key
-    // const kmsDecryptedKey = await decrypt(key)
-    // if (!kmsDecryptedKey) throw new Error('Forbidden')
+    // 1. Decrypt the key
+    const key = await decrypt(uid)
 
-    // // 2. Decrypt the kms decrypted string
-    // const decryptedKey = decryptString(kmsDecryptedKey)
-
-    // // 3. Get profiles
-    // const tokens = await fetchMyProfiles(decryptedKey, tokenIds)
+    // // 2. Get profiles
     const tokens = await fetchMyProfiles(key, tokenIds)
 
     res.status(200).json({ tokens })
@@ -203,19 +176,14 @@ export async function getMyProfiles(req: Request, res: Response) {
  */
 export async function getUserDefaultProfile(req: Request, res: Response) {
   try {
-    const { key } = req.params as { key: string }
+    const { uid } = req.params as { uid: string }
 
-    if (!key) throw new Error('User input error.')
+    if (!uid) throw new Error("User input error.")
 
-    // // 1. Decrypt the key
-    // const kmsDecryptedKey = await decrypt(key)
-    // if (!kmsDecryptedKey) throw new Error('Forbidden')
+    // 1. Decrypt the key
+    const key = await decrypt(uid)
 
-    // // 2. Decrypt the kms decrypted string
-    // const decryptedKey = decryptString(kmsDecryptedKey)
-
-    // // 3. Get profiles
-    // const token = await getDefaultProfile(decryptedKey)
+    // 2. Get profiles
     const token = await getDefaultProfile(key)
 
     res.status(200).json({ token })
@@ -234,7 +202,7 @@ export async function getProfile(req: Request, res: Response) {
   try {
     const { profileId } = req.params as { profileId: string }
 
-    if (!profileId) throw new Error('User input error.')
+    if (!profileId) throw new Error("User input error.")
 
     const token = await getProfileById(Number(profileId))
 
@@ -260,15 +228,31 @@ export async function totalProfiles(req: Request, res: Response) {
 /**
  * The route to validate handle.
  * @dev handle is required
- *
  */
 export async function verifyProfileHandle(req: Request, res: Response) {
   try {
     const { handle } = req.body as { handle: string }
-    if (!handle) throw new Error('Handle is required.')
+    if (!handle) throw new Error("Handle is required.")
     const valid = await verifyHandle(handle)
 
     res.status(200).json({ valid })
+  } catch (error) {
+    res.status(200).json({ valid: false })
+  }
+}
+
+/**
+ * The route to get token uri.
+ */
+export async function fetchTokenURI(req: Request, res: Response) {
+  try {
+    const { profileId } = req.params as { profileId: string }
+
+    if (!profileId) throw new Error("User input error.")
+
+    const uri = await getTokenURI(Number(profileId))
+
+    res.status(200).json({ uri })
   } catch (error) {
     res.status(200).json({ valid: false })
   }
@@ -282,22 +266,17 @@ export async function verifyProfileHandle(req: Request, res: Response) {
  */
 export async function estimateCreateProfileNftGas(req: Request, res: Response) {
   try {
-    const { key } = req.params as { key: string }
+    const { uid } = req.params as { uid: string }
     const { handle, imageURI, tokenURI } =
-      req.body as CreateProfileInput['data']
+      req.body as CreateProfileInput["data"]
 
     // Check if all required parameters are availble
-    if (!key || !handle || !tokenURI) throw new Error('User input error')
+    if (!uid || !handle || !tokenURI) throw new Error("User input error")
 
-    // // 1. Decrypt the key
-    // const kmsDecryptedKey = await decrypt(key)
-    // if (!kmsDecryptedKey) throw new Error('Forbidden')
-
-    // // 2. Decrypt the kms decrypted string
-    // const decryptedKey = decryptString(kmsDecryptedKey)
+    // 1. Decrypt the key
+    const key = await decrypt(uid)
 
     const estimatedGas = await estimateCreateProfileGas({
-      // key: decryptedKey,
       key,
       data: { handle, imageURI, tokenURI },
     })
