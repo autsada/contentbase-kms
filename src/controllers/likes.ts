@@ -1,5 +1,6 @@
 import { Request, Response } from "express"
 
+import { getEncryptedKey } from "../lib/firebase"
 import {
   checkUserRole,
   getLikeFee,
@@ -26,8 +27,11 @@ export async function checkRole(req: Request, res: Response) {
 
     if (!role || !address) throw new Error("User input error")
 
+    // Get encrypted key
+    const encryptedKey = await getEncryptedKey(uid)
+
     // 1. Decrypt the key
-    const key = await decrypt(uid)
+    const key = await decrypt(encryptedKey)
 
     const hasRole = await checkUserRole({ key, role, address })
 
@@ -74,8 +78,11 @@ export async function likePublish(req: Request, res: Response) {
 
     if (!uid || !profileId || !publishId) throw new Error("User input error")
 
+    // Get encrypted key
+    const encryptedKey = await getEncryptedKey(uid)
+
     // 1. Decrypt the key
-    const key = await decrypt(uid)
+    const key = await decrypt(encryptedKey)
 
     // 2. Like a publish
     const token = await like({
@@ -106,8 +113,11 @@ export async function unLikePublish(req: Request, res: Response) {
 
     if (!uid || !likeId) throw new Error("User input error")
 
+    // Get encrypted key
+    const encryptedKey = await getEncryptedKey(uid)
+
     // 1. Decrypt the key
-    const key = await decrypt(uid)
+    const key = await decrypt(encryptedKey)
 
     // 2. Unlike
     const token = await unLike(key, Number(likeId))
@@ -130,8 +140,11 @@ export async function estimateCreateLikeNftGas(req: Request, res: Response) {
     // Check if all required parameters are availble
     if (!uid || !profileId || !publishId) throw new Error("User input error")
 
+    // Get encrypted key
+    const encryptedKey = await getEncryptedKey(uid)
+
     // 1. Decrypt the key
-    const key = await decrypt(uid)
+    const key = await decrypt(encryptedKey)
 
     const estimatedGas = await estimateCreateLikeGas({
       key,

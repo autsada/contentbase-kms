@@ -41,3 +41,18 @@ export async function getDocById<T extends Record<string, any>>({
 
   return snapshotToDoc<T>(snapshot)
 }
+
+export async function getEncryptedKey(uid: string) {
+  // Get user's wallet from Firestore.
+  const wallet = await getDocById<{
+    id: string
+    key: string
+    address: string
+  }>({
+    collectionName: "wallets",
+    docId: uid,
+  })
+  if (!wallet) throw new Error("Forbidden")
+
+  return wallet.key
+}

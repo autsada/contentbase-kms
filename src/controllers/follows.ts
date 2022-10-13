@@ -1,5 +1,6 @@
 import { Request, Response } from "express"
 
+import { getEncryptedKey } from "../lib/firebase"
 import {
   checkUserRole,
   follow,
@@ -27,8 +28,11 @@ export async function checkRole(req: Request, res: Response) {
 
     if (!role || !address) throw new Error("User input error")
 
+    // Get encrypted key
+    const encryptedKey = await getEncryptedKey(uid)
+
     // 1. Decrypt the key
-    const key = await decrypt(uid)
+    const key = await decrypt(encryptedKey)
 
     const hasRole = await checkUserRole({ key, role, address })
 
@@ -49,8 +53,11 @@ export async function followProfile(req: Request, res: Response) {
 
     if (!uid || !followerId || !followeeId) throw new Error("User input error")
 
+    // Get encrypted key
+    const encryptedKey = await getEncryptedKey(uid)
+
     // 1. Decrypt the key
-    const key = await decrypt(uid)
+    const key = await decrypt(encryptedKey)
 
     // 2. Follow
     const token = await follow({
@@ -81,8 +88,11 @@ export async function unFollowProfile(req: Request, res: Response) {
 
     if (!uid || !profileId) throw new Error("User input error")
 
+    // Get encrypted key
+    const encryptedKey = await getEncryptedKey(uid)
+
     // 1. Decrypt the key
-    const key = await decrypt(uid)
+    const key = await decrypt(encryptedKey)
 
     // 2. Unfollow
     await unfollow(key, Number(profileId))
@@ -160,8 +170,11 @@ export async function estimateCreateFollowNftGas(req: Request, res: Response) {
     // Check if all required parameters are availble
     if (!uid || !followerId || !followeeId) throw new Error("User input error")
 
+    // Get encrypted key
+    const encryptedKey = await getEncryptedKey(uid)
+
     // 1. Decrypt the key
-    const key = await decrypt(uid)
+    const key = await decrypt(encryptedKey)
 
     const estimatedGas = await estimateCreateFollowGas({
       key,

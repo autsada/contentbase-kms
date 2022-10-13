@@ -1,7 +1,6 @@
 import { KeyManagementServiceClient } from "@google-cloud/kms"
 
 import { decryptString } from "./utils"
-import { getDocById } from "./firebase"
 
 const {
   KMS_PROJECT_ID,
@@ -110,7 +109,7 @@ export async function encrypt(text: string) {
   }
 }
 
-export async function decrypt(uid: string) {
+export async function decrypt(key: string) {
   // Build the key name
   const keyName = client.cryptoKeyPath(
     KMS_PROJECT_ID!,
@@ -118,16 +117,6 @@ export async function decrypt(uid: string) {
     KMS_KEYRING_ID!,
     KMS_CRYPTOKEY_ID!
   )
-
-  // Get user's wallet from Firestore.
-  const wallet = await getDocById<{ id: string; key: string; address: string }>(
-    {
-      collectionName: "wallets",
-      docId: uid,
-    }
-  )
-  if (!wallet) throw new Error("Forbidden")
-  const key = wallet.key
 
   const ciphertext = Buffer.from(key, "base64")
 

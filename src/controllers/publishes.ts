@@ -1,5 +1,6 @@
 import { Request, Response } from "express"
 
+import { getEncryptedKey } from "../lib/firebase"
 import {
   checkUserRole,
   createPublish,
@@ -30,8 +31,11 @@ export async function checkRole(req: Request, res: Response) {
 
     if (!role || !address) throw new Error("User input error")
 
+    // Get encrypted key
+    const encryptedKey = await getEncryptedKey(uid)
+
     // 1. Decrypt the key
-    const key = await decrypt(uid)
+    const key = await decrypt(encryptedKey)
 
     const hasRole = await checkUserRole({ key, role, address })
 
@@ -54,8 +58,11 @@ export async function createPublishNft(req: Request, res: Response) {
     if (!uid || !tokenURI || !creatorId || !imageURI || !contentURI)
       throw new Error("User input error")
 
+    // Get encrypted key
+    const encryptedKey = await getEncryptedKey(uid)
+
     // 1. Decrypt the key
-    const key = await decrypt(uid)
+    const key = await decrypt(encryptedKey)
 
     // 2. Create publish
     const token = await createPublish({
@@ -93,8 +100,11 @@ export async function updatePublishNft(req: Request, res: Response) {
     if (!uid || !publishId || !creatorId || !tokenURI)
       throw new Error("User input error")
 
+    // Get encrypted key
+    const encryptedKey = await getEncryptedKey(uid)
+
     // 1. Decrypt the key
-    const key = await decrypt(uid)
+    const key = await decrypt(encryptedKey)
 
     // 2. Update publish
     const token = await updatePublish({
@@ -128,8 +138,11 @@ export async function deleteUserPublish(req: Request, res: Response) {
 
     if (!uid || !publishId) throw new Error("User input error")
 
+    // Get encrypted key
+    const encryptedKey = await getEncryptedKey(uid)
+
     // 1. Decrypt the key
-    const key = await decrypt(uid)
+    const key = await decrypt(encryptedKey)
 
     await deletePublish(key, Number(publishId))
 
@@ -150,8 +163,11 @@ export async function getMyPublishes(req: Request, res: Response) {
 
     if (!uid || tokenIds.length === 0) throw new Error("User input error.")
 
+    // Get encrypted key
+    const encryptedKey = await getEncryptedKey(uid)
+
     // 1. Decrypt the key
-    const key = await decrypt(uid)
+    const key = await decrypt(encryptedKey)
 
     // 2. Get publishes
     const publishes = await fetchMyPublishes(key, tokenIds)
@@ -241,8 +257,11 @@ export async function estimateCreatePublishNftGas(req: Request, res: Response) {
     if (!uid || !creatorId || !tokenURI || !imageURI || !contentURI)
       throw new Error("User input error")
 
+    // Get encrypted key
+    const encryptedKey = await getEncryptedKey(uid)
+
     // 1. Decrypt the key
-    const key = await decrypt(uid)
+    const key = await decrypt(encryptedKey)
 
     const estimatedGas = await estimateCreatePublishGas({
       key,

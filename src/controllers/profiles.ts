@@ -1,5 +1,6 @@
 import { Request, Response } from "express"
 
+import { getEncryptedKey } from "../lib/firebase"
 import {
   checkUserRole,
   createProfile,
@@ -34,8 +35,11 @@ export async function checkRole(req: Request, res: Response) {
 
     if (!role || !address) throw new Error("User input error")
 
+    // Get encrypted key
+    const encryptedKey = await getEncryptedKey(uid)
+
     // 1. Decrypt the key
-    const key = await decrypt(uid)
+    const key = await decrypt(encryptedKey)
 
     const hasRole = await checkUserRole({ key, role, address })
 
@@ -58,8 +62,11 @@ export async function createProfileNft(req: Request, res: Response) {
     // imageURI can be empty.
     if (!uid || !handle || !tokenURI) throw new Error("User input error")
 
+    // Get encrypted key
+    const encryptedKey = await getEncryptedKey(uid)
+
     // 1. Decrypt the key
-    const key = await decrypt(uid)
+    const key = await decrypt(encryptedKey)
 
     // 3. Create profile
     const token = await createProfile({
@@ -98,8 +105,11 @@ export async function updateProfileImage(req: Request, res: Response) {
     // imageURI can be empty.
     if (!uid || !profileId || !tokenURI) throw new Error("User input error")
 
-    // // 1. Decrypt the key
-    const key = await decrypt(uid)
+    // Get encrypted key
+    const encryptedKey = await getEncryptedKey(uid)
+
+    // 1. Decrypt the key
+    const key = await decrypt(encryptedKey)
 
     // 3. Update profile
     const token = await updateProfile({
@@ -132,8 +142,11 @@ export async function setProfileAsDefault(req: Request, res: Response) {
 
     if (!uid || !profileId) throw new Error("User input error")
 
+    // Get encrypted key
+    const encryptedKey = await getEncryptedKey(uid)
+
     // 1. Decrypt the key
-    const key = await decrypt(uid)
+    const key = await decrypt(encryptedKey)
 
     // 2. Update profile
     const token = await setDefaultProfile(key, Number(profileId))
@@ -157,8 +170,11 @@ export async function getMyProfiles(req: Request, res: Response) {
 
     if (!uid || tokenIds.length === 0) throw new Error("User input error.")
 
+    // Get encrypted key
+    const encryptedKey = await getEncryptedKey(uid)
+
     // 1. Decrypt the key
-    const key = await decrypt(uid)
+    const key = await decrypt(encryptedKey)
 
     // // 2. Get profiles
     const tokens = await fetchMyProfiles(key, tokenIds)
@@ -179,8 +195,11 @@ export async function getUserDefaultProfile(req: Request, res: Response) {
 
     if (!uid) throw new Error("User input error.")
 
+    // Get encrypted key
+    const encryptedKey = await getEncryptedKey(uid)
+
     // 1. Decrypt the key
-    const key = await decrypt(uid)
+    const key = await decrypt(encryptedKey)
 
     // 2. Get profiles
     const token = await getDefaultProfile(key)
@@ -272,8 +291,11 @@ export async function estimateCreateProfileNftGas(req: Request, res: Response) {
     // Check if all required parameters are availble
     if (!uid || !handle || !tokenURI) throw new Error("User input error")
 
+    // Get encrypted key
+    const encryptedKey = await getEncryptedKey(uid)
+
     // 1. Decrypt the key
-    const key = await decrypt(uid)
+    const key = await decrypt(encryptedKey)
 
     const estimatedGas = await estimateCreateProfileGas({
       key,
