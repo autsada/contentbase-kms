@@ -3,8 +3,13 @@ import { KeyManagementServiceClient } from "@google-cloud/kms"
 import { decryptString } from "./utils"
 import { getDocById } from "./firebase"
 
-const { KMS_PROJECT_ID, KMS_LOCATION_ID, KMS_KEYRING_ID, KMS_CRYPTOKEY_ID } =
-  process.env
+const {
+  KMS_PROJECT_ID,
+  KMS_LOCATION_ID,
+  KMS_KEYRING_ID,
+  KMS_CRYPTOKEY_ID,
+  NODE_ENV,
+} = process.env
 
 const client = new KeyManagementServiceClient()
 
@@ -59,16 +64,50 @@ export async function encrypt(text: string) {
 
   const plaintextBuffer = Buffer.from(text)
 
-  const [encryptResponse] = await client.encrypt({
-    name: keyName,
-    plaintext: plaintextBuffer,
-  })
+  // Use fast-crc32c only in staging and production as it causes error on Macbook M1.
+  if (NODE_ENV === "development") {
+    const [encryptResponse] = await client.encrypt({
+      name: keyName,
+      plaintext: plaintextBuffer,
+    })
 
-  const ciphertext = encryptResponse.ciphertext
+    const ciphertext = encryptResponse.ciphertext
 
-  if (!ciphertext) throw new Error("No cipher text")
+    if (!ciphertext) throw new Error("No cipher text")
 
-  return Buffer.from(ciphertext).toString("base64")
+    return Buffer.from(ciphertext).toString("base64")
+  } else {
+    // Optional, but recommended: compute plaintext's CRC32C.
+    const crc32c = require("fast-crc32c")
+    const plaintextCrc32c = crc32c.calculate(plaintextBuffer)
+
+    const [encryptResponse] = await client.encrypt({
+      name: keyName,
+      plaintext: plaintextBuffer,
+      plaintextCrc32c: {
+        value: plaintextCrc32c,
+      },
+    })
+
+    const ciphertext = encryptResponse.ciphertext
+
+    if (!ciphertext) throw new Error("No cipher text")
+
+    // Optional, but recommended: perform integrity verification on encryptResponse.
+    // For more details on ensuring E2E in-transit integrity to and from Cloud KMS visit:
+    // https://cloud.google.com/kms/docs/data-integrity-guidelines
+    if (!encryptResponse.verifiedPlaintextCrc32c) {
+      throw new Error("Encrypt: request corrupted in-transit")
+    }
+    if (
+      crc32c.calculate(ciphertext) !==
+      Number(encryptResponse.ciphertextCrc32c?.value)
+    ) {
+      throw new Error("Encrypt: response corrupted in-transit")
+    }
+
+    return Buffer.from(ciphertext).toString("base64")
+  }
 }
 
 export async function decrypt(uid: string) {
@@ -92,16 +131,47 @@ export async function decrypt(uid: string) {
 
   const ciphertext = Buffer.from(key, "base64")
 
-  const [decryptResponse] = await client.decrypt({
-    name: keyName,
-    ciphertext: ciphertext,
-  })
+  // Use fast-crc32c only in staging and production as it causes error on Macbook M1.
+  if (NODE_ENV === "development") {
+    const [decryptResponse] = await client.decrypt({
+      name: keyName,
+      ciphertext: ciphertext,
+    })
 
-  // const plaintext = decryptResponse.plaintext?.toString()
-  const kmsDecrypted = decryptResponse.plaintext?.toString()
-  if (!kmsDecrypted) throw new Error("Forbidden")
+    const kmsDecrypted = decryptResponse.plaintext?.toString()
+    if (!kmsDecrypted) throw new Error("Forbidden")
 
-  const plaintext = decryptString(kmsDecrypted)
+    const plaintext = decryptString(kmsDecrypted)
 
-  return plaintext
+    return plaintext
+  } else {
+    // Optional, but recommended: compute ciphertext's CRC32C.
+    const crc32c = require("fast-crc32c")
+    const ciphertextCrc32c = crc32c.calculate(ciphertext)
+
+    const [decryptResponse] = await client.decrypt({
+      name: keyName,
+      ciphertext: ciphertext,
+      ciphertextCrc32c: {
+        value: ciphertextCrc32c,
+      },
+    })
+
+    // Optional, but recommended: perform integrity verification on decryptResponse.
+    // For more details on ensuring E2E in-transit integrity to and from Cloud KMS visit:
+    // https://cloud.google.com/kms/docs/data-integrity-guidelines
+    if (
+      crc32c.calculate(decryptResponse.plaintext) !==
+      Number(decryptResponse.plaintextCrc32c?.value)
+    ) {
+      throw new Error("Decrypt: response corrupted in-transit")
+    }
+
+    const kmsDecrypted = decryptResponse.plaintext?.toString()
+    if (!kmsDecrypted) throw new Error("Forbidden")
+
+    const plaintext = decryptString(kmsDecrypted)
+
+    return plaintext
+  }
 }
