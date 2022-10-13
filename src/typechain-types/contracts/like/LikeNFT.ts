@@ -29,68 +29,30 @@ import type {
 } from "../../common";
 
 export declare namespace DataTypes {
-  export type TokenStruct = {
-    tokenId: PromiseOrValue<BigNumberish>;
-    associatedId: PromiseOrValue<BigNumberish>;
+  export type LikeStruct = {
     owner: PromiseOrValue<string>;
-    tokenType: PromiseOrValue<BigNumberish>;
-    handle: PromiseOrValue<string>;
-    imageURI: PromiseOrValue<string>;
-    contentURI: PromiseOrValue<string>;
-  };
-
-  export type TokenStructOutput = [
-    BigNumber,
-    BigNumber,
-    string,
-    number,
-    string,
-    string,
-    string
-  ] & {
-    tokenId: BigNumber;
-    associatedId: BigNumber;
-    owner: string;
-    tokenType: number;
-    handle: string;
-    imageURI: string;
-    contentURI: string;
-  };
-
-  export type CreateProfileDataStruct = {
-    handle: PromiseOrValue<string>;
-    imageURI: PromiseOrValue<string>;
-  };
-
-  export type CreateProfileDataStructOutput = [string, string] & {
-    handle: string;
-    imageURI: string;
-  };
-
-  export type CreatePublishDataStruct = {
     profileId: PromiseOrValue<BigNumberish>;
-    imageURI: PromiseOrValue<string>;
-    contentURI: PromiseOrValue<string>;
+    publishId: PromiseOrValue<BigNumberish>;
   };
 
-  export type CreatePublishDataStructOutput = [BigNumber, string, string] & {
+  export type LikeStructOutput = [string, BigNumber, BigNumber] & {
+    owner: string;
     profileId: BigNumber;
-    imageURI: string;
-    contentURI: string;
+    publishId: BigNumber;
   };
 
-  export type UpdatePublishDataStruct = {
-    imageURI: PromiseOrValue<string>;
-    contentURI: PromiseOrValue<string>;
+  export type CreateLikeDataStruct = {
+    profileId: PromiseOrValue<BigNumberish>;
+    publishId: PromiseOrValue<BigNumberish>;
   };
 
-  export type UpdatePublishDataStructOutput = [string, string] & {
-    imageURI: string;
-    contentURI: string;
+  export type CreateLikeDataStructOutput = [BigNumber, BigNumber] & {
+    profileId: BigNumber;
+    publishId: BigNumber;
   };
 }
 
-export interface ContentBaseInterface extends utils.Interface {
+export interface LikeNFTInterface extends utils.Interface {
   functions: {
     "ADMIN_ROLE()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
@@ -98,40 +60,37 @@ export interface ContentBaseInterface extends utils.Interface {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "burn(uint256)": FunctionFragment;
-    "createProfile(string,(string,string))": FunctionFragment;
-    "createPublish(string,(uint256,string,string))": FunctionFragment;
-    "defaultProfile()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
+    "getContractBalance()": FunctionFragment;
+    "getLikeSupportFee()": FunctionFragment;
+    "getOwnerAddress()": FunctionFragment;
+    "getPlatformFee()": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "initialize()": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
+    "like((uint256,uint256))": FunctionFragment;
     "name()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
-    "ownerProfiles(uint256[])": FunctionFragment;
-    "ownerPublish(uint256)": FunctionFragment;
-    "ownerPublishes(uint256[])": FunctionFragment;
-    "profileById(uint256)": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
-    "publishById(uint256)": FunctionFragment;
-    "publishesByIds(uint256[])": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "safeTransferFrom(address,address,uint256)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
-    "setDefaultProfile(uint256)": FunctionFragment;
+    "setLikeSupportFee(uint256)": FunctionFragment;
+    "setOwnerAddress(address)": FunctionFragment;
+    "setPlatformFee(uint256)": FunctionFragment;
+    "setProfileContract(address)": FunctionFragment;
+    "setPublishContract(address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
     "tokenURI(uint256)": FunctionFragment;
-    "totalNFTs()": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
-    "updateProfileImage(uint256,string,string)": FunctionFragment;
-    "updatePublish(uint256,string,(string,string))": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
-    "validateHandle(string)": FunctionFragment;
+    "withdraw()": FunctionFragment;
   };
 
   getFunction(
@@ -142,40 +101,37 @@ export interface ContentBaseInterface extends utils.Interface {
       | "approve"
       | "balanceOf"
       | "burn"
-      | "createProfile"
-      | "createPublish"
-      | "defaultProfile"
       | "getApproved"
+      | "getContractBalance"
+      | "getLikeSupportFee"
+      | "getOwnerAddress"
+      | "getPlatformFee"
       | "getRoleAdmin"
       | "grantRole"
       | "hasRole"
       | "initialize"
       | "isApprovedForAll"
+      | "like"
       | "name"
       | "ownerOf"
-      | "ownerProfiles"
-      | "ownerPublish"
-      | "ownerPublishes"
-      | "profileById"
       | "proxiableUUID"
-      | "publishById"
-      | "publishesByIds"
       | "renounceRole"
       | "revokeRole"
       | "safeTransferFrom(address,address,uint256)"
       | "safeTransferFrom(address,address,uint256,bytes)"
       | "setApprovalForAll"
-      | "setDefaultProfile"
+      | "setLikeSupportFee"
+      | "setOwnerAddress"
+      | "setPlatformFee"
+      | "setProfileContract"
+      | "setPublishContract"
       | "supportsInterface"
       | "symbol"
       | "tokenURI"
-      | "totalNFTs"
       | "transferFrom"
-      | "updateProfileImage"
-      | "updatePublish"
       | "upgradeTo"
       | "upgradeToAndCall"
-      | "validateHandle"
+      | "withdraw"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -203,20 +159,24 @@ export interface ContentBaseInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "createProfile",
-    values: [PromiseOrValue<string>, DataTypes.CreateProfileDataStruct]
+    functionFragment: "getApproved",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "createPublish",
-    values: [PromiseOrValue<string>, DataTypes.CreatePublishDataStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "defaultProfile",
+    functionFragment: "getContractBalance",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getApproved",
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "getLikeSupportFee",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getOwnerAddress",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getPlatformFee",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
@@ -238,38 +198,18 @@ export interface ContentBaseInterface extends utils.Interface {
     functionFragment: "isApprovedForAll",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "like",
+    values: [DataTypes.CreateLikeDataStruct]
+  ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownerOf",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "ownerProfiles",
-    values: [PromiseOrValue<BigNumberish>[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "ownerPublish",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "ownerPublishes",
-    values: [PromiseOrValue<BigNumberish>[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "profileById",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "proxiableUUID",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "publishById",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "publishesByIds",
-    values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
@@ -301,8 +241,24 @@ export interface ContentBaseInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<boolean>]
   ): string;
   encodeFunctionData(
-    functionFragment: "setDefaultProfile",
+    functionFragment: "setLikeSupportFee",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setOwnerAddress",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setPlatformFee",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setProfileContract",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setPublishContract",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
@@ -313,29 +269,12 @@ export interface ContentBaseInterface extends utils.Interface {
     functionFragment: "tokenURI",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "totalNFTs", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferFrom",
     values: [
       PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updateProfileImage",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updatePublish",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>,
-      DataTypes.UpdatePublishDataStruct
     ]
   ): string;
   encodeFunctionData(
@@ -346,10 +285,7 @@ export interface ContentBaseInterface extends utils.Interface {
     functionFragment: "upgradeToAndCall",
     values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
   ): string;
-  encodeFunctionData(
-    functionFragment: "validateHandle",
-    values: [PromiseOrValue<string>]
-  ): string;
+  encodeFunctionData(functionFragment: "withdraw", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "ADMIN_ROLE", data: BytesLike): Result;
   decodeFunctionResult(
@@ -364,19 +300,23 @@ export interface ContentBaseInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "createProfile",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "createPublish",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "defaultProfile",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getApproved",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getContractBalance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getLikeSupportFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getOwnerAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getPlatformFee",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -390,34 +330,11 @@ export interface ContentBaseInterface extends utils.Interface {
     functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "like", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "ownerProfiles",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "ownerPublish",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "ownerPublishes",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "profileById",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "proxiableUUID",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "publishById",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "publishesByIds",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -438,7 +355,23 @@ export interface ContentBaseInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setDefaultProfile",
+    functionFragment: "setLikeSupportFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setOwnerAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setPlatformFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setProfileContract",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setPublishContract",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -447,17 +380,8 @@ export interface ContentBaseInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "tokenURI", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "totalNFTs", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferFrom",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "updateProfileImage",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "updatePublish",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
@@ -465,26 +389,21 @@ export interface ContentBaseInterface extends utils.Interface {
     functionFragment: "upgradeToAndCall",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "validateHandle",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
   events: {
     "AdminChanged(address,address)": EventFragment;
     "Approval(address,address,uint256)": EventFragment;
     "ApprovalForAll(address,address,bool)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
-    "DefaultProfileUpdated(tuple,address)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "ProfileCreated(tuple,address)": EventFragment;
-    "ProfileImageUpdated(tuple,address)": EventFragment;
-    "PublishCreated(tuple,address)": EventFragment;
-    "PublishUpdated(tuple,address)": EventFragment;
+    "Like(tuple,address,uint256)": EventFragment;
+    "Received(address,uint256)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
+    "UnLike(tuple,address,uint256)": EventFragment;
     "Upgraded(address)": EventFragment;
   };
 
@@ -492,16 +411,14 @@ export interface ContentBaseInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "DefaultProfileUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ProfileCreated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ProfileImageUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PublishCreated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PublishUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Like"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Received"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UnLike"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
 
@@ -550,18 +467,6 @@ export type BeaconUpgradedEvent = TypedEvent<
 
 export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
 
-export interface DefaultProfileUpdatedEventObject {
-  token: DataTypes.TokenStructOutput;
-  owner: string;
-}
-export type DefaultProfileUpdatedEvent = TypedEvent<
-  [DataTypes.TokenStructOutput, string],
-  DefaultProfileUpdatedEventObject
->;
-
-export type DefaultProfileUpdatedEventFilter =
-  TypedEventFilter<DefaultProfileUpdatedEvent>;
-
 export interface InitializedEventObject {
   version: number;
 }
@@ -569,50 +474,28 @@ export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
-export interface ProfileCreatedEventObject {
-  token: DataTypes.TokenStructOutput;
+export interface LikeEventObject {
+  token: DataTypes.LikeStructOutput;
   owner: string;
+  publishId: BigNumber;
 }
-export type ProfileCreatedEvent = TypedEvent<
-  [DataTypes.TokenStructOutput, string],
-  ProfileCreatedEventObject
+export type LikeEvent = TypedEvent<
+  [DataTypes.LikeStructOutput, string, BigNumber],
+  LikeEventObject
 >;
 
-export type ProfileCreatedEventFilter = TypedEventFilter<ProfileCreatedEvent>;
+export type LikeEventFilter = TypedEventFilter<LikeEvent>;
 
-export interface ProfileImageUpdatedEventObject {
-  token: DataTypes.TokenStructOutput;
-  owner: string;
+export interface ReceivedEventObject {
+  sender: string;
+  value: BigNumber;
 }
-export type ProfileImageUpdatedEvent = TypedEvent<
-  [DataTypes.TokenStructOutput, string],
-  ProfileImageUpdatedEventObject
+export type ReceivedEvent = TypedEvent<
+  [string, BigNumber],
+  ReceivedEventObject
 >;
 
-export type ProfileImageUpdatedEventFilter =
-  TypedEventFilter<ProfileImageUpdatedEvent>;
-
-export interface PublishCreatedEventObject {
-  token: DataTypes.TokenStructOutput;
-  owner: string;
-}
-export type PublishCreatedEvent = TypedEvent<
-  [DataTypes.TokenStructOutput, string],
-  PublishCreatedEventObject
->;
-
-export type PublishCreatedEventFilter = TypedEventFilter<PublishCreatedEvent>;
-
-export interface PublishUpdatedEventObject {
-  token: DataTypes.TokenStructOutput;
-  owner: string;
-}
-export type PublishUpdatedEvent = TypedEvent<
-  [DataTypes.TokenStructOutput, string],
-  PublishUpdatedEventObject
->;
-
-export type PublishUpdatedEventFilter = TypedEventFilter<PublishUpdatedEvent>;
+export type ReceivedEventFilter = TypedEventFilter<ReceivedEvent>;
 
 export interface RoleAdminChangedEventObject {
   role: string;
@@ -663,6 +546,18 @@ export type TransferEvent = TypedEvent<
 
 export type TransferEventFilter = TypedEventFilter<TransferEvent>;
 
+export interface UnLikeEventObject {
+  token: DataTypes.LikeStructOutput;
+  owner: string;
+  publishId: BigNumber;
+}
+export type UnLikeEvent = TypedEvent<
+  [DataTypes.LikeStructOutput, string, BigNumber],
+  UnLikeEventObject
+>;
+
+export type UnLikeEventFilter = TypedEventFilter<UnLikeEvent>;
+
 export interface UpgradedEventObject {
   implementation: string;
 }
@@ -670,12 +565,12 @@ export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
 
 export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
 
-export interface ContentBase extends BaseContract {
+export interface LikeNFT extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ContentBaseInterface;
+  interface: LikeNFTInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -719,26 +614,18 @@ export interface ContentBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    createProfile(
-      uri: PromiseOrValue<string>,
-      createProfileData: DataTypes.CreateProfileDataStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    createPublish(
-      uri: PromiseOrValue<string>,
-      createPublishData: DataTypes.CreatePublishDataStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    defaultProfile(
-      overrides?: CallOverrides
-    ): Promise<[DataTypes.TokenStructOutput]>;
-
     getApproved(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
+
+    getContractBalance(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getLikeSupportFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getOwnerAddress(overrides?: CallOverrides): Promise<[string]>;
+
+    getPlatformFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -767,6 +654,11 @@ export interface ContentBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    like(
+      createLikeData: DataTypes.CreateLikeDataStruct,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     name(overrides?: CallOverrides): Promise<[string]>;
 
     ownerOf(
@@ -774,37 +666,7 @@ export interface ContentBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    ownerProfiles(
-      tokenIds: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<[DataTypes.TokenStructOutput[]]>;
-
-    ownerPublish(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[DataTypes.TokenStructOutput]>;
-
-    ownerPublishes(
-      tokenIds: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<[DataTypes.TokenStructOutput[]]>;
-
-    profileById(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[DataTypes.TokenStructOutput]>;
-
     proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
-
-    publishById(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[DataTypes.TokenStructOutput]>;
-
-    publishesByIds(
-      tokenIds: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<[DataTypes.TokenStructOutput[]]>;
 
     renounceRole(
       role: PromiseOrValue<BytesLike>,
@@ -839,8 +701,28 @@ export interface ContentBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setDefaultProfile(
-      tokenId: PromiseOrValue<BigNumberish>,
+    setLikeSupportFee(
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setOwnerAddress(
+      owner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setPlatformFee(
+      fee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setProfileContract(
+      profileContractAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setPublishContract(
+      publishContractAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -856,26 +738,10 @@ export interface ContentBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    totalNFTs(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     transferFrom(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    updateProfileImage(
-      tokenId: PromiseOrValue<BigNumberish>,
-      uri: PromiseOrValue<string>,
-      imageURI: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    updatePublish(
-      tokenId: PromiseOrValue<BigNumberish>,
-      uri: PromiseOrValue<string>,
-      updatePublishData: DataTypes.UpdatePublishDataStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -890,10 +756,9 @@ export interface ContentBase extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    validateHandle(
-      handle: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    withdraw(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
   ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -918,26 +783,18 @@ export interface ContentBase extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  createProfile(
-    uri: PromiseOrValue<string>,
-    createProfileData: DataTypes.CreateProfileDataStruct,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  createPublish(
-    uri: PromiseOrValue<string>,
-    createPublishData: DataTypes.CreatePublishDataStruct,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  defaultProfile(
-    overrides?: CallOverrides
-  ): Promise<DataTypes.TokenStructOutput>;
-
   getApproved(
     tokenId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
+
+  getContractBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getLikeSupportFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getOwnerAddress(overrides?: CallOverrides): Promise<string>;
+
+  getPlatformFee(overrides?: CallOverrides): Promise<BigNumber>;
 
   getRoleAdmin(
     role: PromiseOrValue<BytesLike>,
@@ -966,6 +823,11 @@ export interface ContentBase extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  like(
+    createLikeData: DataTypes.CreateLikeDataStruct,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   name(overrides?: CallOverrides): Promise<string>;
 
   ownerOf(
@@ -973,37 +835,7 @@ export interface ContentBase extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  ownerProfiles(
-    tokenIds: PromiseOrValue<BigNumberish>[],
-    overrides?: CallOverrides
-  ): Promise<DataTypes.TokenStructOutput[]>;
-
-  ownerPublish(
-    tokenId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<DataTypes.TokenStructOutput>;
-
-  ownerPublishes(
-    tokenIds: PromiseOrValue<BigNumberish>[],
-    overrides?: CallOverrides
-  ): Promise<DataTypes.TokenStructOutput[]>;
-
-  profileById(
-    tokenId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<DataTypes.TokenStructOutput>;
-
   proxiableUUID(overrides?: CallOverrides): Promise<string>;
-
-  publishById(
-    tokenId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<DataTypes.TokenStructOutput>;
-
-  publishesByIds(
-    tokenIds: PromiseOrValue<BigNumberish>[],
-    overrides?: CallOverrides
-  ): Promise<DataTypes.TokenStructOutput[]>;
 
   renounceRole(
     role: PromiseOrValue<BytesLike>,
@@ -1038,8 +870,28 @@ export interface ContentBase extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setDefaultProfile(
-    tokenId: PromiseOrValue<BigNumberish>,
+  setLikeSupportFee(
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setOwnerAddress(
+    owner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setPlatformFee(
+    fee: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setProfileContract(
+    profileContractAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setPublishContract(
+    publishContractAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1055,26 +907,10 @@ export interface ContentBase extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  totalNFTs(overrides?: CallOverrides): Promise<BigNumber>;
-
   transferFrom(
     from: PromiseOrValue<string>,
     to: PromiseOrValue<string>,
     tokenId: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  updateProfileImage(
-    tokenId: PromiseOrValue<BigNumberish>,
-    uri: PromiseOrValue<string>,
-    imageURI: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  updatePublish(
-    tokenId: PromiseOrValue<BigNumberish>,
-    uri: PromiseOrValue<string>,
-    updatePublishData: DataTypes.UpdatePublishDataStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1089,10 +925,9 @@ export interface ContentBase extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  validateHandle(
-    handle: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+  withdraw(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
     ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -1117,26 +952,18 @@ export interface ContentBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    createProfile(
-      uri: PromiseOrValue<string>,
-      createProfileData: DataTypes.CreateProfileDataStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    createPublish(
-      uri: PromiseOrValue<string>,
-      createPublishData: DataTypes.CreatePublishDataStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    defaultProfile(
-      overrides?: CallOverrides
-    ): Promise<DataTypes.TokenStructOutput>;
-
     getApproved(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    getContractBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getLikeSupportFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getOwnerAddress(overrides?: CallOverrides): Promise<string>;
+
+    getPlatformFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -1163,6 +990,11 @@ export interface ContentBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    like(
+      createLikeData: DataTypes.CreateLikeDataStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     name(overrides?: CallOverrides): Promise<string>;
 
     ownerOf(
@@ -1170,37 +1002,7 @@ export interface ContentBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    ownerProfiles(
-      tokenIds: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<DataTypes.TokenStructOutput[]>;
-
-    ownerPublish(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<DataTypes.TokenStructOutput>;
-
-    ownerPublishes(
-      tokenIds: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<DataTypes.TokenStructOutput[]>;
-
-    profileById(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<DataTypes.TokenStructOutput>;
-
     proxiableUUID(overrides?: CallOverrides): Promise<string>;
-
-    publishById(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<DataTypes.TokenStructOutput>;
-
-    publishesByIds(
-      tokenIds: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<DataTypes.TokenStructOutput[]>;
 
     renounceRole(
       role: PromiseOrValue<BytesLike>,
@@ -1235,8 +1037,28 @@ export interface ContentBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setDefaultProfile(
-      tokenId: PromiseOrValue<BigNumberish>,
+    setLikeSupportFee(
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setOwnerAddress(
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setPlatformFee(
+      fee: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setProfileContract(
+      profileContractAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setPublishContract(
+      publishContractAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1252,28 +1074,12 @@ export interface ContentBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    totalNFTs(overrides?: CallOverrides): Promise<BigNumber>;
-
     transferFrom(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    updateProfileImage(
-      tokenId: PromiseOrValue<BigNumberish>,
-      uri: PromiseOrValue<string>,
-      imageURI: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    updatePublish(
-      tokenId: PromiseOrValue<BigNumberish>,
-      uri: PromiseOrValue<string>,
-      updatePublishData: DataTypes.UpdatePublishDataStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     upgradeTo(
       newImplementation: PromiseOrValue<string>,
@@ -1286,10 +1092,7 @@ export interface ContentBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    validateHandle(
-      handle: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+    withdraw(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
@@ -1331,44 +1134,21 @@ export interface ContentBase extends BaseContract {
       beacon?: PromiseOrValue<string> | null
     ): BeaconUpgradedEventFilter;
 
-    "DefaultProfileUpdated(tuple,address)"(
-      token?: null,
-      owner?: null
-    ): DefaultProfileUpdatedEventFilter;
-    DefaultProfileUpdated(
-      token?: null,
-      owner?: null
-    ): DefaultProfileUpdatedEventFilter;
-
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
-    "ProfileCreated(tuple,address)"(
+    "Like(tuple,address,uint256)"(
       token?: null,
-      owner?: null
-    ): ProfileCreatedEventFilter;
-    ProfileCreated(token?: null, owner?: null): ProfileCreatedEventFilter;
+      owner?: null,
+      publishId?: null
+    ): LikeEventFilter;
+    Like(token?: null, owner?: null, publishId?: null): LikeEventFilter;
 
-    "ProfileImageUpdated(tuple,address)"(
-      token?: null,
-      owner?: null
-    ): ProfileImageUpdatedEventFilter;
-    ProfileImageUpdated(
-      token?: null,
-      owner?: null
-    ): ProfileImageUpdatedEventFilter;
-
-    "PublishCreated(tuple,address)"(
-      token?: null,
-      owner?: null
-    ): PublishCreatedEventFilter;
-    PublishCreated(token?: null, owner?: null): PublishCreatedEventFilter;
-
-    "PublishUpdated(tuple,address)"(
-      token?: null,
-      owner?: null
-    ): PublishUpdatedEventFilter;
-    PublishUpdated(token?: null, owner?: null): PublishUpdatedEventFilter;
+    "Received(address,uint256)"(
+      sender?: null,
+      value?: null
+    ): ReceivedEventFilter;
+    Received(sender?: null, value?: null): ReceivedEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: PromiseOrValue<BytesLike> | null,
@@ -1414,6 +1194,13 @@ export interface ContentBase extends BaseContract {
       tokenId?: PromiseOrValue<BigNumberish> | null
     ): TransferEventFilter;
 
+    "UnLike(tuple,address,uint256)"(
+      token?: null,
+      owner?: null,
+      publishId?: null
+    ): UnLikeEventFilter;
+    UnLike(token?: null, owner?: null, publishId?: null): UnLikeEventFilter;
+
     "Upgraded(address)"(
       implementation?: PromiseOrValue<string> | null
     ): UpgradedEventFilter;
@@ -1445,24 +1232,18 @@ export interface ContentBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    createProfile(
-      uri: PromiseOrValue<string>,
-      createProfileData: DataTypes.CreateProfileDataStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    createPublish(
-      uri: PromiseOrValue<string>,
-      createPublishData: DataTypes.CreatePublishDataStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    defaultProfile(overrides?: CallOverrides): Promise<BigNumber>;
-
     getApproved(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getContractBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getLikeSupportFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getOwnerAddress(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getPlatformFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -1491,6 +1272,11 @@ export interface ContentBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    like(
+      createLikeData: DataTypes.CreateLikeDataStruct,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
     ownerOf(
@@ -1498,37 +1284,7 @@ export interface ContentBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    ownerProfiles(
-      tokenIds: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    ownerPublish(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    ownerPublishes(
-      tokenIds: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    profileById(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
-
-    publishById(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    publishesByIds(
-      tokenIds: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     renounceRole(
       role: PromiseOrValue<BytesLike>,
@@ -1563,8 +1319,28 @@ export interface ContentBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    setDefaultProfile(
-      tokenId: PromiseOrValue<BigNumberish>,
+    setLikeSupportFee(
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setOwnerAddress(
+      owner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setPlatformFee(
+      fee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setProfileContract(
+      profileContractAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setPublishContract(
+      publishContractAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1580,26 +1356,10 @@ export interface ContentBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    totalNFTs(overrides?: CallOverrides): Promise<BigNumber>;
-
     transferFrom(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    updateProfileImage(
-      tokenId: PromiseOrValue<BigNumberish>,
-      uri: PromiseOrValue<string>,
-      imageURI: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    updatePublish(
-      tokenId: PromiseOrValue<BigNumberish>,
-      uri: PromiseOrValue<string>,
-      updatePublishData: DataTypes.UpdatePublishDataStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1614,9 +1374,8 @@ export interface ContentBase extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    validateHandle(
-      handle: PromiseOrValue<string>,
-      overrides?: CallOverrides
+    withdraw(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
@@ -1645,24 +1404,20 @@ export interface ContentBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    createProfile(
-      uri: PromiseOrValue<string>,
-      createProfileData: DataTypes.CreateProfileDataStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    createPublish(
-      uri: PromiseOrValue<string>,
-      createPublishData: DataTypes.CreatePublishDataStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    defaultProfile(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     getApproved(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getContractBalance(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getLikeSupportFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getOwnerAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getPlatformFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -1691,6 +1446,11 @@ export interface ContentBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    like(
+      createLikeData: DataTypes.CreateLikeDataStruct,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     ownerOf(
@@ -1698,37 +1458,7 @@ export interface ContentBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    ownerProfiles(
-      tokenIds: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    ownerPublish(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    ownerPublishes(
-      tokenIds: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    profileById(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    publishById(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    publishesByIds(
-      tokenIds: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     renounceRole(
       role: PromiseOrValue<BytesLike>,
@@ -1763,8 +1493,28 @@ export interface ContentBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    setDefaultProfile(
-      tokenId: PromiseOrValue<BigNumberish>,
+    setLikeSupportFee(
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setOwnerAddress(
+      owner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setPlatformFee(
+      fee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setProfileContract(
+      profileContractAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setPublishContract(
+      publishContractAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1780,26 +1530,10 @@ export interface ContentBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    totalNFTs(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     transferFrom(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    updateProfileImage(
-      tokenId: PromiseOrValue<BigNumberish>,
-      uri: PromiseOrValue<string>,
-      imageURI: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    updatePublish(
-      tokenId: PromiseOrValue<BigNumberish>,
-      uri: PromiseOrValue<string>,
-      updatePublishData: DataTypes.UpdatePublishDataStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1814,9 +1548,8 @@ export interface ContentBase extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    validateHandle(
-      handle: PromiseOrValue<string>,
-      overrides?: CallOverrides
+    withdraw(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

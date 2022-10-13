@@ -77,17 +77,37 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC165Upgradeable__factory>;
     getContractFactory(
-      name: "ContentBase",
+      name: "FollowNFT",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ContentBase__factory>;
+    ): Promise<Contracts.FollowNFT__factory>;
     getContractFactory(
-      name: "ContentBaseProfile",
+      name: "IFollowNFT",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ContentBaseProfile__factory>;
+    ): Promise<Contracts.IFollowNFT__factory>;
     getContractFactory(
-      name: "ContentBasePublish",
+      name: "ILikeNFT",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ContentBasePublish__factory>;
+    ): Promise<Contracts.ILikeNFT__factory>;
+    getContractFactory(
+      name: "LikeNFT",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.LikeNFT__factory>;
+    getContractFactory(
+      name: "IProfileNFT",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IProfileNFT__factory>;
+    getContractFactory(
+      name: "ProfileNFT",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ProfileNFT__factory>;
+    getContractFactory(
+      name: "IPublishNFT",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IPublishNFT__factory>;
+    getContractFactory(
+      name: "PublishNFT",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.PublishNFT__factory>;
 
     getContractAt(
       name: "AccessControlUpgradeable",
@@ -170,20 +190,45 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC165Upgradeable>;
     getContractAt(
-      name: "ContentBase",
+      name: "FollowNFT",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.ContentBase>;
+    ): Promise<Contracts.FollowNFT>;
     getContractAt(
-      name: "ContentBaseProfile",
+      name: "IFollowNFT",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.ContentBaseProfile>;
+    ): Promise<Contracts.IFollowNFT>;
     getContractAt(
-      name: "ContentBasePublish",
+      name: "ILikeNFT",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.ContentBasePublish>;
+    ): Promise<Contracts.ILikeNFT>;
+    getContractAt(
+      name: "LikeNFT",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.LikeNFT>;
+    getContractAt(
+      name: "IProfileNFT",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IProfileNFT>;
+    getContractAt(
+      name: "ProfileNFT",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ProfileNFT>;
+    getContractAt(
+      name: "IPublishNFT",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IPublishNFT>;
+    getContractAt(
+      name: "PublishNFT",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.PublishNFT>;
 
     // default types
     getContractFactory(

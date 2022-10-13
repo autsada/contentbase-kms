@@ -6,13 +6,10 @@ import {
   fetchMyPublishes,
   fetchPublishes,
   fetchPublish,
-} from '../lib/contentBasePublish'
+} from '../lib/PublishNFT'
 import { decrypt } from '../lib/kms'
 import { decryptString } from '../lib/utils'
-import type {
-  CreatePublishInput,
-  UpdatePublishInput,
-} from '../lib/contentBasePublish'
+import type { CreatePublishInput, UpdatePublishInput } from '../lib/PublishNFT'
 
 /**
  * @param req.params.key an encrypted key of the user's wallet

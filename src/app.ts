@@ -15,7 +15,6 @@ app.use(express.urlencoded({ extended: true })) // for parsing application/x-www
 app.use(cors())
 
 app.use('/wallet', router.walletRouter)
-app.use('/tokens', router.tokensRouter)
 app.use('/profiles', router.profilesRouter)
 app.use('/publishes', router.publishesRouter)
 
