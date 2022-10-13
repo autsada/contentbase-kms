@@ -52,7 +52,7 @@ export async function followProfile(req: Request, res: Response) {
     // 1. Decrypt the key
     const key = await decrypt(uid)
 
-    // 3. Create profile
+    // 2. Follow
     const token = await follow({
       key,
       data: {
@@ -84,7 +84,7 @@ export async function unFollowProfile(req: Request, res: Response) {
     // 1. Decrypt the key
     const key = await decrypt(uid)
 
-    // 3. Update publish
+    // 2. Unfollow
     await unfollow(key, Number(profileId))
 
     res.status(200).json({ status: "success" })

@@ -2,16 +2,16 @@
  * This file contains the functions for Like Contract.
  */
 
-import { ethers, utils } from 'ethers'
+import { ethers, utils } from "ethers"
 
-import { getContractBySigner, getContractByProvider } from './ethers'
-import LikeContract from '../abi/LikeContract.json'
-import { LikeNFT } from '../typechain-types'
+import { getContractBySigner, getContractByProvider } from "./ethers"
+import LikeContract from "../abi/LikeContract.json"
+import { LikeNFT } from "../typechain-types"
 import {
   LikeEvent,
   UnLikeEvent,
-} from '../typechain-types/contracts/like/LikeNFT'
-import { Role, CheckRoleParams } from '../types'
+} from "../typechain-types/contracts/like/LikeNFT"
+import { Role, CheckRoleParams } from "../types"
 
 /**
  * Input data required for creating a Like NFT.
@@ -58,7 +58,7 @@ export async function checkUserRole({ role, address, key }: CheckRoleParams) {
   const publishContract = getLikeContractBySigner(key)
   const formattedBytes =
     role === Role.DEFAULT
-      ? utils.formatBytes32String('')
+      ? utils.formatBytes32String("")
       : utils.keccak256(utils.toUtf8Bytes(role))
   const hasGivenRole = await publishContract.hasRole(formattedBytes, address)
 
@@ -204,12 +204,12 @@ export async function like(input: CreateLikeInput) {
   let token
 
   if (tx.events) {
-    const LikeEvent = tx.events.find((e) => e.event === 'Like')
+    const LikeEvent = tx.events.find((e) => e.event === "Like")
 
     if (LikeEvent) {
       if (LikeEvent.args) {
         const [{ owner, profileId, publishId }] =
-          LikeEvent.args as LikeEvent['args']
+          LikeEvent.args as LikeEvent["args"]
 
         token = {
           owner,
@@ -229,7 +229,7 @@ export async function like(input: CreateLikeInput) {
  * @param tokenId - a Like token id
  * @return token {Like object}
  */
-export async function unlike(key: string, tokenId: number) {
+export async function unLike(key: string, tokenId: number) {
   const likeContract = getLikeContractBySigner(key)
 
   const transaction = await likeContract.burn(tokenId)
@@ -239,12 +239,12 @@ export async function unlike(key: string, tokenId: number) {
   let token
 
   if (tx.events) {
-    const LikeEvent = tx.events.find((e) => e.event === 'UnLike')
+    const LikeEvent = tx.events.find((e) => e.event === "UnLike")
 
     if (LikeEvent) {
       if (LikeEvent.args) {
         const [{ owner, profileId, publishId }] =
-          LikeEvent.args as UnLikeEvent['args']
+          LikeEvent.args as UnLikeEvent["args"]
 
         token = {
           owner,

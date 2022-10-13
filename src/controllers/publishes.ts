@@ -57,7 +57,7 @@ export async function createPublishNft(req: Request, res: Response) {
     // 1. Decrypt the key
     const key = await decrypt(uid)
 
-    // 3. Create profile
+    // 2. Create publish
     const token = await createPublish({
       key,
       data: {
@@ -96,7 +96,7 @@ export async function updatePublishNft(req: Request, res: Response) {
     // 1. Decrypt the key
     const key = await decrypt(uid)
 
-    // 3. Update publish
+    // 2. Update publish
     const token = await updatePublish({
       key,
       data: {
