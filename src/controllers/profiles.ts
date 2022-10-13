@@ -23,7 +23,6 @@ import type { CheckRoleParams } from "../types"
 /**
  * The route to check role.
  * @dev see CheckRoleParams
- * other values received in body
  */
 export async function checkRole(req: Request, res: Response) {
   try {

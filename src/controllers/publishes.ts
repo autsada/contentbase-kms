@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 
 import {
+  checkUserRole,
   createPublish,
   updatePublish,
   deletePublish,
@@ -13,6 +14,32 @@ import {
 } from "../lib/PublishNFT"
 import { decrypt } from "../lib/kms"
 import type { CreatePublishInput, UpdatePublishInput } from "../lib/PublishNFT"
+import type { CheckRoleParams } from "../types"
+
+/**
+ * The route to check role.
+ * @dev see CheckRoleParams
+ */
+export async function checkRole(req: Request, res: Response) {
+  try {
+    const { uid } = req.params
+    const { role, address } = req.body as Pick<
+      CheckRoleParams,
+      "role" | "address"
+    >
+
+    if (!role || !address) throw new Error("User input error")
+
+    // 1. Decrypt the key
+    const key = await decrypt(uid)
+
+    const hasRole = await checkUserRole({ key, role, address })
+
+    res.status(200).json({ hasRole })
+  } catch (error) {
+    res.status(500).send((error as any).message)
+  }
+}
 
 /**
  * The route to create Publish NFT.

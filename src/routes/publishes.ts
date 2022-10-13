@@ -1,6 +1,7 @@
 import express from "express"
 
 import {
+  checkRole,
   createPublishNft,
   updatePublishNft,
   deleteUserPublish,
@@ -15,6 +16,7 @@ import { authMiddleware } from "../middlewares/auth"
 
 export const publishesRouter = express.Router()
 
+publishesRouter.post("/role/uid/:uid", authMiddleware, checkRole)
 publishesRouter.post("/create/uid/:uid", authMiddleware, createPublishNft)
 publishesRouter.post(
   "/update/publishId/:publishId/uid/:uid",
