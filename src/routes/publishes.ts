@@ -1,23 +1,43 @@
-import express from 'express'
+import express from "express"
 
 import {
   createPublishNft,
   updatePublishNft,
+  deleteUserPublish,
   getMyPublishes,
   getPublishes,
   getPublish,
-} from '../controllers/publishes'
-import { authMiddleware } from '../middlewares/auth'
+  totalPublishes,
+  fetchTokenURI,
+  estimateCreatePublishNftGas,
+} from "../controllers/publishes"
+import { authMiddleware } from "../middlewares/auth"
 
 export const publishesRouter = express.Router()
 
-publishesRouter.post('/create/key/:key', authMiddleware, createPublishNft)
+publishesRouter.post("/create/uid/:uid", authMiddleware, createPublishNft)
 publishesRouter.post(
-  '/update/publishId/:publishId/key/:key',
+  "/update/publishId/:publishId/uid/:uid",
   authMiddleware,
   updatePublishNft
 )
+publishesRouter.delete(
+  "/delete/publishId/:publishId/uid/:uid",
+  authMiddleware,
+  deleteUserPublish
+)
 // Has to be a post route as the route has to receive an array from request body
-publishesRouter.post('/my-publishes/key/:key', authMiddleware, getMyPublishes)
-publishesRouter.post('/get', authMiddleware, getPublishes)
-publishesRouter.get('/publishId/:publishId', authMiddleware, getPublish)
+publishesRouter.post("/my-publishes/uid/:uid", authMiddleware, getMyPublishes)
+publishesRouter.post("/get", authMiddleware, getPublishes)
+publishesRouter.get("/publishId/:publishId", authMiddleware, getPublish)
+publishesRouter.get("/total", authMiddleware, totalPublishes)
+publishesRouter.get(
+  "/token-uri/publishId/:publishId",
+  authMiddleware,
+  fetchTokenURI
+)
+publishesRouter.post(
+  "/estimateGas/uid/:uid",
+  authMiddleware,
+  estimateCreatePublishNftGas
+)
