@@ -18,6 +18,8 @@ app.use(cors())
 app.use("/wallet", router.walletRouter)
 app.use("/profiles", router.profilesRouter)
 app.use("/publishes", router.publishesRouter)
+app.use("/follows", router.followsRouter)
+app.use("/likes", router.likesRouter)
 app.use("/admin", router.adminRouter)
 
 // Create the HTTP server
