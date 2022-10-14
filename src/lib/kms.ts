@@ -63,7 +63,7 @@ export async function encrypt(text: string) {
 
   const plaintextBuffer = Buffer.from(text)
 
-  // Use fast-crc32c only in staging and production as it causes error on Macbook M1.
+  // Use fast-crc32c only in staging and production as it causes error on Macbook M1 in development.
   if (NODE_ENV === "development") {
     const [encryptResponse] = await client.encrypt({
       name: keyName,
@@ -120,7 +120,7 @@ export async function decrypt(key: string) {
 
   const ciphertext = Buffer.from(key, "base64")
 
-  // Use fast-crc32c only in staging and production as it causes error on Macbook M1.
+  // Use fast-crc32c only in staging and production as it causes error on Macbook M1 in development.
   if (NODE_ENV === "development") {
     const [decryptResponse] = await client.decrypt({
       name: keyName,
