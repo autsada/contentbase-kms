@@ -72,3 +72,20 @@ export async function getEncryptedKey(uid: string) {
 
   return wallet.key
 }
+
+export function createDocWithId<T extends Record<string, any>>({
+  collectionName,
+  docId,
+  data,
+}: Pick<Args<T>, "collectionName" | "docId" | "data">) {
+  return db
+    .collection(collectionName)
+    .doc(docId)
+    .set(
+      {
+        ...data,
+        createdAt: new Date(),
+      },
+      { merge: true }
+    )
+}

@@ -1,13 +1,27 @@
-import { Request, Response } from 'express'
+import { Request, Response } from "express"
 
-import { generateWallet, getBalance } from '../lib/ethers'
+import { generateWallet, getBalance } from "../lib/ethers"
+import { walletsCollection } from "../config/firebase"
+import { createDocWithId } from "../lib/firebase"
 
 /**
- * @dev The function to generate blockchain wallet
+ * @dev The function to generate blockchain wallet.
+ * @dev Required user's auth uid
  */
 export async function createWallet(req: Request, res: Response) {
   try {
+    const { uid } = req.body as { uid: string }
     const wallet = await generateWallet()
+
+    // Save wallet to Firestore.
+    await createDocWithId<typeof wallet>({
+      collectionName: walletsCollection,
+      docId: uid,
+      data: {
+        address: wallet.address,
+        key: wallet.key,
+      },
+    })
 
     res.status(200).json({ ...wallet })
   } catch (error) {
