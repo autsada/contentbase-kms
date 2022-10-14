@@ -1,6 +1,6 @@
 import { firestore } from "firebase-admin"
 
-import { db } from "../config/firebase"
+import { db, walletsCollection } from "../config/firebase"
 
 type Args<T = Record<string, any>> = {
   collectionName: string
@@ -10,6 +10,11 @@ type Args<T = Record<string, any>> = {
   fieldValue: any
 }
 
+/**
+ * Convert Firestore snapshot to Javascript object.
+ * @param snapshot Firestore snapshot
+ * @returns doc object
+ */
 export function snapshotToDoc<T extends Record<string, any>>(
   snapshot: firestore.DocumentSnapshot<firestore.DocumentData>
 ) {
@@ -31,6 +36,12 @@ export function snapshotToDoc<T extends Record<string, any>>(
   return doc
 }
 
+/**
+ * Get document by id.
+ * @param input.collectionName
+ * @param input.docId
+ * @returns doc
+ */
 export async function getDocById<T extends Record<string, any>>({
   collectionName,
   docId,
@@ -42,6 +53,11 @@ export async function getDocById<T extends Record<string, any>>({
   return snapshotToDoc<T>(snapshot)
 }
 
+/**
+ * Get encrypted wallet key from user's doc.
+ * @param uid {string}
+ * @returns encrypted key
+ */
 export async function getEncryptedKey(uid: string) {
   // Get user's wallet from Firestore.
   const wallet = await getDocById<{
@@ -49,7 +65,7 @@ export async function getEncryptedKey(uid: string) {
     key: string
     address: string
   }>({
-    collectionName: "wallets",
+    collectionName: walletsCollection,
     docId: uid,
   })
   if (!wallet) throw new Error("Forbidden")

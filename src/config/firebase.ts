@@ -1,11 +1,11 @@
-import admin from "firebase-admin";
+import admin from "firebase-admin"
 import {
   initializeApp,
   getApps,
   getApp,
   applicationDefault,
-} from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
+} from "firebase-admin/app"
+import { getFirestore } from "firebase-admin/firestore"
 
 const {
   FIREBASE_PROJECT_ID,
@@ -13,7 +13,7 @@ const {
   FIREBASE_CLIENT_EMAIL,
   FIREBASE_STORAGE_BUCKET,
   NODE_ENV,
-} = process.env;
+} = process.env
 
 function initializeFirebaseAdmin() {
   return !getApps.length
@@ -28,12 +28,12 @@ function initializeFirebaseAdmin() {
               }),
         storageBucket: FIREBASE_STORAGE_BUCKET,
       })
-    : getApp();
+    : getApp()
 }
 
-const firebaseApp = initializeFirebaseAdmin();
+const firebaseApp = initializeFirebaseAdmin()
 
-export const db = getFirestore(firebaseApp);
+export const db = getFirestore(firebaseApp)
 
 // Collections
-export const walletsCollection = "wallets";
+export const walletsCollection = "wallets"
