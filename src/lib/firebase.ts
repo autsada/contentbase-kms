@@ -54,11 +54,11 @@ export async function getDocById<T extends Record<string, any>>({
 }
 
 /**
- * Get encrypted wallet key from user's doc.
+ * Get wallet of a user.
  * @param uid {string}
  * @returns encrypted key
  */
-export async function getEncryptedKey(uid: string) {
+export async function getWallet(uid: string) {
   // Get user's wallet from Firestore.
   const wallet = await getDocById<{
     id: string
@@ -70,7 +70,7 @@ export async function getEncryptedKey(uid: string) {
   })
   if (!wallet) throw new Error("Forbidden")
 
-  return wallet.key
+  return wallet
 }
 
 export function createDocWithId<T extends Record<string, any>>({

@@ -1,6 +1,6 @@
 import { Request, Response } from "express"
 
-import { getEncryptedKey } from "../lib/firebase"
+import { getWallet } from "../lib/firebase"
 import {
   checkUserRole,
   getLikeFee,
@@ -20,15 +20,12 @@ import type { CheckRoleParams } from "../types"
 export async function checkRole(req: Request, res: Response) {
   try {
     const { uid } = req.params
-    const { role, address } = req.body as Pick<
-      CheckRoleParams,
-      "role" | "address"
-    >
+    const { role } = req.body as Pick<CheckRoleParams, "role">
 
-    if (!role || !address) throw new Error("User input error")
+    if (!role) throw new Error("User input error")
 
     // Get encrypted key
-    const encryptedKey = await getEncryptedKey(uid)
+    const { key: encryptedKey, address } = await getWallet(uid)
 
     // 1. Decrypt the key
     const key = await decrypt(encryptedKey)
@@ -79,7 +76,7 @@ export async function likePublish(req: Request, res: Response) {
     if (!uid || !profileId || !publishId) throw new Error("User input error")
 
     // Get encrypted key
-    const encryptedKey = await getEncryptedKey(uid)
+    const { key: encryptedKey } = await getWallet(uid)
 
     // 1. Decrypt the key
     const key = await decrypt(encryptedKey)
@@ -114,7 +111,7 @@ export async function unLikePublish(req: Request, res: Response) {
     if (!uid || !likeId) throw new Error("User input error")
 
     // Get encrypted key
-    const encryptedKey = await getEncryptedKey(uid)
+    const { key: encryptedKey } = await getWallet(uid)
 
     // 1. Decrypt the key
     const key = await decrypt(encryptedKey)
@@ -141,7 +138,7 @@ export async function estimateCreateLikeNftGas(req: Request, res: Response) {
     if (!uid || !profileId || !publishId) throw new Error("User input error")
 
     // Get encrypted key
-    const encryptedKey = await getEncryptedKey(uid)
+    const { key: encryptedKey } = await getWallet(uid)
 
     // 1. Decrypt the key
     const key = await decrypt(encryptedKey)

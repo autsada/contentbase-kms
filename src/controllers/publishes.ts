@@ -1,6 +1,6 @@
 import { Request, Response } from "express"
 
-import { getEncryptedKey } from "../lib/firebase"
+import { getWallet } from "../lib/firebase"
 import {
   checkUserRole,
   createPublish,
@@ -24,15 +24,12 @@ import type { CheckRoleParams } from "../types"
 export async function checkRole(req: Request, res: Response) {
   try {
     const { uid } = req.params
-    const { role, address } = req.body as Pick<
-      CheckRoleParams,
-      "role" | "address"
-    >
+    const { role } = req.body as Pick<CheckRoleParams, "role">
 
-    if (!role || !address) throw new Error("User input error")
+    if (!role) throw new Error("User input error")
 
     // Get encrypted key
-    const encryptedKey = await getEncryptedKey(uid)
+    const { key: encryptedKey, address } = await getWallet(uid)
 
     // 1. Decrypt the key
     const key = await decrypt(encryptedKey)
@@ -59,7 +56,7 @@ export async function createPublishNft(req: Request, res: Response) {
       throw new Error("User input error")
 
     // Get encrypted key
-    const encryptedKey = await getEncryptedKey(uid)
+    const { key: encryptedKey } = await getWallet(uid)
 
     // 1. Decrypt the key
     const key = await decrypt(encryptedKey)
@@ -101,7 +98,7 @@ export async function updatePublishNft(req: Request, res: Response) {
       throw new Error("User input error")
 
     // Get encrypted key
-    const encryptedKey = await getEncryptedKey(uid)
+    const { key: encryptedKey } = await getWallet(uid)
 
     // 1. Decrypt the key
     const key = await decrypt(encryptedKey)
@@ -139,7 +136,7 @@ export async function deleteUserPublish(req: Request, res: Response) {
     if (!uid || !publishId) throw new Error("User input error")
 
     // Get encrypted key
-    const encryptedKey = await getEncryptedKey(uid)
+    const { key: encryptedKey } = await getWallet(uid)
 
     // 1. Decrypt the key
     const key = await decrypt(encryptedKey)
@@ -164,7 +161,7 @@ export async function getMyPublishes(req: Request, res: Response) {
     if (!uid || tokenIds.length === 0) throw new Error("User input error.")
 
     // Get encrypted key
-    const encryptedKey = await getEncryptedKey(uid)
+    const { key: encryptedKey } = await getWallet(uid)
 
     // 1. Decrypt the key
     const key = await decrypt(encryptedKey)
@@ -258,7 +255,7 @@ export async function estimateCreatePublishNftGas(req: Request, res: Response) {
       throw new Error("User input error")
 
     // Get encrypted key
-    const encryptedKey = await getEncryptedKey(uid)
+    const { key: encryptedKey } = await getWallet(uid)
 
     // 1. Decrypt the key
     const key = await decrypt(encryptedKey)
