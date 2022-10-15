@@ -13,6 +13,8 @@ export async function createWallet(req: Request, res: Response) {
     const { uid } = req.body as { uid: string }
     const wallet = await generateWallet()
 
+    if (!uid) throw new Error("Bad request")
+
     // Save wallet to Firestore.
     await createDocWithId<typeof wallet>({
       collectionName: walletsCollection,
