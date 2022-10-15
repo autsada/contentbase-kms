@@ -25,7 +25,7 @@ export async function createWallet(req: Request, res: Response) {
       },
     })
 
-    res.status(200).json({ ...wallet })
+    res.status(200).json({ address: wallet.address })
   } catch (error) {
     res.status(500).send((error as any).message)
   }
