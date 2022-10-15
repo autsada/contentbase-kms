@@ -98,6 +98,11 @@ const _abi = [
           },
           {
             internalType: "uint256",
+            name: "tokenId",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
             name: "followerId",
             type: "uint256",
           },

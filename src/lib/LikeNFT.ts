@@ -208,11 +208,12 @@ export async function like(input: CreateLikeInput) {
 
     if (LikeEvent) {
       if (LikeEvent.args) {
-        const [{ owner, profileId, publishId }] =
+        const [{ owner, tokenId, profileId, publishId }] =
           LikeEvent.args as LikeEvent["args"]
 
         token = {
           owner,
+          tokenId: tokenId.toNumber(),
           profileId: profileId.toNumber(),
           publishId: publishId.toNumber(),
         }
@@ -243,11 +244,12 @@ export async function unLike(key: string, tokenId: number) {
 
     if (LikeEvent) {
       if (LikeEvent.args) {
-        const [{ owner, profileId, publishId }] =
+        const [{ owner, tokenId, profileId, publishId }] =
           LikeEvent.args as UnLikeEvent["args"]
 
         token = {
           owner,
+          tokenId: tokenId.toNumber(),
           profileId: profileId.toNumber(),
           publishId: publishId.toNumber(),
         }

@@ -2,16 +2,16 @@
  * This file contains the functions for Publish Contract.
  */
 
-import { ethers, utils } from 'ethers'
+import { ethers, utils } from "ethers"
 
-import { getContractBySigner, getContractByProvider } from './ethers'
-import PublishContract from '../abi/PublishContract.json'
-import { PublishNFT } from '../typechain-types'
+import { getContractBySigner, getContractByProvider } from "./ethers"
+import PublishContract from "../abi/PublishContract.json"
+import { PublishNFT } from "../typechain-types"
 import {
   PublishCreatedEvent,
   PublishUpdatedEvent,
-} from '../typechain-types/contracts/publish/PublishNFT'
-import { Role, CheckRoleParams } from '../types'
+} from "../typechain-types/contracts/publish/PublishNFT"
+import { Role, CheckRoleParams } from "../types"
 
 /**
  * Input data required for creating a Publish NFT.
@@ -82,7 +82,7 @@ export async function checkUserRole({ role, address, key }: CheckRoleParams) {
   const publishContract = getPublishContractBySigner(key)
   const formattedBytes =
     role === Role.DEFAULT
-      ? utils.formatBytes32String('')
+      ? utils.formatBytes32String("")
       : utils.keccak256(utils.toUtf8Bytes(role))
   const hasGivenRole = await publishContract.hasRole(formattedBytes, address)
 
@@ -139,16 +139,17 @@ export async function createPublish(input: CreatePublishInput) {
 
   if (tx.events) {
     const publishCreatedEvent = tx.events.find(
-      (e) => e.event === 'PublishCreated'
+      (e) => e.event === "PublishCreated"
     )
 
     if (publishCreatedEvent) {
       if (publishCreatedEvent.args) {
-        const [{ creatorId, owner, imageURI, contentURI, likes }, _] =
-          publishCreatedEvent.args as PublishCreatedEvent['args']
+        const [{ tokenId, creatorId, owner, imageURI, contentURI, likes }, _] =
+          publishCreatedEvent.args as PublishCreatedEvent["args"]
 
         token = {
-          creatorId,
+          tokenId: tokenId.toNumber(),
+          creatorId: creatorId.toNumber(),
           owner,
           imageURI,
           contentURI,
@@ -187,17 +188,18 @@ export async function updatePublish(input: UpdatePublishInput) {
 
   if (tx.events) {
     const publishUpdatedEvent = tx.events.find(
-      (e) => e.event === 'PublishUpdated'
+      (e) => e.event === "PublishUpdated"
     )
 
     if (publishUpdatedEvent) {
       if (publishUpdatedEvent.args) {
-        const [{ owner, creatorId, imageURI, contentURI, likes }, _] =
-          publishUpdatedEvent.args as PublishUpdatedEvent['args']
+        const [{ owner, tokenId, creatorId, imageURI, contentURI, likes }, _] =
+          publishUpdatedEvent.args as PublishUpdatedEvent["args"]
 
         updatedToken = {
           owner,
-          creatorId,
+          tokenId: tokenId.toNumber(),
+          creatorId: creatorId.toNumber(),
           imageURI,
           contentURI,
           likes: likes.toNumber(),
@@ -232,10 +234,11 @@ export async function fetchMyPublishes(key: string, tokenIds: number[]) {
   const profileContract = getPublishContractBySigner(key)
   const myPublishes = await profileContract.ownerPublishes(tokenIds)
   const publishes = myPublishes.map(
-    ({ owner, creatorId, imageURI, contentURI, likes }) => {
+    ({ owner, tokenId, creatorId, imageURI, contentURI, likes }) => {
       return {
         owner,
-        creatorId,
+        tokenId: tokenId.toNumber(),
+        creatorId: creatorId.toNumber(),
         imageURI,
         contentURI,
         likes: likes.toNumber(),
@@ -257,10 +260,11 @@ export async function fetchPublishes(tokenIds: number[]) {
   const publishContract = getPublishContractByProvider()
   const myPublishes = await publishContract.getPublishes(tokenIds)
   const publishes = myPublishes.map(
-    ({ owner, creatorId, imageURI, contentURI, likes }) => {
+    ({ owner, tokenId, creatorId, imageURI, contentURI, likes }) => {
       return {
         owner,
-        creatorId,
+        tokenId: tokenId.toNumber(),
+        creatorId: creatorId.toNumber(),
         imageURI,
         contentURI,
         likes: likes.toNumber(),
@@ -278,12 +282,13 @@ export async function fetchPublishes(tokenIds: number[]) {
  */
 export async function fetchPublish(publishId: number) {
   const publishContract = getPublishContractByProvider()
-  const { owner, creatorId, imageURI, contentURI, likes } =
+  const { owner, tokenId, creatorId, imageURI, contentURI, likes } =
     await publishContract.publishById(publishId)
 
   return {
     owner,
-    creatorId,
+    tokenId: tokenId.toNumber(),
+    creatorId: creatorId.toNumber(),
     imageURI,
     contentURI,
     likes: likes.toNumber(),

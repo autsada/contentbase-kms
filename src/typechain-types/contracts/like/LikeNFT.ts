@@ -31,12 +31,14 @@ import type {
 export declare namespace DataTypes {
   export type LikeStruct = {
     owner: PromiseOrValue<string>;
+    tokenId: PromiseOrValue<BigNumberish>;
     profileId: PromiseOrValue<BigNumberish>;
     publishId: PromiseOrValue<BigNumberish>;
   };
 
-  export type LikeStructOutput = [string, BigNumber, BigNumber] & {
+  export type LikeStructOutput = [string, BigNumber, BigNumber, BigNumber] & {
     owner: string;
+    tokenId: BigNumber;
     profileId: BigNumber;
     publishId: BigNumber;
   };

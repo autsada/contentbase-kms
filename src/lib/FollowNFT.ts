@@ -2,13 +2,13 @@
  * This file contains the functions for Follow Contract.
  */
 
-import { ethers, utils } from 'ethers'
+import { ethers, utils } from "ethers"
 
-import { getContractBySigner, getContractByProvider } from './ethers'
-import FollowContract from '../abi/FollowContract.json'
-import { FollowNFT } from '../typechain-types'
-import { FollowEvent } from '../typechain-types/contracts/follow/FollowNFT'
-import { Role, CheckRoleParams } from '../types'
+import { getContractBySigner, getContractByProvider } from "./ethers"
+import FollowContract from "../abi/FollowContract.json"
+import { FollowNFT } from "../typechain-types"
+import { FollowEvent } from "../typechain-types/contracts/follow/FollowNFT"
+import { Role, CheckRoleParams } from "../types"
 
 /**
  * Input data required for creating a Follow NFT.
@@ -55,7 +55,7 @@ export async function checkUserRole({ role, address, key }: CheckRoleParams) {
   const publishContract = getFollowContractBySigner(key)
   const formattedBytes =
     role === Role.DEFAULT
-      ? utils.formatBytes32String('')
+      ? utils.formatBytes32String("")
       : utils.keccak256(utils.toUtf8Bytes(role))
   const hasGivenRole = await publishContract.hasRole(formattedBytes, address)
 
@@ -97,15 +97,16 @@ export async function follow(input: CreateFollowInput) {
   let token
 
   if (tx.events) {
-    const followCreatedEvent = tx.events.find((e) => e.event === 'Follow')
+    const followCreatedEvent = tx.events.find((e) => e.event === "Follow")
 
     if (followCreatedEvent) {
       if (followCreatedEvent.args) {
-        const [{ owner, followerId, followeeId }, follower, followee] =
-          followCreatedEvent.args as FollowEvent['args']
+        const [{ owner, tokenId, followerId, followeeId }, follower, followee] =
+          followCreatedEvent.args as FollowEvent["args"]
 
         token = {
           owner,
+          tokenId: tokenId.toNumber(),
           followerId: followerId.toNumber(),
           followeeId: followeeId.toNumber(),
         }
@@ -162,8 +163,9 @@ export async function getFollows(tokenIds: number[]) {
   const followContract = getFollowContractByProvider()
   const follows = await followContract.getFollows(tokenIds)
 
-  return follows.map(({ owner, followerId, followeeId }) => ({
+  return follows.map(({ owner, tokenId, followerId, followeeId }) => ({
     owner,
+    tokenId: tokenId.toNumber(),
     followerId: followerId.toNumber(),
     followeeId: followeeId.toNumber(),
   }))

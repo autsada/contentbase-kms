@@ -2,17 +2,17 @@
  * This file contains the functions for Profile Contract.
  */
 
-import { ethers, utils } from 'ethers'
+import { ethers, utils } from "ethers"
 
-import { getContractBySigner, getContractByProvider } from './ethers'
-import ProfileContract from '../abi/ProfileContract.json'
-import { ProfileNFT } from '../typechain-types'
+import { getContractBySigner, getContractByProvider } from "./ethers"
+import ProfileContract from "../abi/ProfileContract.json"
+import { ProfileNFT } from "../typechain-types"
 import {
   ProfileCreatedEvent,
   ProfileImageUpdatedEvent,
   DefaultProfileUpdatedEvent,
-} from '../typechain-types/contracts/profile/ProfileNFT'
-import { Role, CheckRoleParams } from '../types'
+} from "../typechain-types/contracts/profile/ProfileNFT"
+import { Role, CheckRoleParams } from "../types"
 
 /**
  * Input data required for creating a Profile NFT.
@@ -77,7 +77,7 @@ export async function checkUserRole({ role, address, key }: CheckRoleParams) {
   const profileContract = getProfileContractBySigner(key)
   const formattedBytes =
     role === Role.DEFAULT
-      ? utils.formatBytes32String('')
+      ? utils.formatBytes32String("")
       : utils.keccak256(utils.toUtf8Bytes(role))
   const hasGivenRole = await profileContract.hasRole(formattedBytes, address)
 
@@ -98,7 +98,7 @@ export async function createProfile(input: CreateProfileInput) {
   // Validate the handle
   const isHandleValid = verifyHandle(handle)
 
-  if (!isHandleValid) throw new Error('Handle is invalid or taken')
+  if (!isHandleValid) throw new Error("Handle is invalid or taken")
 
   const profileContract = getProfileContractBySigner(key)
 
@@ -114,15 +114,16 @@ export async function createProfile(input: CreateProfileInput) {
 
   if (tx.events) {
     const profileCreatedEvent = tx.events.find(
-      (e) => e.event === 'ProfileCreated'
+      (e) => e.event === "ProfileCreated"
     )
 
     if (profileCreatedEvent) {
       if (profileCreatedEvent.args) {
-        const [{ handle, imageURI, owner }, _] =
-          profileCreatedEvent.args as ProfileCreatedEvent['args']
+        const [{ tokenId, handle, imageURI, owner }, _] =
+          profileCreatedEvent.args as ProfileCreatedEvent["args"]
 
         token = {
+          tokenId: tokenId.toNumber(),
           owner,
           handle,
           imageURI,
@@ -158,15 +159,16 @@ export async function updateProfile(input: UpdateProfileImageInput) {
 
   if (tx.events) {
     const profileCreatedEvent = tx.events.find(
-      (e) => e.event === 'ProfileImageUpdated'
+      (e) => e.event === "ProfileImageUpdated"
     )
 
     if (profileCreatedEvent) {
       if (profileCreatedEvent.args) {
-        const [{ owner, handle, imageURI }, _] =
-          profileCreatedEvent.args as ProfileImageUpdatedEvent['args']
+        const [{ tokenId, owner, handle, imageURI }, _] =
+          profileCreatedEvent.args as ProfileImageUpdatedEvent["args"]
 
         updatedToken = {
+          tokenId: tokenId.toNumber(),
           owner,
           handle,
           imageURI,
@@ -194,15 +196,16 @@ export async function setDefaultProfile(key: string, tokenId: number) {
 
   if (tx.events) {
     const profileCreatedEvent = tx.events.find(
-      (e) => e.event === 'DefaultProfileUpdated'
+      (e) => e.event === "DefaultProfileUpdated"
     )
 
     if (profileCreatedEvent) {
       if (profileCreatedEvent.args) {
-        const [{ owner, handle, imageURI }, _] =
-          profileCreatedEvent.args as DefaultProfileUpdatedEvent['args']
+        const [{ tokenId, owner, handle, imageURI }, _] =
+          profileCreatedEvent.args as DefaultProfileUpdatedEvent["args"]
 
         token = {
+          tokenId: tokenId.toNumber(),
           owner,
           handle,
           imageURI,
@@ -225,8 +228,9 @@ export async function fetchMyProfiles(key: string, tokenIds: number[]) {
   const profileContract = getProfileContractBySigner(key)
   const profiles = await profileContract.ownerProfiles(tokenIds)
 
-  return profiles.map(({ owner, handle, imageURI }) => ({
+  return profiles.map(({ tokenId, owner, handle, imageURI }) => ({
     owner,
+    tokenId: tokenId.toNumber(),
     handle,
     imageURI,
   }))
@@ -239,10 +243,12 @@ export async function fetchMyProfiles(key: string, tokenIds: number[]) {
  */
 export async function getDefaultProfile(key: string) {
   const profileContract = getProfileContractBySigner(key)
-  const { owner, handle, imageURI } = await profileContract.defaultProfile()
+  const { owner, tokenId, handle, imageURI } =
+    await profileContract.defaultProfile()
 
   return {
     owner,
+    tokenId: tokenId.toNumber(),
     handle,
     imageURI,
   }
@@ -255,12 +261,12 @@ export async function getDefaultProfile(key: string) {
  */
 export async function getProfileById(profileId: number) {
   const profileContract = getProfileContractByProvider()
-  const { owner, handle, imageURI } = await profileContract.profileById(
-    profileId
-  )
+  const { owner, tokenId, handle, imageURI } =
+    await profileContract.profileById(profileId)
 
   return {
     owner,
+    tokenId: tokenId.toNumber(),
     handle,
     imageURI,
   }

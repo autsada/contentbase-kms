@@ -37,12 +37,14 @@ export declare namespace DataTypes {
   };
 
   export type ProfileStruct = {
+    tokenId: PromiseOrValue<BigNumberish>;
     owner: PromiseOrValue<string>;
     handle: PromiseOrValue<string>;
     imageURI: PromiseOrValue<string>;
   };
 
-  export type ProfileStructOutput = [string, string, string] & {
+  export type ProfileStructOutput = [BigNumber, string, string, string] & {
+    tokenId: BigNumber;
     owner: string;
     handle: string;
     imageURI: string;

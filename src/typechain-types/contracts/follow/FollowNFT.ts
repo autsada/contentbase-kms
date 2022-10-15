@@ -31,12 +31,14 @@ import type {
 export declare namespace DataTypes {
   export type FollowStruct = {
     owner: PromiseOrValue<string>;
+    tokenId: PromiseOrValue<BigNumberish>;
     followerId: PromiseOrValue<BigNumberish>;
     followeeId: PromiseOrValue<BigNumberish>;
   };
 
-  export type FollowStructOutput = [string, BigNumber, BigNumber] & {
+  export type FollowStructOutput = [string, BigNumber, BigNumber, BigNumber] & {
     owner: string;
+    tokenId: BigNumber;
     followerId: BigNumber;
     followeeId: BigNumber;
   };

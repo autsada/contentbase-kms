@@ -53,6 +53,11 @@ const _abi = [
       {
         components: [
           {
+            internalType: "uint256",
+            name: "tokenId",
+            type: "uint256",
+          },
+          {
             internalType: "address",
             name: "owner",
             type: "address",
@@ -127,6 +132,11 @@ const _abi = [
       {
         components: [
           {
+            internalType: "uint256",
+            name: "tokenId",
+            type: "uint256",
+          },
+          {
             internalType: "address",
             name: "owner",
             type: "address",
@@ -162,6 +172,11 @@ const _abi = [
     outputs: [
       {
         components: [
+          {
+            internalType: "uint256",
+            name: "tokenId",
+            type: "uint256",
+          },
           {
             internalType: "address",
             name: "owner",

@@ -31,6 +31,7 @@ import type {
 export declare namespace DataTypes {
   export type PublishStruct = {
     owner: PromiseOrValue<string>;
+    tokenId: PromiseOrValue<BigNumberish>;
     creatorId: PromiseOrValue<BigNumberish>;
     likes: PromiseOrValue<BigNumberish>;
     imageURI: PromiseOrValue<string>;
@@ -41,10 +42,12 @@ export declare namespace DataTypes {
     string,
     BigNumber,
     BigNumber,
+    BigNumber,
     string,
     string
   ] & {
     owner: string;
+    tokenId: BigNumber;
     creatorId: BigNumber;
     likes: BigNumber;
     imageURI: string;

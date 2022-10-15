@@ -70,6 +70,11 @@ const _abi = [
           },
           {
             internalType: "uint256",
+            name: "tokenId",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
             name: "creatorId",
             type: "uint256",
           },
@@ -148,6 +153,11 @@ const _abi = [
           },
           {
             internalType: "uint256",
+            name: "tokenId",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
             name: "creatorId",
             type: "uint256",
           },
@@ -191,6 +201,11 @@ const _abi = [
             internalType: "address",
             name: "owner",
             type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "tokenId",
+            type: "uint256",
           },
           {
             internalType: "uint256",
