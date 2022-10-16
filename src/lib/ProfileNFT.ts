@@ -218,25 +218,6 @@ export async function setDefaultProfile(key: string, tokenId: number) {
 }
 
 /**
- * The function to get caller's profiles.
- * @param key a wallet private key
- * @param tokenIds an array of profile token ids
- * @dev tokenIds array length must not greater than 40
- * @return tokens {array of Profile object}
- */
-export async function fetchMyProfiles(key: string, tokenIds: number[]) {
-  const profileContract = getProfileContractBySigner(key)
-  const profiles = await profileContract.ownerProfiles(tokenIds)
-
-  return profiles.map(({ tokenId, owner, handle, imageURI }) => ({
-    owner,
-    tokenId: tokenId.toNumber(),
-    handle,
-    imageURI,
-  }))
-}
-
-/**
  * The function get user's default profile.
  * @param key a wallet private key
  * @return token {Profile object}
@@ -255,35 +236,6 @@ export async function getDefaultProfile(key: string) {
 }
 
 /**
- * The function to get profile from provided id.
- * @param profileId {number} a token id of the profile token
- * @return token {Profile object}
- */
-export async function getProfileById(profileId: number) {
-  const profileContract = getProfileContractByProvider()
-  const { owner, tokenId, handle, imageURI } =
-    await profileContract.profileById(profileId)
-
-  return {
-    owner,
-    tokenId: tokenId.toNumber(),
-    handle,
-    imageURI,
-  }
-}
-
-/**
- * The function to get total profiles count.
- * @return count {number}
- */
-export async function totalProfilesCount() {
-  const profileContract = getProfileContractByProvider()
-  const result = await profileContract.totalProfiles()
-
-  return result.toNumber()
-}
-
-/**
  * The function to verify if handle is valid.
  * @param handle user's handle
  * @return valid {boolean}
@@ -293,18 +245,6 @@ export async function verifyHandle(handle: string) {
   const valid = await profileContract.validateHandle(handle)
 
   return valid
-}
-
-/**
- * The function to get tokenURI of a profile.
- * @param tokenId {number} - a token id
- * @return tokenURI {string}
- */
-export async function getTokenURI(tokenId: number) {
-  const profileContract = getProfileContractByProvider()
-  const tokenURI = await profileContract.tokenURI(tokenId)
-
-  return tokenURI
 }
 
 /**

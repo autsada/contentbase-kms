@@ -6,12 +6,8 @@ import {
   createProfile,
   updateProfile,
   setDefaultProfile,
-  fetchMyProfiles,
   getDefaultProfile,
-  getProfileById,
-  totalProfilesCount,
   verifyHandle,
-  getTokenURI,
   estimateCreateProfileGas,
 } from "../lib/ProfileNFT"
 import { decrypt } from "../lib/kms"
@@ -157,33 +153,6 @@ export async function setProfileAsDefault(req: Request, res: Response) {
 }
 
 /**
- * The route to get user's profiles.
- * @dev token ids array is required
- */
-export async function getMyProfiles(req: Request, res: Response) {
-  try {
-    const { uid } = req.params as { uid: string }
-    const { tokenIds } = req.body as { tokenIds: number[] }
-
-    if (!uid || tokenIds.length === 0) throw new Error("User input error.")
-
-    // Get encrypted key
-    const { key: encryptedKey } = await getWallet(uid)
-
-    // 1. Decrypt the key
-    const key = await decrypt(encryptedKey)
-
-    // // 2. Get profiles
-    const tokens = await fetchMyProfiles(key, tokenIds)
-
-    res.status(200).json({ tokens })
-  } catch (error) {
-    // In case NOT FOUND, fetchMyProfiles will throw so it's needed to return 200 - empty array so the process can continue.
-    res.status(200).json({ tokens: [] })
-  }
-}
-
-/**
  * The route to get user's default profile.
  */
 export async function getUserDefaultProfile(req: Request, res: Response) {
@@ -210,37 +179,6 @@ export async function getUserDefaultProfile(req: Request, res: Response) {
 }
 
 /**
- * The route to get a profile by provided id.
- * @dev token id is required
- */
-export async function getProfile(req: Request, res: Response) {
-  try {
-    const { profileId } = req.params as { profileId: string }
-
-    if (!profileId) throw new Error("User input error.")
-
-    const token = await getProfileById(Number(profileId))
-
-    res.status(200).json({ token })
-  } catch (error) {
-    res.status(500).send((error as any).message)
-  }
-}
-
-/**
- * The route to get total profiles count.
- */
-export async function totalProfiles(req: Request, res: Response) {
-  try {
-    const total = await totalProfilesCount()
-
-    res.status(200).json({ total })
-  } catch (error) {
-    res.status(500).send((error as any).message)
-  }
-}
-
-/**
  * The route to validate handle.
  * @dev handle is required
  */
@@ -251,23 +189,6 @@ export async function verifyProfileHandle(req: Request, res: Response) {
     const valid = await verifyHandle(handle)
 
     res.status(200).json({ valid })
-  } catch (error) {
-    res.status(200).json({ valid: false })
-  }
-}
-
-/**
- * The route to get token uri.
- */
-export async function fetchTokenURI(req: Request, res: Response) {
-  try {
-    const { profileId } = req.params as { profileId: string }
-
-    if (!profileId) throw new Error("User input error.")
-
-    const uri = await getTokenURI(Number(profileId))
-
-    res.status(200).json({ uri })
   } catch (error) {
     res.status(200).json({ valid: false })
   }
