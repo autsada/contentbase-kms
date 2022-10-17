@@ -1,3 +1,8 @@
+/**
+ * These are handlers for the routes that only allow admin to access.
+ * @dev All these route will be used in development only. In production connect to the blockchain directly from the UI.
+ */
+
 import express from "express"
 
 import {
@@ -42,11 +47,7 @@ adminRouter.post(
   authMiddleware,
   setPublishContractOnLikeContract
 )
-adminRouter.post(
-  "/set/platform-address",
-  authMiddleware,
-  setPlatformOwnerAddress
-)
+adminRouter.post("/set/owner-address", authMiddleware, setPlatformOwnerAddress)
 adminRouter.post("/withdraw", authMiddleware, withdrawFunds)
 adminRouter.post("/set/like-fee", authMiddleware, setLikeSupportFee)
 adminRouter.post("/set/platform-fee", authMiddleware, setFeeForPlatform)

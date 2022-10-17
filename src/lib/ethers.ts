@@ -6,9 +6,6 @@ import { encryptString } from "./utils"
 
 const { BLOCKCHAIN_LOCAL_URL, NODE_ENV, ALCHEMY_API_KEY } = process.env
 
-const localChainPrivatKey =
-  "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
-
 export function getJsonRpcProvider() {
   const url = BLOCKCHAIN_LOCAL_URL!
 
@@ -50,10 +47,7 @@ export function getContractBySigner({
   privateKey: string
   contractInterface: ethers.ContractInterface
 }) {
-  const signer =
-    NODE_ENV === "development"
-      ? getSigner(localChainPrivatKey)
-      : getSigner(privateKey)
+  const signer = getSigner(privateKey)
 
   return new ethers.Contract(address, contractInterface, signer)
 }

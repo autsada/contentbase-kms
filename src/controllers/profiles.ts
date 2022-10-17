@@ -187,9 +187,11 @@ export async function verifyProfileHandle(req: Request, res: Response) {
     const { handle } = req.body as { handle: string }
     if (!handle) throw new Error("Handle is required.")
     const valid = await verifyHandle(handle)
+    console.log("valid -->", valid)
 
     res.status(200).json({ valid })
   } catch (error) {
+    console.log("error -->", error)
     res.status(200).json({ valid: false })
   }
 }
