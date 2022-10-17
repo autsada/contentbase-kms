@@ -93,7 +93,7 @@ export async function updatePublishNft(req: Request, res: Response) {
     const { tokenURI, creatorId, imageURI, contentURI } =
       req.body as UpdatePublishInput["data"]
 
-    // imageURI can be empty.
+    // imageURI and contentURI can be empty.
     if (!uid || !publishId || !creatorId || !tokenURI)
       throw new Error("User input error")
 
