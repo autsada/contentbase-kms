@@ -9,7 +9,6 @@ import {
   getPublishes,
   getPublish,
   totalPublishes,
-  fetchTokenURI,
   estimateCreatePublishNftGas,
 } from "../controllers/publishes"
 import { authMiddleware } from "../middlewares/auth"
@@ -33,11 +32,6 @@ publishesRouter.post("/my-publishes/uid/:uid", authMiddleware, getMyPublishes)
 publishesRouter.post("/get", authMiddleware, getPublishes)
 publishesRouter.get("/publishId/:publishId", authMiddleware, getPublish)
 publishesRouter.get("/total", authMiddleware, totalPublishes)
-publishesRouter.get(
-  "/token-uri/publishId/:publishId",
-  authMiddleware,
-  fetchTokenURI
-)
 publishesRouter.post(
   "/estimateGas/uid/:uid",
   authMiddleware,

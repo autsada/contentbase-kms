@@ -14,9 +14,9 @@ import { authMiddleware } from "../middlewares/auth"
 export const followsRouter = express.Router()
 
 followsRouter.post("/role/uid/:uid", authMiddleware, checkRole)
-followsRouter.post("/uid/:uid", authMiddleware, followProfile)
+followsRouter.post("/create/uid/:uid", authMiddleware, followProfile)
 followsRouter.delete(
-  "/profileId/:profileId/uid/:uid",
+  "/delete/tokenId/:tokenId/uid/:uid",
   authMiddleware,
   unFollowProfile
 )
@@ -30,7 +30,8 @@ followsRouter.get(
   authMiddleware,
   getFollowers
 )
-followsRouter.get("/follows", authMiddleware, fetchFollows)
+// This must be a post request as it will receive data in the body
+followsRouter.post("/", authMiddleware, fetchFollows)
 followsRouter.post(
   "/estimateGas/uid/:uid",
   authMiddleware,

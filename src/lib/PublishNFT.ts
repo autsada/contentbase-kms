@@ -13,21 +13,65 @@ import {
 } from "../typechain-types/contracts/publish/PublishNFT"
 import { Role, CheckRoleParams } from "../types"
 
+export enum Category {
+  Empty = "Empty",
+  Music = "Music",
+  Movies = "Movies",
+  Entertainment = "Entertainment",
+  Sports = "Sports",
+  Food = "Food",
+  Travel = "Travel",
+  Gaming = "Gaming",
+  News = "News",
+  Animals = "Animals",
+  Education = "Education",
+  Science = "Science",
+  Technology = "Technology",
+  Programming = "Programming",
+  LifeStyle = "LifeStyle",
+  Vehicles = "Vehicles",
+  Children = "Children",
+  Women = "Women",
+  Men = "Men",
+  Other = "Other",
+  NotExist = "NotExist",
+}
+
+// A helper function to get Category index.
+export function getIndexOfCategory(cat: Category) {
+  return Object.keys(Category).indexOf(cat)
+}
+
+// A helper function to get Category key.
+export function getKeyOfCategory(index: number) {
+  return Object.keys(Category)[index]
+}
+
 /**
- * Input data required for creating a Publish NFT.
+ * Input data required to create a Publish NFT.
  * @param key - a wallet's key
- * @param data.tokenURI - a token's metadata uri
  * @param data.creatorId - a token id of the creator's profile
  * @param data.imageURI - a thumbnail image uri of the publish
- * @param data.contentURI - a uri of the publish
+ * @param data.contentURI - a content uri of the publish
+ * @param data.metadataURI - a metadata file uri of the publish
+ * @param data.title - a publish's title
+ * @param data.description - a publish's description
+ * @param data.primaryCategory - a publish's primaryCategory
+ * @param data.secondaryCategory - a publish's secondaryCategory
+ * @param data.tertiaryCategory - a publish's tertiaryCategory
  */
 export interface CreatePublishInput {
   key: string
   data: {
-    tokenURI: string
     creatorId: number
     imageURI: string
     contentURI: string
+    metadataURI: string
+    title: string
+    description?: string
+    primaryCategory: Category
+    secondaryCategory: Category
+    tertiaryCategory: Category
   }
 }
 
@@ -36,18 +80,28 @@ export interface CreatePublishInput {
  * @param key - a wallet's key
  * @param data.tokenId - a token id of the publish to be updated
  * @param data.creatorId - a token id of the creator's profile
- * @param data.tokenURI - a token's metadata uri
  * @param data.imageURI - a thumbnail image uri of the publish
  * @param data.contentURI - a uri of the publish
+ * @param data.metadataURI - a metadata file uri of the publish
+ * @param data.title - a publish's title
+ * @param data.description - a publish's description
+ * @param data.primaryCategory - a publish's primaryCategory
+ * @param data.secondaryCategory - a publish's secondaryCategory
+ * @param data.tertiaryCategory - a publish's tertiaryCategory
  */
 export interface UpdatePublishInput {
   key: string
   data: {
     tokenId: number
     creatorId: number
-    tokenURI: string
     imageURI: string
     contentURI: string
+    metadataURI: string
+    title: string
+    description?: string
+    primaryCategory: Category
+    secondaryCategory: Category
+    tertiaryCategory: Category
   }
 }
 
@@ -121,16 +175,32 @@ export async function setLikeContract(key: string, address: string) {
 export async function createPublish(input: CreatePublishInput) {
   const {
     key,
-    data: { tokenURI, creatorId, imageURI, contentURI },
+    data: {
+      creatorId,
+      imageURI,
+      contentURI,
+      metadataURI,
+      title,
+      description,
+      primaryCategory,
+      secondaryCategory,
+      tertiaryCategory,
+    },
   } = input
 
   const publishContract = getPublishContractBySigner(key)
 
+  // Make sure to pass down categories as numbers.
   const transaction = await publishContract.createPublish({
-    tokenURI,
     creatorId,
     imageURI,
     contentURI,
+    metadataURI,
+    title,
+    description: description || "",
+    primaryCategory: getIndexOfCategory(primaryCategory),
+    secondaryCategory: getIndexOfCategory(secondaryCategory),
+    tertiaryCategory: getIndexOfCategory(tertiaryCategory),
   })
 
   const tx = await transaction.wait()
@@ -144,8 +214,23 @@ export async function createPublish(input: CreatePublishInput) {
 
     if (publishCreatedEvent) {
       if (publishCreatedEvent.args) {
-        const [{ tokenId, creatorId, owner, imageURI, contentURI, likes }, _] =
-          publishCreatedEvent.args as PublishCreatedEvent["args"]
+        const [
+          {
+            tokenId,
+            creatorId,
+            owner,
+            imageURI,
+            contentURI,
+            metadataURI,
+            likes,
+          },
+          title,
+          description,
+          primaryCategory,
+          secondaryCategory,
+          tertiaryCategory,
+          _,
+        ] = publishCreatedEvent.args as PublishCreatedEvent["args"]
 
         token = {
           tokenId: tokenId.toNumber(),
@@ -153,7 +238,13 @@ export async function createPublish(input: CreatePublishInput) {
           owner,
           imageURI,
           contentURI,
+          metadataURI,
           likes: likes.toNumber(),
+          title,
+          description,
+          primaryCategory: getKeyOfCategory(primaryCategory),
+          secondaryCategory: getKeyOfCategory(secondaryCategory),
+          tertiaryCategory: getKeyOfCategory(tertiaryCategory),
         }
       }
     }
@@ -170,7 +261,18 @@ export async function createPublish(input: CreatePublishInput) {
 export async function updatePublish(input: UpdatePublishInput) {
   const {
     key,
-    data: { tokenURI, tokenId, creatorId, imageURI, contentURI },
+    data: {
+      tokenId,
+      creatorId,
+      imageURI,
+      contentURI,
+      metadataURI,
+      title,
+      description,
+      primaryCategory,
+      secondaryCategory,
+      tertiaryCategory,
+    },
   } = input
 
   const publishContract = getPublishContractBySigner(key)
@@ -178,9 +280,14 @@ export async function updatePublish(input: UpdatePublishInput) {
   const transaction = await publishContract.updatePublish({
     tokenId,
     creatorId,
-    tokenURI,
     imageURI,
     contentURI,
+    metadataURI,
+    title,
+    description: description || "",
+    primaryCategory: getIndexOfCategory(primaryCategory),
+    secondaryCategory: getIndexOfCategory(secondaryCategory),
+    tertiaryCategory: getIndexOfCategory(tertiaryCategory),
   })
 
   const tx = await transaction.wait()
@@ -193,8 +300,23 @@ export async function updatePublish(input: UpdatePublishInput) {
 
     if (publishUpdatedEvent) {
       if (publishUpdatedEvent.args) {
-        const [{ owner, tokenId, creatorId, imageURI, contentURI, likes }, _] =
-          publishUpdatedEvent.args as PublishUpdatedEvent["args"]
+        const [
+          {
+            owner,
+            tokenId,
+            creatorId,
+            imageURI,
+            contentURI,
+            metadataURI,
+            likes,
+          },
+          title,
+          description,
+          primaryCategory,
+          secondaryCategory,
+          tertiaryCategory,
+          _,
+        ] = publishUpdatedEvent.args as PublishUpdatedEvent["args"]
 
         updatedToken = {
           owner,
@@ -202,7 +324,13 @@ export async function updatePublish(input: UpdatePublishInput) {
           creatorId: creatorId.toNumber(),
           imageURI,
           contentURI,
+          metadataURI,
           likes: likes.toNumber(),
+          title,
+          description,
+          primaryCategory: getKeyOfCategory(primaryCategory),
+          secondaryCategory: getKeyOfCategory(secondaryCategory),
+          tertiaryCategory: getKeyOfCategory(tertiaryCategory),
         }
       }
     }
@@ -234,13 +362,22 @@ export async function fetchMyPublishes(key: string, tokenIds: number[]) {
   const profileContract = getPublishContractBySigner(key)
   const myPublishes = await profileContract.ownerPublishes(tokenIds)
   const publishes = myPublishes.map(
-    ({ owner, tokenId, creatorId, imageURI, contentURI, likes }) => {
+    ({
+      owner,
+      tokenId,
+      creatorId,
+      imageURI,
+      contentURI,
+      metadataURI,
+      likes,
+    }) => {
       return {
         owner,
         tokenId: tokenId.toNumber(),
         creatorId: creatorId.toNumber(),
         imageURI,
         contentURI,
+        metadataURI,
         likes: likes.toNumber(),
       }
     }
@@ -260,13 +397,22 @@ export async function fetchPublishes(tokenIds: number[]) {
   const publishContract = getPublishContractByProvider()
   const myPublishes = await publishContract.getPublishes(tokenIds)
   const publishes = myPublishes.map(
-    ({ owner, tokenId, creatorId, imageURI, contentURI, likes }) => {
+    ({
+      owner,
+      tokenId,
+      creatorId,
+      imageURI,
+      contentURI,
+      metadataURI,
+      likes,
+    }) => {
       return {
         owner,
         tokenId: tokenId.toNumber(),
         creatorId: creatorId.toNumber(),
         imageURI,
         contentURI,
+        metadataURI,
         likes: likes.toNumber(),
       }
     }
@@ -282,8 +428,15 @@ export async function fetchPublishes(tokenIds: number[]) {
  */
 export async function fetchPublish(publishId: number) {
   const publishContract = getPublishContractByProvider()
-  const { owner, tokenId, creatorId, imageURI, contentURI, likes } =
-    await publishContract.publishById(publishId)
+  const {
+    owner,
+    tokenId,
+    creatorId,
+    imageURI,
+    contentURI,
+    metadataURI,
+    likes,
+  } = await publishContract.publishById(publishId)
 
   return {
     owner,
@@ -291,6 +444,7 @@ export async function fetchPublish(publishId: number) {
     creatorId: creatorId.toNumber(),
     imageURI,
     contentURI,
+    metadataURI,
     likes: likes.toNumber(),
   }
 }
@@ -307,18 +461,6 @@ export async function totalPublishesCount() {
 }
 
 /**
- * The function to get tokenURI of a publish.
- * @param tokenId {number} - a token id
- * @return tokenURI {string}
- */
-export async function getTokenURI(tokenId: number) {
-  const publishContract = getPublishContractByProvider()
-  const tokenURI = await publishContract.tokenURI(tokenId)
-
-  return tokenURI
-}
-
-/**
  * The function to estimate gas used to create a publish token.
  * @dev see CreatePublishInput
  * @return gas {number} - amount in ether
@@ -326,15 +468,30 @@ export async function getTokenURI(tokenId: number) {
 export async function estimateCreatePublishGas(input: CreatePublishInput) {
   const {
     key,
-    data: { creatorId, imageURI, contentURI, tokenURI },
+    data: {
+      creatorId,
+      imageURI,
+      contentURI,
+      metadataURI,
+      title,
+      description,
+      primaryCategory,
+      secondaryCategory,
+      tertiaryCategory,
+    },
   } = input
   const publishContract = getPublishContractBySigner(key)
 
   const gasInWei = await publishContract.estimateGas.createPublish({
-    tokenURI,
     creatorId,
     imageURI,
     contentURI,
+    metadataURI,
+    title,
+    description: description || "",
+    primaryCategory: getIndexOfCategory(primaryCategory),
+    secondaryCategory: getIndexOfCategory(secondaryCategory),
+    tertiaryCategory: getIndexOfCategory(tertiaryCategory),
   })
 
   return ethers.utils.formatEther(gasInWei)

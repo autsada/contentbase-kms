@@ -10,7 +10,6 @@ import {
   fetchPublishes,
   fetchPublish,
   totalPublishesCount,
-  getTokenURI,
   estimateCreatePublishGas,
 } from "../lib/PublishNFT"
 import { decrypt } from "../lib/kms"
@@ -49,10 +48,31 @@ export async function checkRole(req: Request, res: Response) {
 export async function createPublishNft(req: Request, res: Response) {
   try {
     const { uid } = req.params as { uid: string }
-    const { tokenURI, creatorId, imageURI, contentURI } =
-      req.body as CreatePublishInput["data"]
+    const {
+      creatorId,
+      imageURI,
+      contentURI,
+      metadataURI,
+      title,
+      description,
+      primaryCategory,
+      secondaryCategory,
+      tertiaryCategory,
+    } = req.body as CreatePublishInput["data"]
 
-    if (!uid || !tokenURI || !creatorId || !imageURI || !contentURI)
+    // Validate input.
+    // description can be empty.
+    if (
+      !uid ||
+      !creatorId ||
+      !imageURI ||
+      !contentURI ||
+      !metadataURI ||
+      !title ||
+      !primaryCategory ||
+      !secondaryCategory ||
+      !tertiaryCategory
+    )
       throw new Error("User input error")
 
     // Get encrypted key
@@ -65,10 +85,15 @@ export async function createPublishNft(req: Request, res: Response) {
     const token = await createPublish({
       key,
       data: {
-        tokenURI,
         creatorId,
         imageURI,
         contentURI,
+        metadataURI,
+        title,
+        description,
+        primaryCategory,
+        secondaryCategory,
+        tertiaryCategory,
       },
     })
 
@@ -90,11 +115,32 @@ export async function updatePublishNft(req: Request, res: Response) {
       uid: string
       publishId: string
     }
-    const { tokenURI, creatorId, imageURI, contentURI } =
-      req.body as UpdatePublishInput["data"]
+    const {
+      creatorId,
+      imageURI,
+      contentURI,
+      metadataURI,
+      title,
+      description,
+      primaryCategory,
+      secondaryCategory,
+      tertiaryCategory,
+    } = req.body as Omit<UpdatePublishInput["data"], "tokenId">
 
-    // imageURI and contentURI can be empty.
-    if (!uid || !publishId || !creatorId || !tokenURI)
+    // Validate input.
+    // description can be empty.
+    if (
+      !uid ||
+      !publishId ||
+      !creatorId ||
+      !imageURI ||
+      !contentURI ||
+      !metadataURI ||
+      !title ||
+      !primaryCategory ||
+      !secondaryCategory ||
+      !tertiaryCategory
+    )
       throw new Error("User input error")
 
     // Get encrypted key
@@ -109,9 +155,14 @@ export async function updatePublishNft(req: Request, res: Response) {
       data: {
         tokenId: Number(publishId),
         creatorId,
-        tokenURI,
-        imageURI: imageURI || "",
+        imageURI,
         contentURI,
+        metadataURI,
+        title,
+        description,
+        primaryCategory,
+        secondaryCategory,
+        tertiaryCategory,
       },
     })
 
@@ -133,6 +184,7 @@ export async function deleteUserPublish(req: Request, res: Response) {
       publishId: string
     }
 
+    // Validate input.
     if (!uid || !publishId) throw new Error("User input error")
 
     // Get encrypted key
@@ -143,7 +195,7 @@ export async function deleteUserPublish(req: Request, res: Response) {
 
     await deletePublish(key, Number(publishId))
 
-    res.status(200)
+    res.status(200).json({ status: 200 })
   } catch (error) {
     res.status(500).send((error as any).message)
   }
@@ -158,6 +210,7 @@ export async function getMyPublishes(req: Request, res: Response) {
     const { uid } = req.params as { uid: string }
     const { tokenIds } = req.body as { tokenIds: number[] }
 
+    // Validate input.
     if (!uid || tokenIds.length === 0) throw new Error("User input error.")
 
     // Get encrypted key
@@ -183,6 +236,7 @@ export async function getPublishes(req: Request, res: Response) {
   try {
     const { tokenIds } = req.body as { tokenIds: number[] }
 
+    // Validate input.
     if (tokenIds.length === 0) throw new Error("User input error.")
 
     const publishes = await fetchPublishes(tokenIds)
@@ -200,6 +254,7 @@ export async function getPublish(req: Request, res: Response) {
   try {
     const { publishId } = req.params as { publishId: string }
 
+    // Validate input.
     if (!publishId) throw new Error("User input error.")
 
     const token = await fetchPublish(Number(publishId))
@@ -224,34 +279,38 @@ export async function totalPublishes(req: Request, res: Response) {
 }
 
 /**
- * The route to get token uri.
- */
-export async function fetchTokenURI(req: Request, res: Response) {
-  try {
-    const { publishId } = req.params as { publishId: string }
-
-    if (!publishId) throw new Error("User input error.")
-
-    const uri = await getTokenURI(Number(publishId))
-
-    res.status(200).json({ uri })
-  } catch (error) {
-    res.status(200).json({ valid: false })
-  }
-}
-
-/**
  * The route to estimate gas used to create Publish NFT.
  * @dev see CreatePublishInput
  */
 export async function estimateCreatePublishNftGas(req: Request, res: Response) {
   try {
     const { uid } = req.params as { uid: string }
-    const { tokenURI, creatorId, imageURI, contentURI } =
-      req.body as CreatePublishInput["data"]
+    const {
+      creatorId,
+      imageURI,
+      contentURI,
+      metadataURI,
+      title,
+      description,
+      primaryCategory,
+      secondaryCategory,
+      tertiaryCategory,
+    } = req.body as CreatePublishInput["data"]
 
-    // Check if all required parameters are availble
-    if (!uid || !creatorId || !tokenURI || !imageURI || !contentURI)
+    // Validate input.
+    // description can be empty.
+    if (
+      !uid ||
+      !creatorId ||
+      !imageURI ||
+      !contentURI ||
+      !metadataURI ||
+      !title ||
+      !description ||
+      !primaryCategory ||
+      !secondaryCategory ||
+      !tertiaryCategory
+    )
       throw new Error("User input error")
 
     // Get encrypted key
@@ -262,7 +321,17 @@ export async function estimateCreatePublishNftGas(req: Request, res: Response) {
 
     const estimatedGas = await estimateCreatePublishGas({
       key,
-      data: { creatorId, contentURI, imageURI, tokenURI },
+      data: {
+        creatorId,
+        imageURI,
+        contentURI,
+        metadataURI,
+        title,
+        description,
+        primaryCategory,
+        secondaryCategory,
+        tertiaryCategory,
+      },
     })
 
     res.status(200).json({ gas: estimatedGas })

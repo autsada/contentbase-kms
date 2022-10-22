@@ -16,11 +16,6 @@ const _abi = [
         components: [
           {
             internalType: "string",
-            name: "tokenURI",
-            type: "string",
-          },
-          {
-            internalType: "string",
             name: "handle",
             type: "string",
           },
@@ -122,88 +117,6 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256[]",
-        name: "tokenIds",
-        type: "uint256[]",
-      },
-    ],
-    name: "ownerProfiles",
-    outputs: [
-      {
-        components: [
-          {
-            internalType: "uint256",
-            name: "tokenId",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "owner",
-            type: "address",
-          },
-          {
-            internalType: "string",
-            name: "handle",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "imageURI",
-            type: "string",
-          },
-        ],
-        internalType: "struct DataTypes.Profile[]",
-        name: "",
-        type: "tuple[]",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-    ],
-    name: "profileById",
-    outputs: [
-      {
-        components: [
-          {
-            internalType: "uint256",
-            name: "tokenId",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "owner",
-            type: "address",
-          },
-          {
-            internalType: "string",
-            name: "handle",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "imageURI",
-            type: "string",
-          },
-        ],
-        internalType: "struct DataTypes.Profile",
-        name: "",
-        type: "tuple",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "uint256",
         name: "tokenId",
         type: "uint256",
@@ -235,11 +148,6 @@ const _abi = [
             internalType: "uint256",
             name: "tokenId",
             type: "uint256",
-          },
-          {
-            internalType: "string",
-            name: "tokenURI",
-            type: "string",
           },
           {
             internalType: "string",

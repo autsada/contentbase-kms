@@ -44,28 +44,24 @@ export declare namespace DataTypes {
   };
 
   export type CreateProfileDataStruct = {
-    tokenURI: PromiseOrValue<string>;
     handle: PromiseOrValue<string>;
     imageURI: PromiseOrValue<string>;
   };
 
-  export type CreateProfileDataStructOutput = [string, string, string] & {
-    tokenURI: string;
+  export type CreateProfileDataStructOutput = [string, string] & {
     handle: string;
     imageURI: string;
   };
 
   export type UpdateProfileImageDataStruct = {
     tokenId: PromiseOrValue<BigNumberish>;
-    tokenURI: PromiseOrValue<string>;
     imageURI: PromiseOrValue<string>;
   };
 
-  export type UpdateProfileImageDataStructOutput = [
-    BigNumber,
-    string,
-    string
-  ] & { tokenId: BigNumber; tokenURI: string; imageURI: string };
+  export type UpdateProfileImageDataStructOutput = [BigNumber, string] & {
+    tokenId: BigNumber;
+    imageURI: string;
+  };
 }
 
 export interface ProfileNFTInterface extends utils.Interface {
@@ -75,7 +71,7 @@ export interface ProfileNFTInterface extends utils.Interface {
     "UPGRADER_ROLE()": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
-    "createProfile((string,string,string))": FunctionFragment;
+    "createProfile((string,string))": FunctionFragment;
     "defaultProfile()": FunctionFragment;
     "exists(uint256)": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
@@ -87,8 +83,6 @@ export interface ProfileNFTInterface extends utils.Interface {
     "name()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
     "ownerOfProfile(uint256)": FunctionFragment;
-    "ownerProfiles(uint256[])": FunctionFragment;
-    "profileById(uint256)": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
@@ -101,7 +95,7 @@ export interface ProfileNFTInterface extends utils.Interface {
     "tokenURI(uint256)": FunctionFragment;
     "totalProfiles()": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
-    "updateProfileImage((uint256,string,string))": FunctionFragment;
+    "updateProfileImage((uint256,string))": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
     "validateHandle(string)": FunctionFragment;
@@ -126,8 +120,6 @@ export interface ProfileNFTInterface extends utils.Interface {
       | "name"
       | "ownerOf"
       | "ownerOfProfile"
-      | "ownerProfiles"
-      | "profileById"
       | "proxiableUUID"
       | "renounceRole"
       | "revokeRole"
@@ -209,14 +201,6 @@ export interface ProfileNFTInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "ownerOfProfile",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "ownerProfiles",
-    values: [PromiseOrValue<BigNumberish>[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "profileById",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -333,14 +317,6 @@ export interface ProfileNFTInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ownerOfProfile",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "ownerProfiles",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "profileById",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -672,16 +648,6 @@ export interface ProfileNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    ownerProfiles(
-      tokenIds: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<[DataTypes.ProfileStructOutput[]]>;
-
-    profileById(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[DataTypes.ProfileStructOutput]>;
-
     proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
 
     renounceRole(
@@ -840,16 +806,6 @@ export interface ProfileNFT extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  ownerProfiles(
-    tokenIds: PromiseOrValue<BigNumberish>[],
-    overrides?: CallOverrides
-  ): Promise<DataTypes.ProfileStructOutput[]>;
-
-  profileById(
-    tokenId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<DataTypes.ProfileStructOutput>;
-
   proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
   renounceRole(
@@ -1005,16 +961,6 @@ export interface ProfileNFT extends BaseContract {
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
-
-    ownerProfiles(
-      tokenIds: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<DataTypes.ProfileStructOutput[]>;
-
-    profileById(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<DataTypes.ProfileStructOutput>;
 
     proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
@@ -1291,16 +1237,6 @@ export interface ProfileNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    ownerProfiles(
-      tokenIds: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    profileById(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceRole(
@@ -1456,16 +1392,6 @@ export interface ProfileNFT extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     ownerOfProfile(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    ownerProfiles(
-      tokenIds: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    profileById(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

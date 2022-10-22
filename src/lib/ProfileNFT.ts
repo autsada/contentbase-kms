@@ -19,14 +19,12 @@ import { Role, CheckRoleParams } from "../types"
  * @param key {string} - wallet's key
  * @param data.handle {string} - a handle of the profile
  * @param data.imageURI {string} - a profile image uri
- * @param data.tokenURI {string} - a token's metadata uri
  */
 export interface CreateProfileInput {
   key: string
   data: {
     handle: string
     imageURI: string
-    tokenURI: string
   }
 }
 
@@ -35,14 +33,12 @@ export interface CreateProfileInput {
  * @param key {string} - wallet's key
  * @param data.tokenId {number} - an id of a Profile NFT
  * @param data.imageURI {string} - a profile image uri
- * @param data.tokenURI {string} - a token's metadata uri
  */
 export interface UpdateProfileImageInput {
   key: string
   data: {
     tokenId: number
     imageURI: string
-    tokenURI: string
   }
 }
 
@@ -92,7 +88,7 @@ export async function checkUserRole({ role, address, key }: CheckRoleParams) {
 export async function createProfile(input: CreateProfileInput) {
   const {
     key,
-    data: { handle, imageURI, tokenURI },
+    data: { handle, imageURI },
   } = input
 
   // Validate the handle
@@ -103,7 +99,6 @@ export async function createProfile(input: CreateProfileInput) {
   const profileContract = getProfileContractBySigner(key)
 
   const transaction = await profileContract.createProfile({
-    tokenURI,
     handle,
     imageURI,
   })
@@ -143,14 +138,13 @@ export async function createProfile(input: CreateProfileInput) {
 export async function updateProfile(input: UpdateProfileImageInput) {
   const {
     key,
-    data: { tokenId, imageURI, tokenURI },
+    data: { tokenId, imageURI },
   } = input
 
   const profileContract = getProfileContractBySigner(key)
 
   const transaction = await profileContract.updateProfileImage({
     tokenId,
-    tokenURI,
     imageURI,
   })
 
@@ -255,12 +249,11 @@ export async function verifyHandle(handle: string) {
 export async function estimateCreateProfileGas(input: CreateProfileInput) {
   const {
     key,
-    data: { handle, imageURI, tokenURI },
+    data: { handle, imageURI },
   } = input
   const profileContract = getProfileContractBySigner(key)
 
   const gasInWei = await profileContract.estimateGas.createProfile({
-    tokenURI,
     handle,
     imageURI,
   })

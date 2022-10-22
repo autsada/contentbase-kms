@@ -36,6 +36,7 @@ export declare namespace DataTypes {
     likes: PromiseOrValue<BigNumberish>;
     imageURI: PromiseOrValue<string>;
     contentURI: PromiseOrValue<string>;
+    metadataURI: PromiseOrValue<string>;
   };
 
   export type PublishStructOutput = [
@@ -43,6 +44,7 @@ export declare namespace DataTypes {
     BigNumber,
     BigNumber,
     BigNumber,
+    string,
     string,
     string
   ] & {
@@ -52,25 +54,41 @@ export declare namespace DataTypes {
     likes: BigNumber;
     imageURI: string;
     contentURI: string;
+    metadataURI: string;
   };
 
   export type CreatePublishDataStruct = {
     creatorId: PromiseOrValue<BigNumberish>;
     imageURI: PromiseOrValue<string>;
     contentURI: PromiseOrValue<string>;
-    tokenURI: PromiseOrValue<string>;
+    metadataURI: PromiseOrValue<string>;
+    title: PromiseOrValue<string>;
+    description: PromiseOrValue<string>;
+    primaryCategory: PromiseOrValue<BigNumberish>;
+    secondaryCategory: PromiseOrValue<BigNumberish>;
+    tertiaryCategory: PromiseOrValue<BigNumberish>;
   };
 
   export type CreatePublishDataStructOutput = [
     BigNumber,
     string,
     string,
-    string
+    string,
+    string,
+    string,
+    number,
+    number,
+    number
   ] & {
     creatorId: BigNumber;
     imageURI: string;
     contentURI: string;
-    tokenURI: string;
+    metadataURI: string;
+    title: string;
+    description: string;
+    primaryCategory: number;
+    secondaryCategory: number;
+    tertiaryCategory: number;
   };
 
   export type UpdatePublishDataStruct = {
@@ -78,7 +96,12 @@ export declare namespace DataTypes {
     creatorId: PromiseOrValue<BigNumberish>;
     imageURI: PromiseOrValue<string>;
     contentURI: PromiseOrValue<string>;
-    tokenURI: PromiseOrValue<string>;
+    metadataURI: PromiseOrValue<string>;
+    title: PromiseOrValue<string>;
+    description: PromiseOrValue<string>;
+    primaryCategory: PromiseOrValue<BigNumberish>;
+    secondaryCategory: PromiseOrValue<BigNumberish>;
+    tertiaryCategory: PromiseOrValue<BigNumberish>;
   };
 
   export type UpdatePublishDataStructOutput = [
@@ -86,13 +109,23 @@ export declare namespace DataTypes {
     BigNumber,
     string,
     string,
-    string
+    string,
+    string,
+    string,
+    number,
+    number,
+    number
   ] & {
     tokenId: BigNumber;
     creatorId: BigNumber;
     imageURI: string;
     contentURI: string;
-    tokenURI: string;
+    metadataURI: string;
+    title: string;
+    description: string;
+    primaryCategory: number;
+    secondaryCategory: number;
+    tertiaryCategory: number;
   };
 }
 
@@ -104,7 +137,7 @@ export interface PublishNFTInterface extends utils.Interface {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "burn(uint256)": FunctionFragment;
-    "createPublish((uint256,string,string,string))": FunctionFragment;
+    "createPublish((uint256,string,string,string,string,string,uint8,uint8,uint8))": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "getPublishes(uint256[])": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
@@ -132,7 +165,7 @@ export interface PublishNFTInterface extends utils.Interface {
     "tokenURI(uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
     "unLike(uint256)": FunctionFragment;
-    "updatePublish((uint256,uint256,string,string,string))": FunctionFragment;
+    "updatePublish((uint256,uint256,string,string,string,string,string,uint8,uint8,uint8))": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
   };
@@ -444,8 +477,8 @@ export interface PublishNFTInterface extends utils.Interface {
     "ApprovalForAll(address,address,bool)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "PublishCreated(tuple,address)": EventFragment;
-    "PublishUpdated(tuple,address)": EventFragment;
+    "PublishCreated(tuple,string,string,uint8,uint8,uint8,address)": EventFragment;
+    "PublishUpdated(tuple,string,string,uint8,uint8,uint8,address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
@@ -521,10 +554,23 @@ export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export interface PublishCreatedEventObject {
   token: DataTypes.PublishStructOutput;
+  title: string;
+  description: string;
+  primaryCategory: number;
+  secondaryCategory: number;
+  tertiaryCategory: number;
   owner: string;
 }
 export type PublishCreatedEvent = TypedEvent<
-  [DataTypes.PublishStructOutput, string],
+  [
+    DataTypes.PublishStructOutput,
+    string,
+    string,
+    number,
+    number,
+    number,
+    string
+  ],
   PublishCreatedEventObject
 >;
 
@@ -532,10 +578,23 @@ export type PublishCreatedEventFilter = TypedEventFilter<PublishCreatedEvent>;
 
 export interface PublishUpdatedEventObject {
   token: DataTypes.PublishStructOutput;
+  title: string;
+  description: string;
+  primaryCategory: number;
+  secondaryCategory: number;
+  tertiaryCategory: number;
   owner: string;
 }
 export type PublishUpdatedEvent = TypedEvent<
-  [DataTypes.PublishStructOutput, string],
+  [
+    DataTypes.PublishStructOutput,
+    string,
+    string,
+    number,
+    number,
+    number,
+    string
+  ],
   PublishUpdatedEventObject
 >;
 
@@ -1201,17 +1260,43 @@ export interface PublishNFT extends BaseContract {
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
-    "PublishCreated(tuple,address)"(
+    "PublishCreated(tuple,string,string,uint8,uint8,uint8,address)"(
       token?: null,
+      title?: null,
+      description?: null,
+      primaryCategory?: null,
+      secondaryCategory?: null,
+      tertiaryCategory?: null,
       owner?: null
     ): PublishCreatedEventFilter;
-    PublishCreated(token?: null, owner?: null): PublishCreatedEventFilter;
-
-    "PublishUpdated(tuple,address)"(
+    PublishCreated(
       token?: null,
+      title?: null,
+      description?: null,
+      primaryCategory?: null,
+      secondaryCategory?: null,
+      tertiaryCategory?: null,
+      owner?: null
+    ): PublishCreatedEventFilter;
+
+    "PublishUpdated(tuple,string,string,uint8,uint8,uint8,address)"(
+      token?: null,
+      title?: null,
+      description?: null,
+      primaryCategory?: null,
+      secondaryCategory?: null,
+      tertiaryCategory?: null,
       owner?: null
     ): PublishUpdatedEventFilter;
-    PublishUpdated(token?: null, owner?: null): PublishUpdatedEventFilter;
+    PublishUpdated(
+      token?: null,
+      title?: null,
+      description?: null,
+      primaryCategory?: null,
+      secondaryCategory?: null,
+      tertiaryCategory?: null,
+      owner?: null
+    ): PublishUpdatedEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: PromiseOrValue<BytesLike> | null,

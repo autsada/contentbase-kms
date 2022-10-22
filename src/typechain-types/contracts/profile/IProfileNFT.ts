@@ -25,13 +25,11 @@ import type {
 
 export declare namespace DataTypes {
   export type CreateProfileDataStruct = {
-    tokenURI: PromiseOrValue<string>;
     handle: PromiseOrValue<string>;
     imageURI: PromiseOrValue<string>;
   };
 
-  export type CreateProfileDataStructOutput = [string, string, string] & {
-    tokenURI: string;
+  export type CreateProfileDataStructOutput = [string, string] & {
     handle: string;
     imageURI: string;
   };
@@ -52,28 +50,24 @@ export declare namespace DataTypes {
 
   export type UpdateProfileImageDataStruct = {
     tokenId: PromiseOrValue<BigNumberish>;
-    tokenURI: PromiseOrValue<string>;
     imageURI: PromiseOrValue<string>;
   };
 
-  export type UpdateProfileImageDataStructOutput = [
-    BigNumber,
-    string,
-    string
-  ] & { tokenId: BigNumber; tokenURI: string; imageURI: string };
+  export type UpdateProfileImageDataStructOutput = [BigNumber, string] & {
+    tokenId: BigNumber;
+    imageURI: string;
+  };
 }
 
 export interface IProfileNFTInterface extends utils.Interface {
   functions: {
-    "createProfile((string,string,string))": FunctionFragment;
+    "createProfile((string,string))": FunctionFragment;
     "defaultProfile()": FunctionFragment;
     "exists(uint256)": FunctionFragment;
     "ownerOfProfile(uint256)": FunctionFragment;
-    "ownerProfiles(uint256[])": FunctionFragment;
-    "profileById(uint256)": FunctionFragment;
     "setDefaultProfile(uint256)": FunctionFragment;
     "totalProfiles()": FunctionFragment;
-    "updateProfileImage((uint256,string,string))": FunctionFragment;
+    "updateProfileImage((uint256,string))": FunctionFragment;
     "validateHandle(string)": FunctionFragment;
   };
 
@@ -83,8 +77,6 @@ export interface IProfileNFTInterface extends utils.Interface {
       | "defaultProfile"
       | "exists"
       | "ownerOfProfile"
-      | "ownerProfiles"
-      | "profileById"
       | "setDefaultProfile"
       | "totalProfiles"
       | "updateProfileImage"
@@ -105,14 +97,6 @@ export interface IProfileNFTInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "ownerOfProfile",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "ownerProfiles",
-    values: [PromiseOrValue<BigNumberish>[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "profileById",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -143,14 +127,6 @@ export interface IProfileNFTInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "exists", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ownerOfProfile",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "ownerProfiles",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "profileById",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -219,16 +195,6 @@ export interface IProfileNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    ownerProfiles(
-      tokenIds: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<[DataTypes.ProfileStructOutput[]]>;
-
-    profileById(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[DataTypes.ProfileStructOutput]>;
-
     setDefaultProfile(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -266,16 +232,6 @@ export interface IProfileNFT extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  ownerProfiles(
-    tokenIds: PromiseOrValue<BigNumberish>[],
-    overrides?: CallOverrides
-  ): Promise<DataTypes.ProfileStructOutput[]>;
-
-  profileById(
-    tokenId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<DataTypes.ProfileStructOutput>;
-
   setDefaultProfile(
     tokenId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -312,16 +268,6 @@ export interface IProfileNFT extends BaseContract {
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
-
-    ownerProfiles(
-      tokenIds: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<DataTypes.ProfileStructOutput[]>;
-
-    profileById(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<DataTypes.ProfileStructOutput>;
 
     setDefaultProfile(
       tokenId: PromiseOrValue<BigNumberish>,
@@ -361,16 +307,6 @@ export interface IProfileNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    ownerProfiles(
-      tokenIds: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    profileById(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     setDefaultProfile(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -403,16 +339,6 @@ export interface IProfileNFT extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     ownerOfProfile(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    ownerProfiles(
-      tokenIds: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    profileById(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

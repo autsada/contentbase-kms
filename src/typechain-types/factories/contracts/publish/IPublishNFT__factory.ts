@@ -31,8 +31,33 @@ const _abi = [
           },
           {
             internalType: "string",
-            name: "tokenURI",
+            name: "metadataURI",
             type: "string",
+          },
+          {
+            internalType: "string",
+            name: "title",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "description",
+            type: "string",
+          },
+          {
+            internalType: "enum DataTypes.Category",
+            name: "primaryCategory",
+            type: "uint8",
+          },
+          {
+            internalType: "enum DataTypes.Category",
+            name: "secondaryCategory",
+            type: "uint8",
+          },
+          {
+            internalType: "enum DataTypes.Category",
+            name: "tertiaryCategory",
+            type: "uint8",
           },
         ],
         internalType: "struct DataTypes.CreatePublishData",
@@ -91,6 +116,11 @@ const _abi = [
           {
             internalType: "string",
             name: "contentURI",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "metadataURI",
             type: "string",
           },
         ],
@@ -176,6 +206,11 @@ const _abi = [
             name: "contentURI",
             type: "string",
           },
+          {
+            internalType: "string",
+            name: "metadataURI",
+            type: "string",
+          },
         ],
         internalType: "struct DataTypes.Publish[]",
         name: "",
@@ -225,6 +260,11 @@ const _abi = [
           {
             internalType: "string",
             name: "contentURI",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "metadataURI",
             type: "string",
           },
         ],
@@ -314,8 +354,33 @@ const _abi = [
           },
           {
             internalType: "string",
-            name: "tokenURI",
+            name: "metadataURI",
             type: "string",
+          },
+          {
+            internalType: "string",
+            name: "title",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "description",
+            type: "string",
+          },
+          {
+            internalType: "enum DataTypes.Category",
+            name: "primaryCategory",
+            type: "uint8",
+          },
+          {
+            internalType: "enum DataTypes.Category",
+            name: "secondaryCategory",
+            type: "uint8",
+          },
+          {
+            internalType: "enum DataTypes.Category",
+            name: "tertiaryCategory",
+            type: "uint8",
           },
         ],
         internalType: "struct DataTypes.UpdatePublishData",

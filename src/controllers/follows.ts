@@ -78,12 +78,12 @@ export async function followProfile(req: Request, res: Response) {
  */
 export async function unFollowProfile(req: Request, res: Response) {
   try {
-    const { uid, profileId } = req.params as {
+    const { uid, tokenId } = req.params as {
       uid: string
-      profileId: string
+      tokenId: string
     }
 
-    if (!uid || !profileId) throw new Error("User input error")
+    if (!uid || !tokenId) throw new Error("User input error")
 
     // Get encrypted key
     const { key: encryptedKey } = await getWallet(uid)
@@ -92,9 +92,9 @@ export async function unFollowProfile(req: Request, res: Response) {
     const key = await decrypt(encryptedKey)
 
     // 2. Unfollow
-    await unfollow(key, Number(profileId))
+    await unfollow(key, Number(tokenId))
 
-    res.status(200).json({ status: "success" })
+    res.status(200).json({ status: 200 })
   } catch (error) {
     res.status(500).send((error as any).message)
   }
