@@ -35,15 +35,26 @@ export declare namespace DataTypes {
   };
 
   export type ProfileStruct = {
-    tokenId: PromiseOrValue<BigNumberish>;
     owner: PromiseOrValue<string>;
+    tokenId: PromiseOrValue<BigNumberish>;
+    following: PromiseOrValue<BigNumberish>;
+    followers: PromiseOrValue<BigNumberish>;
     handle: PromiseOrValue<string>;
     imageURI: PromiseOrValue<string>;
   };
 
-  export type ProfileStructOutput = [BigNumber, string, string, string] & {
-    tokenId: BigNumber;
+  export type ProfileStructOutput = [
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    string,
+    string
+  ] & {
     owner: string;
+    tokenId: BigNumber;
+    following: BigNumber;
+    followers: BigNumber;
     handle: string;
     imageURI: string;
   };
@@ -64,9 +75,12 @@ export interface IProfileNFTInterface extends utils.Interface {
     "createProfile((string,string))": FunctionFragment;
     "defaultProfile()": FunctionFragment;
     "exists(uint256)": FunctionFragment;
+    "follow(uint256,uint256)": FunctionFragment;
     "ownerOfProfile(uint256)": FunctionFragment;
     "setDefaultProfile(uint256)": FunctionFragment;
+    "setFollowContractAddress(address)": FunctionFragment;
     "totalProfiles()": FunctionFragment;
+    "unFollow(uint256,uint256)": FunctionFragment;
     "updateProfileImage((uint256,string))": FunctionFragment;
     "validateHandle(string)": FunctionFragment;
   };
@@ -76,9 +90,12 @@ export interface IProfileNFTInterface extends utils.Interface {
       | "createProfile"
       | "defaultProfile"
       | "exists"
+      | "follow"
       | "ownerOfProfile"
       | "setDefaultProfile"
+      | "setFollowContractAddress"
       | "totalProfiles"
+      | "unFollow"
       | "updateProfileImage"
       | "validateHandle"
   ): FunctionFragment;
@@ -96,6 +113,10 @@ export interface IProfileNFTInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "follow",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "ownerOfProfile",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -104,8 +125,16 @@ export interface IProfileNFTInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "setFollowContractAddress",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "totalProfiles",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "unFollow",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "updateProfileImage",
@@ -125,6 +154,7 @@ export interface IProfileNFTInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "exists", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "follow", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ownerOfProfile",
     data: BytesLike
@@ -134,9 +164,14 @@ export interface IProfileNFTInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setFollowContractAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "totalProfiles",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "unFollow", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "updateProfileImage",
     data: BytesLike
@@ -190,6 +225,12 @@ export interface IProfileNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    follow(
+      followerId: PromiseOrValue<BigNumberish>,
+      followeeId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     ownerOfProfile(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -200,7 +241,18 @@ export interface IProfileNFT extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setFollowContractAddress(
+      followContractAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     totalProfiles(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    unFollow(
+      followerId: PromiseOrValue<BigNumberish>,
+      followeeId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     updateProfileImage(
       updateProfileImageData: DataTypes.UpdateProfileImageDataStruct,
@@ -227,6 +279,12 @@ export interface IProfileNFT extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  follow(
+    followerId: PromiseOrValue<BigNumberish>,
+    followeeId: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   ownerOfProfile(
     tokenId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -237,7 +295,18 @@ export interface IProfileNFT extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setFollowContractAddress(
+    followContractAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   totalProfiles(overrides?: CallOverrides): Promise<BigNumber>;
+
+  unFollow(
+    followerId: PromiseOrValue<BigNumberish>,
+    followeeId: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   updateProfileImage(
     updateProfileImageData: DataTypes.UpdateProfileImageDataStruct,
@@ -264,6 +333,12 @@ export interface IProfileNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    follow(
+      followerId: PromiseOrValue<BigNumberish>,
+      followeeId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     ownerOfProfile(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -274,7 +349,18 @@ export interface IProfileNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setFollowContractAddress(
+      followContractAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     totalProfiles(overrides?: CallOverrides): Promise<BigNumber>;
+
+    unFollow(
+      followerId: PromiseOrValue<BigNumberish>,
+      followeeId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     updateProfileImage(
       updateProfileImageData: DataTypes.UpdateProfileImageDataStruct,
@@ -302,6 +388,12 @@ export interface IProfileNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    follow(
+      followerId: PromiseOrValue<BigNumberish>,
+      followeeId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     ownerOfProfile(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -312,7 +404,18 @@ export interface IProfileNFT extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setFollowContractAddress(
+      followContractAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     totalProfiles(overrides?: CallOverrides): Promise<BigNumber>;
+
+    unFollow(
+      followerId: PromiseOrValue<BigNumberish>,
+      followeeId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     updateProfileImage(
       updateProfileImageData: DataTypes.UpdateProfileImageDataStruct,
@@ -338,6 +441,12 @@ export interface IProfileNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    follow(
+      followerId: PromiseOrValue<BigNumberish>,
+      followeeId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     ownerOfProfile(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -348,7 +457,18 @@ export interface IProfileNFT extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    setFollowContractAddress(
+      followContractAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     totalProfiles(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    unFollow(
+      followerId: PromiseOrValue<BigNumberish>,
+      followeeId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     updateProfileImage(
       updateProfileImageData: DataTypes.UpdateProfileImageDataStruct,

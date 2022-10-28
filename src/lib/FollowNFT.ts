@@ -8,21 +8,7 @@ import { getContractBySigner, getContractByProvider } from "./ethers"
 import FollowContract from "../abi/FollowContract.json"
 import { FollowNFT } from "../typechain-types"
 import { FollowEvent } from "../typechain-types/contracts/follow/FollowNFT"
-import { Role, CheckRoleParams } from "../types"
-
-/**
- * Input data required for creating a Follow NFT.
- * @param key - a wallet's key
- * @param data.follwerId - a profile id of the follwer
- * @param data.follweeId - a profile id of the follwee
- */
-export interface CreateFollowInput {
-  key: string
-  data: {
-    followerId: number
-    followeeId: number
-  }
-}
+import { Role, CheckRoleParams, CreateFollowInput } from "../types"
 
 /**
  * Get conract using signer.
@@ -126,30 +112,6 @@ export async function unfollow(key: string, tokenId: number) {
   const followContract = getFollowContractBySigner(key)
 
   await followContract.burn(tokenId)
-}
-
-/**
- * The function to get following count of a profile.
- * @param profileId - a profile token id
- * @return count {number}
- */
-export async function getFollowingCount(profileId: number) {
-  const followContract = getFollowContractByProvider()
-  const count = await followContract.followingCount(profileId)
-
-  return count.toNumber()
-}
-
-/**
- * The function to get followers count of a profile.
- * @param profileId - a profile token id
- * @return count {number}
- */
-export async function getFollowersCount(profileId: number) {
-  const followContract = getFollowContractByProvider()
-  const count = await followContract.followersCount(profileId)
-
-  return count.toNumber()
 }
 
 /**

@@ -399,13 +399,12 @@ export interface LikeNFTInterface extends utils.Interface {
     "ApprovalForAll(address,address,bool)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "Like(tuple,address,uint256)": EventFragment;
-    "Received(address,uint256)": EventFragment;
+    "Like(tuple,address,address,uint256)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
-    "UnLike(tuple,address,uint256)": EventFragment;
+    "UnLike(tuple,address)": EventFragment;
     "Upgraded(address)": EventFragment;
   };
 
@@ -415,7 +414,6 @@ export interface LikeNFTInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Like"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Received"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
@@ -479,25 +477,15 @@ export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 export interface LikeEventObject {
   token: DataTypes.LikeStructOutput;
   owner: string;
-  publishId: BigNumber;
+  publishOwner: string;
+  fee: BigNumber;
 }
 export type LikeEvent = TypedEvent<
-  [DataTypes.LikeStructOutput, string, BigNumber],
+  [DataTypes.LikeStructOutput, string, string, BigNumber],
   LikeEventObject
 >;
 
 export type LikeEventFilter = TypedEventFilter<LikeEvent>;
-
-export interface ReceivedEventObject {
-  sender: string;
-  value: BigNumber;
-}
-export type ReceivedEvent = TypedEvent<
-  [string, BigNumber],
-  ReceivedEventObject
->;
-
-export type ReceivedEventFilter = TypedEventFilter<ReceivedEvent>;
 
 export interface RoleAdminChangedEventObject {
   role: string;
@@ -551,10 +539,9 @@ export type TransferEventFilter = TypedEventFilter<TransferEvent>;
 export interface UnLikeEventObject {
   token: DataTypes.LikeStructOutput;
   owner: string;
-  publishId: BigNumber;
 }
 export type UnLikeEvent = TypedEvent<
-  [DataTypes.LikeStructOutput, string, BigNumber],
+  [DataTypes.LikeStructOutput, string],
   UnLikeEventObject
 >;
 
@@ -1139,18 +1126,18 @@ export interface LikeNFT extends BaseContract {
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
-    "Like(tuple,address,uint256)"(
+    "Like(tuple,address,address,uint256)"(
       token?: null,
       owner?: null,
-      publishId?: null
+      publishOwner?: null,
+      fee?: null
     ): LikeEventFilter;
-    Like(token?: null, owner?: null, publishId?: null): LikeEventFilter;
-
-    "Received(address,uint256)"(
-      sender?: null,
-      value?: null
-    ): ReceivedEventFilter;
-    Received(sender?: null, value?: null): ReceivedEventFilter;
+    Like(
+      token?: null,
+      owner?: null,
+      publishOwner?: null,
+      fee?: null
+    ): LikeEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: PromiseOrValue<BytesLike> | null,
@@ -1196,12 +1183,8 @@ export interface LikeNFT extends BaseContract {
       tokenId?: PromiseOrValue<BigNumberish> | null
     ): TransferEventFilter;
 
-    "UnLike(tuple,address,uint256)"(
-      token?: null,
-      owner?: null,
-      publishId?: null
-    ): UnLikeEventFilter;
-    UnLike(token?: null, owner?: null, publishId?: null): UnLikeEventFilter;
+    "UnLike(tuple,address)"(token?: null, owner?: null): UnLikeEventFilter;
+    UnLike(token?: null, owner?: null): UnLikeEventFilter;
 
     "Upgraded(address)"(
       implementation?: PromiseOrValue<string> | null

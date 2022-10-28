@@ -5,14 +5,11 @@ import {
   checkUserRole,
   follow,
   unfollow,
-  getFollowingCount,
-  getFollowersCount,
   getFollows,
   estimateCreateFollowGas,
 } from "../lib/FollowNFT"
 import { decrypt } from "../lib/kms"
-import type { CreateFollowInput } from "../lib/FollowNFT"
-import type { CheckRoleParams } from "../types"
+import type { CheckRoleParams, CreateFollowInput } from "../types"
 
 /**
  * The route to check role.
@@ -48,7 +45,15 @@ export async function followProfile(req: Request, res: Response) {
     const { uid } = req.params as { uid: string }
     const { followerId, followeeId } = req.body as CreateFollowInput["data"]
 
-    if (!uid || !followerId || !followeeId) throw new Error("User input error")
+    // Validate input.
+    if (
+      !uid ||
+      typeof followerId !== "number" ||
+      !followerId ||
+      typeof followeeId !== "number" ||
+      !followeeId
+    )
+      throw new Error("User input error")
 
     // Get encrypted key
     const { key: encryptedKey } = await getWallet(uid)
@@ -66,6 +71,15 @@ export async function followProfile(req: Request, res: Response) {
     })
 
     if (!token) throw new Error("Follow failed.")
+
+    // // Create a new doc in "follows" collection in Firestore.
+    // await createDoc<Partial<FollowDoc>>({
+    //   collectionName: followsCollection,
+    //   data: {
+    //     ...token,
+    //     uid,
+    //   },
+    // })
 
     res.status(200).json({ token })
   } catch (error) {
@@ -94,45 +108,22 @@ export async function unFollowProfile(req: Request, res: Response) {
     // 2. Unfollow
     await unfollow(key, Number(tokenId))
 
+    // // Find and delete the follow doc in Firestore.
+    // const follows = await searchDocByField<FollowDoc>({
+    //   collectionName: followsCollection,
+    //   fieldName: "tokenId",
+    //   fieldValue: Number(tokenId), // Must be a number
+    // })
+    // const follow = follows[0]
+
+    // if (follow) {
+    //   await deleteDocById({
+    //     collectionName: followsCollection,
+    //     docId: follow.id,
+    //   })
+    // }
+
     res.status(200).json({ status: 200 })
-  } catch (error) {
-    res.status(500).send((error as any).message)
-  }
-}
-
-/**
- * The route to get number of following.
- */
-export async function getFollowing(req: Request, res: Response) {
-  try {
-    const { profileId } = req.params as {
-      profileId: string
-    }
-
-    if (!profileId) throw new Error("User input error")
-
-    const count = await getFollowingCount(Number(profileId))
-
-    res.status(200).json({ count })
-  } catch (error) {
-    res.status(500).send((error as any).message)
-  }
-}
-
-/**
- * The route to get number of followers.
- */
-export async function getFollowers(req: Request, res: Response) {
-  try {
-    const { profileId } = req.params as {
-      profileId: string
-    }
-
-    if (!profileId) throw new Error("User input error")
-
-    const count = await getFollowersCount(Number(profileId))
-
-    res.status(200).json({ count })
   } catch (error) {
     res.status(500).send((error as any).message)
   }

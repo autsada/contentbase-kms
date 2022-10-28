@@ -1,6 +1,12 @@
 import { Request, Response } from "express"
 
-import { getWallet } from "../lib/firebase"
+import { profilesCollection } from "../config/firebase"
+import {
+  getWallet,
+  createDoc,
+  searchDocByField,
+  updateDocById,
+} from "../lib/firebase"
 import {
   checkUserRole,
   createProfile,
@@ -11,11 +17,12 @@ import {
   estimateCreateProfileGas,
 } from "../lib/ProfileNFT"
 import { decrypt } from "../lib/kms"
-import type {
+import {
   CreateProfileInput,
   UpdateProfileImageInput,
-} from "../lib/ProfileNFT"
-import type { CheckRoleParams } from "../types"
+  CheckRoleParams,
+  ProfileDoc,
+} from "../types"
 
 /**
  * The route to check role.
@@ -55,6 +62,13 @@ export async function createProfileNft(req: Request, res: Response) {
     // imageURI can be empty.
     if (!uid || !handle) throw new Error("User input error")
 
+    // Validate handle.
+    // Make sure to lowercase the handle.
+    const lowercasedHandle = handle.toLocaleLowerCase()
+    const valid = await verifyHandle(lowercasedHandle)
+
+    if (!valid) throw new Error("Handle is taken or invalid")
+
     // Get encrypted key
     const { key: encryptedKey } = await getWallet(uid)
 
@@ -65,12 +79,22 @@ export async function createProfileNft(req: Request, res: Response) {
     const token = await createProfile({
       key,
       data: {
-        handle,
+        handle: lowercasedHandle,
         imageURI,
       },
     })
 
     if (!token) throw new Error("Create profile failed.")
+
+    // Create a new doc in "profiles" collection in Firestore.
+    await createDoc<Partial<ProfileDoc>>({
+      collectionName: profilesCollection,
+      data: {
+        ...token,
+        uid,
+        displayedHandle: handle, // also save the unlowercased handle.
+      },
+    })
 
     res.status(200).json({ token })
   } catch (error) {
@@ -113,6 +137,22 @@ export async function updateProfileImage(req: Request, res: Response) {
     })
 
     if (!token) throw new Error("Updated profile failed.")
+
+    // Find and update a profile doc in Firestore.
+    const docs = await searchDocByField<ProfileDoc>({
+      collectionName: profilesCollection,
+      fieldName: "tokenId",
+      fieldValue: Number(profileId), // Must be a number
+    })
+    const profileDoc = docs[0]
+
+    if (profileDoc) {
+      await updateDocById<Partial<ProfileDoc>>({
+        collectionName: profilesCollection,
+        docId: profileDoc.id,
+        data: token,
+      })
+    }
 
     res.status(200).json({ token })
   } catch (error) {
@@ -189,7 +229,7 @@ export async function verifyProfileHandle(req: Request, res: Response) {
     // Validate input.
     if (!handle) throw new Error("Handle is required.")
 
-    const valid = await verifyHandle(handle)
+    const valid = await verifyHandle(handle.toLowerCase())
 
     res.status(200).json({ valid })
   } catch (error) {

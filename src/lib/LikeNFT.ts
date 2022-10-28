@@ -11,21 +11,7 @@ import {
   LikeEvent,
   UnLikeEvent,
 } from "../typechain-types/contracts/like/LikeNFT"
-import { Role, CheckRoleParams } from "../types"
-
-/**
- * Input data required for creating a Like NFT.
- * @param key - a wallet's key
- * @param data.profileId - a profile id of the caller
- * @param data.publishId - a publish id that the caller likes
- */
-export interface CreateLikeInput {
-  key: string
-  data: {
-    profileId: number
-    publishId: number
-  }
-}
+import { Role, CheckRoleParams, CreateLikeInput } from "../types"
 
 /**
  * Get conract using signer.
@@ -142,7 +128,7 @@ export async function getLikeFee() {
   const likeContract = getLikeContractByProvider()
   const fee = await likeContract.getLikeSupportFee()
 
-  return fee.toNumber()
+  return Number(utils.formatEther(fee))
 }
 
 /**
@@ -178,7 +164,7 @@ export async function getContractBalance(key: string) {
   const likeContract = getLikeContractBySigner(key)
   const balance = await likeContract.getContractBalance()
 
-  return balance.toNumber()
+  return Number(utils.formatEther(balance))
 }
 
 /**
@@ -194,10 +180,14 @@ export async function like(input: CreateLikeInput) {
 
   const likeContract = getLikeContractBySigner(key)
 
-  const transaction = await likeContract.like({
-    profileId,
-    publishId,
-  })
+  const transaction = await likeContract.like(
+    {
+      profileId,
+      publishId,
+    },
+    // Send some ethers as a support money to the creator of the publish.
+    { value: utils.parseEther("1000") }
+  )
 
   const tx = await transaction.wait()
 
@@ -208,7 +198,7 @@ export async function like(input: CreateLikeInput) {
 
     if (LikeEvent) {
       if (LikeEvent.args) {
-        const [{ owner, tokenId, profileId, publishId }] =
+        const [{ owner, tokenId, profileId, publishId }, sender, fee] =
           LikeEvent.args as LikeEvent["args"]
 
         token = {
@@ -272,10 +262,13 @@ export async function estimateCreateLikeGas(input: CreateLikeInput) {
   } = input
   const likeContract = getLikeContractBySigner(key)
 
-  const gasInWei = await likeContract.estimateGas.like({
-    profileId,
-    publishId,
-  })
+  const gasInWei = await likeContract.estimateGas.like(
+    {
+      profileId,
+      publishId,
+    }, // Send some ethers as a support money to the creator of the publish.
+    { value: utils.parseEther("1000") }
+  )
 
   return ethers.utils.formatEther(gasInWei)
 }

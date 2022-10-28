@@ -5,6 +5,7 @@
 
 import { Request, Response } from "express"
 
+import { setFollowContract as setFollowContractForProfileContract } from "../lib/ProfileNFT"
 import {
   setProfileContract as setProfileContractForPublishContract,
   setLikeContract as setLikeContractForPublishContract,
@@ -22,6 +23,25 @@ import {
 } from "../lib/LikeNFT"
 
 const { ADMIN_PRIVATE_KEY } = process.env
+
+export async function setFollowContractOnProfileContract(
+  req: Request,
+  res: Response
+) {
+  try {
+    const { followContractAddress } = req.body as {
+      followContractAddress: string
+    }
+    await setFollowContractForProfileContract(
+      ADMIN_PRIVATE_KEY!,
+      followContractAddress
+    )
+
+    res.status(200).json({ status: "Ok" })
+  } catch (error) {
+    res.status(500).send((error as any).message)
+  }
+}
 
 /**
  * The route to set Profile contract interface in the Publish contract.

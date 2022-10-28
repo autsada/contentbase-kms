@@ -48,14 +48,24 @@ const _abi = [
       {
         components: [
           {
+            internalType: "address",
+            name: "owner",
+            type: "address",
+          },
+          {
             internalType: "uint256",
             name: "tokenId",
             type: "uint256",
           },
           {
-            internalType: "address",
-            name: "owner",
-            type: "address",
+            internalType: "uint256",
+            name: "following",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "followers",
+            type: "uint256",
           },
           {
             internalType: "string",
@@ -99,6 +109,30 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "followerId",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "followeeId",
+        type: "uint256",
+      },
+    ],
+    name: "follow",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "tokenId",
         type: "uint256",
       },
@@ -128,6 +162,19 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "followContractAddress",
+        type: "address",
+      },
+    ],
+    name: "setFollowContractAddress",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "totalProfiles",
     outputs: [
@@ -138,6 +185,30 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "followerId",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "followeeId",
+        type: "uint256",
+      },
+    ],
+    name: "unFollow",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {

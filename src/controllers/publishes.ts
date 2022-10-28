@@ -1,6 +1,12 @@
 import { Request, Response } from "express"
 
-import { getWallet } from "../lib/firebase"
+import {
+  createDoc,
+  deleteDocById,
+  getWallet,
+  searchDocByField,
+  updateDocById,
+} from "../lib/firebase"
 import {
   checkUserRole,
   createPublish,
@@ -13,8 +19,14 @@ import {
   estimateCreatePublishGas,
 } from "../lib/PublishNFT"
 import { decrypt } from "../lib/kms"
-import type { CreatePublishInput, UpdatePublishInput } from "../lib/PublishNFT"
-import type { CheckRoleParams } from "../types"
+import {
+  CheckRoleParams,
+  PublishDoc,
+  Category,
+  CreatePublishInput,
+  UpdatePublishInput,
+} from "../types"
+import { publishesCollection } from "../config/firebase"
 
 /**
  * The route to check role.
@@ -90,7 +102,7 @@ export async function createPublishNft(req: Request, res: Response) {
         contentURI,
         metadataURI,
         title,
-        description,
+        description: description || "", // use empty string if it's undefined.
         primaryCategory,
         secondaryCategory,
         tertiaryCategory,
@@ -98,6 +110,26 @@ export async function createPublishNft(req: Request, res: Response) {
     })
 
     if (!token) throw new Error("Create publish failed.")
+
+    // Create a new doc in "publishes" collection.
+    await createDoc<Partial<PublishDoc>>({
+      collectionName: publishesCollection,
+      data: {
+        ...token,
+        primaryCategory,
+        secondaryCategory:
+          secondaryCategory === Category.Empty &&
+          tertiaryCategory !== Category.Empty
+            ? tertiaryCategory
+            : secondaryCategory,
+        tertiaryCategory:
+          secondaryCategory === Category.Empty &&
+          tertiaryCategory !== Category.Empty
+            ? Category.Empty
+            : tertiaryCategory,
+        uid,
+      },
+    })
 
     res.status(200).json({ token })
   } catch (error) {
@@ -127,21 +159,45 @@ export async function updatePublishNft(req: Request, res: Response) {
       tertiaryCategory,
     } = req.body as Omit<UpdatePublishInput["data"], "tokenId">
 
-    // Validate input.
-    // description can be empty.
+    // Validate required input.
+    if (!uid || !publishId || !creatorId) throw new Error("User input error")
+
+    // Check to make sure at least one of the publish data is provided.
     if (
-      !uid ||
-      !publishId ||
-      !creatorId ||
-      !imageURI ||
-      !contentURI ||
-      !metadataURI ||
-      !title ||
-      !primaryCategory ||
-      !secondaryCategory ||
+      !imageURI &&
+      !contentURI &&
+      !metadataURI &&
+      !title &&
+      !description &&
+      !primaryCategory &&
+      !secondaryCategory &&
       !tertiaryCategory
     )
       throw new Error("User input error")
+
+    // Find the publish doc in Firestore.
+    const publishes = await searchDocByField<PublishDoc>({
+      collectionName: publishesCollection,
+      fieldName: "tokenId",
+      fieldValue: Number(publishId), // Must be a number
+    })
+    const publish = publishes[0]
+
+    // If doc doesn't exist.
+    if (!publish) throw new Error("Bad request")
+
+    // // Throw error if none of the data is changed.
+    // if (
+    //   publish.imageURI === imageURI &&
+    //   publish.contentURI === contentURI &&
+    //   publish.metadataURI === metadataURI &&
+    //   publish.title === title &&
+    //   publish.description === description &&
+    //   publish.primaryCategory === primaryCategory &&
+    //   publish.secondaryCategory === secondaryCategory &&
+    //   publish.tertiaryCategory === tertiaryCategory
+    // )
+    //   throw new Error("Bad request")
 
     // Get encrypted key
     const { key: encryptedKey } = await getWallet(uid)
@@ -150,23 +206,52 @@ export async function updatePublishNft(req: Request, res: Response) {
     const key = await decrypt(encryptedKey)
 
     // 2. Update publish
+    // If the argument is undefined | null, use the existing data from the database.
     const token = await updatePublish({
       key,
       data: {
         tokenId: Number(publishId),
         creatorId,
-        imageURI,
-        contentURI,
-        metadataURI,
-        title,
-        description,
-        primaryCategory,
-        secondaryCategory,
-        tertiaryCategory,
+        imageURI: !imageURI ? publish.imageURI : imageURI,
+        contentURI: !contentURI ? publish.contentURI : contentURI,
+        metadataURI: !metadataURI ? publish.metadataURI : metadataURI,
+        title: !title ? publish.title : title,
+        description: !description ? publish.description : description,
+        // The primary category cannot be "Empty", so if "Empty" is provided, use the existing data.
+        primaryCategory:
+          !primaryCategory || primaryCategory === Category.Empty
+            ? publish.primaryCategory
+            : primaryCategory,
+        secondaryCategory: !secondaryCategory
+          ? publish.secondaryCategory
+          : secondaryCategory,
+        tertiaryCategory: !tertiaryCategory
+          ? publish.tertiaryCategory
+          : tertiaryCategory,
       },
     })
 
     if (!token) throw new Error("Update publish failed.")
+
+    // Update the publish doc in Firestore.
+    await updateDocById({
+      collectionName: publishesCollection,
+      docId: publish.id,
+      data: {
+        ...token,
+        // If secondary is "Empty" and tertiary is not, then use the tertiary as secondary and make tertiary "Empty".
+        secondaryCategory:
+          token.secondaryCategory === Category.Empty &&
+          token.tertiaryCategory !== Category.Empty
+            ? token.tertiaryCategory
+            : token.secondaryCategory,
+        tertiaryCategory:
+          token.secondaryCategory === Category.Empty &&
+          token.tertiaryCategory !== Category.Empty
+            ? Category.Empty
+            : token.tertiaryCategory,
+      },
+    })
 
     res.status(200).json({ token })
   } catch (error) {
@@ -194,6 +279,21 @@ export async function deleteUserPublish(req: Request, res: Response) {
     const key = await decrypt(encryptedKey)
 
     await deletePublish(key, Number(publishId))
+
+    // Find and delete the publish doc in Firestore.
+    const publishes = await searchDocByField<PublishDoc>({
+      collectionName: publishesCollection,
+      fieldName: "tokenId",
+      fieldValue: Number(publishId), // Must be a number
+    })
+    const publish = publishes[0]
+
+    if (publish) {
+      await deleteDocById({
+        collectionName: publishesCollection,
+        docId: publish.id,
+      })
+    }
 
     res.status(200).json({ status: 200 })
   } catch (error) {

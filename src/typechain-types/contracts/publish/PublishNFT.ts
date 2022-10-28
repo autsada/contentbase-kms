@@ -477,8 +477,9 @@ export interface PublishNFTInterface extends utils.Interface {
     "ApprovalForAll(address,address,bool)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "PublishCreated(tuple,string,string,uint8,uint8,uint8,address)": EventFragment;
-    "PublishUpdated(tuple,string,string,uint8,uint8,uint8,address)": EventFragment;
+    "PublishCreated(tuple,address,string,string,uint8,uint8,uint8)": EventFragment;
+    "PublishDeleted(uint256,address)": EventFragment;
+    "PublishUpdated(tuple,address,string,string,uint8,uint8,uint8)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
@@ -492,6 +493,7 @@ export interface PublishNFTInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PublishCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PublishDeleted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PublishUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
@@ -554,46 +556,57 @@ export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export interface PublishCreatedEventObject {
   token: DataTypes.PublishStructOutput;
+  owner: string;
   title: string;
   description: string;
   primaryCategory: number;
   secondaryCategory: number;
   tertiaryCategory: number;
-  owner: string;
 }
 export type PublishCreatedEvent = TypedEvent<
   [
     DataTypes.PublishStructOutput,
     string,
     string,
+    string,
     number,
     number,
-    number,
-    string
+    number
   ],
   PublishCreatedEventObject
 >;
 
 export type PublishCreatedEventFilter = TypedEventFilter<PublishCreatedEvent>;
 
+export interface PublishDeletedEventObject {
+  tokenId: BigNumber;
+  owner: string;
+}
+export type PublishDeletedEvent = TypedEvent<
+  [BigNumber, string],
+  PublishDeletedEventObject
+>;
+
+export type PublishDeletedEventFilter = TypedEventFilter<PublishDeletedEvent>;
+
 export interface PublishUpdatedEventObject {
   token: DataTypes.PublishStructOutput;
+  owner: string;
   title: string;
   description: string;
   primaryCategory: number;
   secondaryCategory: number;
   tertiaryCategory: number;
-  owner: string;
 }
 export type PublishUpdatedEvent = TypedEvent<
   [
     DataTypes.PublishStructOutput,
     string,
     string,
+    string,
     number,
     number,
-    number,
-    string
+    number
   ],
   PublishUpdatedEventObject
 >;
@@ -1106,7 +1119,7 @@ export interface PublishNFT extends BaseContract {
     like(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
@@ -1199,7 +1212,7 @@ export interface PublishNFT extends BaseContract {
     unLike(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
 
     updatePublish(
       updatePublishData: DataTypes.UpdatePublishDataStruct,
@@ -1260,42 +1273,48 @@ export interface PublishNFT extends BaseContract {
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
-    "PublishCreated(tuple,string,string,uint8,uint8,uint8,address)"(
+    "PublishCreated(tuple,address,string,string,uint8,uint8,uint8)"(
       token?: null,
+      owner?: null,
       title?: null,
       description?: null,
       primaryCategory?: null,
       secondaryCategory?: null,
-      tertiaryCategory?: null,
-      owner?: null
+      tertiaryCategory?: null
     ): PublishCreatedEventFilter;
     PublishCreated(
       token?: null,
+      owner?: null,
       title?: null,
       description?: null,
       primaryCategory?: null,
       secondaryCategory?: null,
-      tertiaryCategory?: null,
-      owner?: null
+      tertiaryCategory?: null
     ): PublishCreatedEventFilter;
 
-    "PublishUpdated(tuple,string,string,uint8,uint8,uint8,address)"(
+    "PublishDeleted(uint256,address)"(
+      tokenId?: null,
+      owner?: null
+    ): PublishDeletedEventFilter;
+    PublishDeleted(tokenId?: null, owner?: null): PublishDeletedEventFilter;
+
+    "PublishUpdated(tuple,address,string,string,uint8,uint8,uint8)"(
       token?: null,
+      owner?: null,
       title?: null,
       description?: null,
       primaryCategory?: null,
       secondaryCategory?: null,
-      tertiaryCategory?: null,
-      owner?: null
+      tertiaryCategory?: null
     ): PublishUpdatedEventFilter;
     PublishUpdated(
       token?: null,
+      owner?: null,
       title?: null,
       description?: null,
       primaryCategory?: null,
       secondaryCategory?: null,
-      tertiaryCategory?: null,
-      owner?: null
+      tertiaryCategory?: null
     ): PublishUpdatedEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(

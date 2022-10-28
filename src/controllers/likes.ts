@@ -1,6 +1,6 @@
 import { Request, Response } from "express"
 
-import { getWallet } from "../lib/firebase"
+import { getWallet, searchDocByField, updateDocById } from "../lib/firebase"
 import {
   checkUserRole,
   getLikeFee,
@@ -10,8 +10,8 @@ import {
   estimateCreateLikeGas,
 } from "../lib/LikeNFT"
 import { decrypt } from "../lib/kms"
-import type { CreateLikeInput } from "../lib/LikeNFT"
-import type { CheckRoleParams } from "../types"
+import type { CheckRoleParams, CreateLikeInput, PublishDoc } from "../types"
+import { publishesCollection } from "../config/firebase"
 
 /**
  * The route to check role.
@@ -90,7 +90,35 @@ export async function likePublish(req: Request, res: Response) {
       },
     })
 
-    if (!token) throw new Error("Follow failed.")
+    if (!token) throw new Error("Like failed.")
+
+    // // Create a new doc in "likes" colletion in Firestore.
+    // await createDoc<Partial<LikeDoc>>({
+    //   collectionName: likesCollection,
+    //   data: {
+    //     ...token,
+    //     uid,
+    //   },
+    // })
+
+    // Update the publish doc (increase likes) in Firestore.
+    // Find the publish doc in Firestore.
+    const publishes = await searchDocByField<PublishDoc>({
+      collectionName: publishesCollection,
+      fieldName: "tokenId",
+      fieldValue: Number(publishId), // Must be a number
+    })
+    const publish = publishes[0]
+
+    if (publish) {
+      await updateDocById<Partial<PublishDoc>>({
+        collectionName: publishesCollection,
+        docId: publish.id,
+        data: {
+          likes: publish.likes + 1,
+        },
+      })
+    }
 
     res.status(200).json({ token })
   } catch (error) {
@@ -103,12 +131,12 @@ export async function likePublish(req: Request, res: Response) {
  */
 export async function unLikePublish(req: Request, res: Response) {
   try {
-    const { uid, likeId } = req.params as {
+    const { uid, tokenId } = req.params as {
       uid: string
-      likeId: string
+      tokenId: string
     }
 
-    if (!uid || !likeId) throw new Error("User input error")
+    if (!uid || !tokenId) throw new Error("User input error")
 
     // Get encrypted key
     const { key: encryptedKey } = await getWallet(uid)
@@ -117,9 +145,45 @@ export async function unLikePublish(req: Request, res: Response) {
     const key = await decrypt(encryptedKey)
 
     // 2. Unlike
-    const token = await unLike(key, Number(likeId))
+    const token = await unLike(key, Number(tokenId))
 
-    res.status(200).json({ token })
+    if (!token) throw new Error("Unlike failed")
+
+    // // Find and delete the like doc in Firestore.
+    // const likes = await searchDocByField<LikeDoc>({
+    //   collectionName: likesCollection,
+    //   fieldName: "tokenId",
+    //   fieldValue: Number(tokenId), // Must be a number
+    // })
+    // const like = likes[0]
+
+    // if (like) {
+    //   await deleteDocById({
+    //     collectionName: likesCollection,
+    //     docId: like.id,
+    //   })
+    // }
+
+    // Update the publish doc (decrease likes) in Firestore.
+    // Find the publish doc in Firestore.
+    const publishes = await searchDocByField<PublishDoc>({
+      collectionName: publishesCollection,
+      fieldName: "tokenId",
+      fieldValue: Number(token.publishId), // Must be a number
+    })
+    const publish = publishes[0]
+
+    if (publish) {
+      await updateDocById<Partial<PublishDoc>>({
+        collectionName: publishesCollection,
+        docId: publish.id,
+        data: {
+          likes: publish.likes - 1,
+        },
+      })
+    }
+
+    res.status(200).json({ status: 200 })
   } catch (error) {
     res.status(500).send((error as any).message)
   }

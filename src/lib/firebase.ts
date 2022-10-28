@@ -1,6 +1,7 @@
 import { firestore } from "firebase-admin"
 
 import { db, walletsCollection } from "../config/firebase"
+import type { Wallet } from "../types/firestore-types"
 
 type Args<T = Record<string, any>> = {
   collectionName: string
@@ -54,25 +55,28 @@ export async function getDocById<T extends Record<string, any>>({
 }
 
 /**
- * Get wallet of a user.
- * @param uid {string}
- * @returns encrypted key
+ * Create a new doc with generated id.
+ * @param input.collectionName
+ * @param input.data
+ * @returns
  */
-export async function getWallet(uid: string) {
-  // Get user's wallet from Firestore.
-  const wallet = await getDocById<{
-    id: string
-    key: string
-    address: string
-  }>({
-    collectionName: walletsCollection,
-    docId: uid,
+export function createDoc<T extends Record<string, any>>({
+  collectionName,
+  data,
+}: Pick<Args<T>, "collectionName" | "data">) {
+  return db.collection(collectionName).add({
+    ...data,
+    createdAt: new Date(),
   })
-  if (!wallet) throw new Error("Forbidden")
-
-  return wallet
 }
 
+/**
+ * Create a new doc with pre-defined id.
+ * @param input.collectionName
+ * @param input.docId
+ * @param input.data
+ * @returns
+ */
 export function createDocWithId<T extends Record<string, any>>({
   collectionName,
   docId,
@@ -88,4 +92,89 @@ export function createDocWithId<T extends Record<string, any>>({
       },
       { merge: true }
     )
+}
+
+/**
+ * Update a doc of the specified id.
+ * @param input.collectionName
+ * @param input.docId
+ * @param input.data
+ * @returns
+ */
+export function updateDocById<T extends Record<string, any>>({
+  collectionName,
+  docId,
+  data,
+}: Pick<Args<T>, "collectionName" | "docId" | "data">) {
+  return db
+    .collection(collectionName)
+    .doc(docId)
+    .set(
+      {
+        ...data,
+        updatedAt: new Date(),
+      },
+      { merge: true }
+    )
+}
+
+/**
+ * Delete a doc by id.
+ * @param input.collectionName
+ * @param input.docId
+ * @returns
+ */
+export async function deleteDocById({
+  collectionName,
+  docId,
+}: Pick<Args, "collectionName" | "docId">) {
+  const result = await db.collection(collectionName).doc(docId).delete()
+
+  return result
+}
+
+/**
+ * Search doc by field name.
+ * @param input.collectionName
+ * @param input.fieldName
+ * @param input.fieldValue
+ * @returns
+ */
+export async function searchDocByField<T extends Record<string, any>>({
+  collectionName,
+  fieldName,
+  fieldValue,
+}: Pick<Args, "collectionName" | "fieldName" | "fieldValue">) {
+  const snapshots = await db
+    .collection(collectionName)
+    .where(fieldName, "==", fieldValue)
+    .get()
+
+  let docs: T[] = []
+
+  if (snapshots.empty) return []
+
+  snapshots.forEach((snapshot) => {
+    const data = snapshotToDoc<T>(snapshot)
+    docs.push(data)
+  })
+
+  return docs
+}
+
+// ===== "wallets" collection ===== //
+/**
+ * Get a doc from "wallets" collection.
+ * @param uid {string}
+ * @returns encrypted key
+ */
+export async function getWallet(uid: string) {
+  // Get user's wallet from Firestore.
+  const wallet = await getDocById<Wallet>({
+    collectionName: walletsCollection,
+    docId: uid,
+  })
+  if (!wallet) throw new Error("Forbidden")
+
+  return wallet
 }

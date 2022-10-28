@@ -37,3 +37,7 @@ export const db = getFirestore(firebaseApp)
 
 // Collections
 export const walletsCollection = "wallets"
+export const accountsCollection = "accounts"
+export const activitiesCollection = "activities"
+export const profilesCollection = "profiles"
+export const publishesCollection = "publishes"

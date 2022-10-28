@@ -387,7 +387,7 @@ export interface IPublishNFT extends BaseContract {
     like(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
 
     ownerOfPublish(
       publishId: PromiseOrValue<BigNumberish>,
@@ -419,7 +419,7 @@ export interface IPublishNFT extends BaseContract {
     unLike(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
 
     updatePublish(
       updatePublishData: DataTypes.UpdatePublishDataStruct,

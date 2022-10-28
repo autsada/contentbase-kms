@@ -11,31 +11,13 @@ import {
   PublishCreatedEvent,
   PublishUpdatedEvent,
 } from "../typechain-types/contracts/publish/PublishNFT"
-import { Role, CheckRoleParams } from "../types"
-
-export enum Category {
-  Empty = "Empty",
-  Music = "Music",
-  Movies = "Movies",
-  Entertainment = "Entertainment",
-  Sports = "Sports",
-  Food = "Food",
-  Travel = "Travel",
-  Gaming = "Gaming",
-  News = "News",
-  Animals = "Animals",
-  Education = "Education",
-  Science = "Science",
-  Technology = "Technology",
-  Programming = "Programming",
-  LifeStyle = "LifeStyle",
-  Vehicles = "Vehicles",
-  Children = "Children",
-  Women = "Women",
-  Men = "Men",
-  Other = "Other",
-  NotExist = "NotExist",
-}
+import {
+  Role,
+  CheckRoleParams,
+  Category,
+  CreatePublishInput,
+  UpdatePublishInput,
+} from "../types"
 
 // A helper function to get Category index.
 export function getIndexOfCategory(cat: Category) {
@@ -45,64 +27,6 @@ export function getIndexOfCategory(cat: Category) {
 // A helper function to get Category key.
 export function getKeyOfCategory(index: number) {
   return Object.keys(Category)[index]
-}
-
-/**
- * Input data required to create a Publish NFT.
- * @param key - a wallet's key
- * @param data.creatorId - a token id of the creator's profile
- * @param data.imageURI - a thumbnail image uri of the publish
- * @param data.contentURI - a content uri of the publish
- * @param data.metadataURI - a metadata file uri of the publish
- * @param data.title - a publish's title
- * @param data.description - a publish's description
- * @param data.primaryCategory - a publish's primaryCategory
- * @param data.secondaryCategory - a publish's secondaryCategory
- * @param data.tertiaryCategory - a publish's tertiaryCategory
- */
-export interface CreatePublishInput {
-  key: string
-  data: {
-    creatorId: number
-    imageURI: string
-    contentURI: string
-    metadataURI: string
-    title: string
-    description?: string
-    primaryCategory: Category
-    secondaryCategory: Category
-    tertiaryCategory: Category
-  }
-}
-
-/**
- * Input data required to update Publish.
- * @param key - a wallet's key
- * @param data.tokenId - a token id of the publish to be updated
- * @param data.creatorId - a token id of the creator's profile
- * @param data.imageURI - a thumbnail image uri of the publish
- * @param data.contentURI - a uri of the publish
- * @param data.metadataURI - a metadata file uri of the publish
- * @param data.title - a publish's title
- * @param data.description - a publish's description
- * @param data.primaryCategory - a publish's primaryCategory
- * @param data.secondaryCategory - a publish's secondaryCategory
- * @param data.tertiaryCategory - a publish's tertiaryCategory
- */
-export interface UpdatePublishInput {
-  key: string
-  data: {
-    tokenId: number
-    creatorId: number
-    imageURI: string
-    contentURI: string
-    metadataURI: string
-    title: string
-    description?: string
-    primaryCategory: Category
-    secondaryCategory: Category
-    tertiaryCategory: Category
-  }
 }
 
 /**
@@ -197,7 +121,7 @@ export async function createPublish(input: CreatePublishInput) {
     contentURI,
     metadataURI,
     title,
-    description: description || "",
+    description: description!,
     primaryCategory: getIndexOfCategory(primaryCategory),
     secondaryCategory: getIndexOfCategory(secondaryCategory),
     tertiaryCategory: getIndexOfCategory(tertiaryCategory),
@@ -224,12 +148,12 @@ export async function createPublish(input: CreatePublishInput) {
             metadataURI,
             likes,
           },
+          tokenOwner,
           title,
           description,
           primaryCategory,
           secondaryCategory,
           tertiaryCategory,
-          _,
         ] = publishCreatedEvent.args as PublishCreatedEvent["args"]
 
         token = {
@@ -280,14 +204,14 @@ export async function updatePublish(input: UpdatePublishInput) {
   const transaction = await publishContract.updatePublish({
     tokenId,
     creatorId,
-    imageURI,
-    contentURI,
-    metadataURI,
-    title,
-    description: description || "",
-    primaryCategory: getIndexOfCategory(primaryCategory),
-    secondaryCategory: getIndexOfCategory(secondaryCategory),
-    tertiaryCategory: getIndexOfCategory(tertiaryCategory),
+    imageURI: imageURI!,
+    contentURI: contentURI!,
+    metadataURI: metadataURI!,
+    title: title!,
+    description: description!,
+    primaryCategory: getIndexOfCategory(primaryCategory!),
+    secondaryCategory: getIndexOfCategory(secondaryCategory!),
+    tertiaryCategory: getIndexOfCategory(tertiaryCategory!),
   })
 
   const tx = await transaction.wait()
@@ -310,12 +234,12 @@ export async function updatePublish(input: UpdatePublishInput) {
             metadataURI,
             likes,
           },
+          tokenOwner,
           title,
           description,
           primaryCategory,
           secondaryCategory,
           tertiaryCategory,
-          _,
         ] = publishUpdatedEvent.args as PublishUpdatedEvent["args"]
 
         updatedToken = {

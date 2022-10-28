@@ -1,8 +1,12 @@
 import { Request, Response } from "express"
 
 import { generateWallet, getBalance } from "../lib/ethers"
-import { walletsCollection } from "../config/firebase"
-import { createDocWithId } from "../lib/firebase"
+import { walletsCollection, accountsCollection } from "../config/firebase"
+import { createDocWithId, getDocById } from "../lib/firebase"
+import type { Account, Wallet } from "../types/firestore-types"
+
+const badRequestErrMessage = "Bad Request"
+const forbiddenErrMessage = "Forbidden"
 
 /**
  * @dev The function to generate blockchain wallet.
@@ -11,17 +15,38 @@ import { createDocWithId } from "../lib/firebase"
 export async function createWallet(req: Request, res: Response) {
   try {
     const { uid } = req.body as { uid: string }
-    if (!uid) throw new Error("Bad request")
+    if (!uid) throw new Error(badRequestErrMessage)
+
+    const walletDoc = await getDocById<Wallet>({
+      collectionName: walletsCollection,
+      docId: uid,
+    })
+
+    // If user already has a wallet.
+    if (walletDoc) {
+      // If an account has an address field it means that this account already has a wallet.
+      throw new Error("You already have a wallet")
+    }
 
     const wallet = await generateWallet()
 
-    // Save wallet to Firestore.
+    // Create a new doc in "wallets" collection.
     await createDocWithId<typeof wallet>({
       collectionName: walletsCollection,
       docId: uid,
       data: {
-        address: wallet.address,
+        address: wallet.address.toLowerCase(),
         key: wallet.key,
+      },
+    })
+
+    // Create a new doc (or update if it already exists) in "accounts" colleciton
+    await createDocWithId<Partial<Account>>({
+      collectionName: accountsCollection,
+      docId: uid,
+      data: {
+        address: wallet.address.toLowerCase(),
+        type: "traditional",
       },
     })
 

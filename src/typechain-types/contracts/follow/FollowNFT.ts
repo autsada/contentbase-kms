@@ -63,8 +63,6 @@ export interface FollowNFTInterface extends utils.Interface {
     "balanceOf(address)": FunctionFragment;
     "burn(uint256)": FunctionFragment;
     "follow((uint256,uint256))": FunctionFragment;
-    "followersCount(uint256)": FunctionFragment;
-    "followingCount(uint256)": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "getFollows(uint256[])": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
@@ -98,8 +96,6 @@ export interface FollowNFTInterface extends utils.Interface {
       | "balanceOf"
       | "burn"
       | "follow"
-      | "followersCount"
-      | "followingCount"
       | "getApproved"
       | "getFollows"
       | "getRoleAdmin"
@@ -151,14 +147,6 @@ export interface FollowNFTInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "follow",
     values: [DataTypes.CreateFollowDataStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "followersCount",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "followingCount",
-    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getApproved",
@@ -270,14 +258,6 @@ export interface FollowNFTInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "follow", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "followersCount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "followingCount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getApproved",
     data: BytesLike
   ): Result;
@@ -347,6 +327,7 @@ export interface FollowNFTInterface extends utils.Interface {
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
+    "UnFollow(tuple,address)": EventFragment;
     "Upgraded(address)": EventFragment;
   };
 
@@ -360,6 +341,7 @@ export interface FollowNFTInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UnFollow"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
 
@@ -410,8 +392,8 @@ export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
 
 export interface FollowEventObject {
   token: DataTypes.FollowStructOutput;
-  follower: string;
-  followee: string;
+  followerAddress: string;
+  followeeAddress: string;
 }
 export type FollowEvent = TypedEvent<
   [DataTypes.FollowStructOutput, string, string],
@@ -476,6 +458,17 @@ export type TransferEvent = TypedEvent<
 
 export type TransferEventFilter = TypedEventFilter<TransferEvent>;
 
+export interface UnFollowEventObject {
+  token: DataTypes.FollowStructOutput;
+  followerAddress: string;
+}
+export type UnFollowEvent = TypedEvent<
+  [DataTypes.FollowStructOutput, string],
+  UnFollowEventObject
+>;
+
+export type UnFollowEventFilter = TypedEventFilter<UnFollowEvent>;
+
 export interface UpgradedEventObject {
   implementation: string;
 }
@@ -536,16 +529,6 @@ export interface FollowNFT extends BaseContract {
       createFollowData: DataTypes.CreateFollowDataStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    followersCount(
-      profileId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    followingCount(
-      profileId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
 
     getApproved(
       tokenId: PromiseOrValue<BigNumberish>,
@@ -689,16 +672,6 @@ export interface FollowNFT extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  followersCount(
-    profileId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  followingCount(
-    profileId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   getApproved(
     tokenId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -838,16 +811,6 @@ export interface FollowNFT extends BaseContract {
 
     follow(
       createFollowData: DataTypes.CreateFollowDataStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    followersCount(
-      profileId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    followingCount(
-      profileId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1005,10 +968,14 @@ export interface FollowNFT extends BaseContract {
 
     "Follow(tuple,address,address)"(
       token?: null,
-      follower?: null,
-      followee?: null
+      followerAddress?: null,
+      followeeAddress?: null
     ): FollowEventFilter;
-    Follow(token?: null, follower?: null, followee?: null): FollowEventFilter;
+    Follow(
+      token?: null,
+      followerAddress?: null,
+      followeeAddress?: null
+    ): FollowEventFilter;
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
@@ -1057,6 +1024,12 @@ export interface FollowNFT extends BaseContract {
       tokenId?: PromiseOrValue<BigNumberish> | null
     ): TransferEventFilter;
 
+    "UnFollow(tuple,address)"(
+      token?: null,
+      followerAddress?: null
+    ): UnFollowEventFilter;
+    UnFollow(token?: null, followerAddress?: null): UnFollowEventFilter;
+
     "Upgraded(address)"(
       implementation?: PromiseOrValue<string> | null
     ): UpgradedEventFilter;
@@ -1091,16 +1064,6 @@ export interface FollowNFT extends BaseContract {
     follow(
       createFollowData: DataTypes.CreateFollowDataStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    followersCount(
-      profileId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    followingCount(
-      profileId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getApproved(
@@ -1246,16 +1209,6 @@ export interface FollowNFT extends BaseContract {
     follow(
       createFollowData: DataTypes.CreateFollowDataStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    followersCount(
-      profileId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    followingCount(
-      profileId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getApproved(

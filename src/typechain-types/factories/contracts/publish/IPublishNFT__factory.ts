@@ -141,7 +141,13 @@ const _abi = [
       },
     ],
     name: "like",
-    outputs: [],
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -324,7 +330,13 @@ const _abi = [
       },
     ],
     name: "unLike",
-    outputs: [],
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },

@@ -4,8 +4,6 @@ import {
   checkRole,
   followProfile,
   unFollowProfile,
-  getFollowing,
-  getFollowers,
   fetchFollows,
   estimateCreateFollowNftGas,
 } from "../controllers/follows"
@@ -20,16 +18,7 @@ followsRouter.delete(
   authMiddleware,
   unFollowProfile
 )
-followsRouter.get(
-  "/following/profileId/:profileId",
-  authMiddleware,
-  getFollowing
-)
-followsRouter.get(
-  "/followers/profileId/:profileId",
-  authMiddleware,
-  getFollowers
-)
+
 // This must be a post request as it will receive data in the body
 followsRouter.post("/", authMiddleware, fetchFollows)
 followsRouter.post(

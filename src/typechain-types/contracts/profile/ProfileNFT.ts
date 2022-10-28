@@ -30,15 +30,26 @@ import type {
 
 export declare namespace DataTypes {
   export type ProfileStruct = {
-    tokenId: PromiseOrValue<BigNumberish>;
     owner: PromiseOrValue<string>;
+    tokenId: PromiseOrValue<BigNumberish>;
+    following: PromiseOrValue<BigNumberish>;
+    followers: PromiseOrValue<BigNumberish>;
     handle: PromiseOrValue<string>;
     imageURI: PromiseOrValue<string>;
   };
 
-  export type ProfileStructOutput = [BigNumber, string, string, string] & {
-    tokenId: BigNumber;
+  export type ProfileStructOutput = [
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    string,
+    string
+  ] & {
     owner: string;
+    tokenId: BigNumber;
+    following: BigNumber;
+    followers: BigNumber;
     handle: string;
     imageURI: string;
   };
@@ -74,6 +85,7 @@ export interface ProfileNFTInterface extends utils.Interface {
     "createProfile((string,string))": FunctionFragment;
     "defaultProfile()": FunctionFragment;
     "exists(uint256)": FunctionFragment;
+    "follow(uint256,uint256)": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
@@ -90,11 +102,13 @@ export interface ProfileNFTInterface extends utils.Interface {
     "safeTransferFrom(address,address,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
     "setDefaultProfile(uint256)": FunctionFragment;
+    "setFollowContractAddress(address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
     "tokenURI(uint256)": FunctionFragment;
     "totalProfiles()": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
+    "unFollow(uint256,uint256)": FunctionFragment;
     "updateProfileImage((uint256,string))": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
@@ -111,6 +125,7 @@ export interface ProfileNFTInterface extends utils.Interface {
       | "createProfile"
       | "defaultProfile"
       | "exists"
+      | "follow"
       | "getApproved"
       | "getRoleAdmin"
       | "grantRole"
@@ -127,11 +142,13 @@ export interface ProfileNFTInterface extends utils.Interface {
       | "safeTransferFrom(address,address,uint256,bytes)"
       | "setApprovalForAll"
       | "setDefaultProfile"
+      | "setFollowContractAddress"
       | "supportsInterface"
       | "symbol"
       | "tokenURI"
       | "totalProfiles"
       | "transferFrom"
+      | "unFollow"
       | "updateProfileImage"
       | "upgradeTo"
       | "upgradeToAndCall"
@@ -169,6 +186,10 @@ export interface ProfileNFTInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "exists",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "follow",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getApproved",
@@ -241,6 +262,10 @@ export interface ProfileNFTInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "setFollowContractAddress",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [PromiseOrValue<BytesLike>]
   ): string;
@@ -260,6 +285,10 @@ export interface ProfileNFTInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "unFollow",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "updateProfileImage",
@@ -298,6 +327,7 @@ export interface ProfileNFTInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "exists", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "follow", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getApproved",
     data: BytesLike
@@ -345,6 +375,10 @@ export interface ProfileNFTInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setFollowContractAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
@@ -358,6 +392,7 @@ export interface ProfileNFTInterface extends utils.Interface {
     functionFragment: "transferFrom",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "unFollow", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "updateProfileImage",
     data: BytesLike
@@ -604,6 +639,12 @@ export interface ProfileNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    follow(
+      followerId: PromiseOrValue<BigNumberish>,
+      followeeId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     getApproved(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -688,6 +729,11 @@ export interface ProfileNFT extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setFollowContractAddress(
+      followContractAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     supportsInterface(
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -706,6 +752,12 @@ export interface ProfileNFT extends BaseContract {
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    unFollow(
+      followerId: PromiseOrValue<BigNumberish>,
+      followeeId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -761,6 +813,12 @@ export interface ProfileNFT extends BaseContract {
     tokenId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  follow(
+    followerId: PromiseOrValue<BigNumberish>,
+    followeeId: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   getApproved(
     tokenId: PromiseOrValue<BigNumberish>,
@@ -846,6 +904,11 @@ export interface ProfileNFT extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setFollowContractAddress(
+    followContractAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   supportsInterface(
     interfaceId: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
@@ -864,6 +927,12 @@ export interface ProfileNFT extends BaseContract {
     from: PromiseOrValue<string>,
     to: PromiseOrValue<string>,
     tokenId: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  unFollow(
+    followerId: PromiseOrValue<BigNumberish>,
+    followeeId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -917,6 +986,12 @@ export interface ProfileNFT extends BaseContract {
 
     exists(
       tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    follow(
+      followerId: PromiseOrValue<BigNumberish>,
+      followeeId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -1002,6 +1077,11 @@ export interface ProfileNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setFollowContractAddress(
+      followContractAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     supportsInterface(
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -1022,6 +1102,12 @@ export interface ProfileNFT extends BaseContract {
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    unFollow(
+      followerId: PromiseOrValue<BigNumberish>,
+      followeeId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     updateProfileImage(
       updateProfileImageData: DataTypes.UpdateProfileImageDataStruct,
@@ -1193,6 +1279,12 @@ export interface ProfileNFT extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    follow(
+      followerId: PromiseOrValue<BigNumberish>,
+      followeeId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     getApproved(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1277,6 +1369,11 @@ export interface ProfileNFT extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setFollowContractAddress(
+      followContractAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     supportsInterface(
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -1295,6 +1392,12 @@ export interface ProfileNFT extends BaseContract {
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    unFollow(
+      followerId: PromiseOrValue<BigNumberish>,
+      followeeId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1350,6 +1453,12 @@ export interface ProfileNFT extends BaseContract {
     exists(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    follow(
+      followerId: PromiseOrValue<BigNumberish>,
+      followeeId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getApproved(
@@ -1436,6 +1545,11 @@ export interface ProfileNFT extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    setFollowContractAddress(
+      followContractAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     supportsInterface(
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -1454,6 +1568,12 @@ export interface ProfileNFT extends BaseContract {
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    unFollow(
+      followerId: PromiseOrValue<BigNumberish>,
+      followeeId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -52,32 +52,17 @@ export declare namespace DataTypes {
 export interface IFollowNFTInterface extends utils.Interface {
   functions: {
     "follow((uint256,uint256))": FunctionFragment;
-    "followersCount(uint256)": FunctionFragment;
-    "followingCount(uint256)": FunctionFragment;
     "getFollows(uint256[])": FunctionFragment;
     "setProfileContract(address)": FunctionFragment;
   };
 
   getFunction(
-    nameOrSignatureOrTopic:
-      | "follow"
-      | "followersCount"
-      | "followingCount"
-      | "getFollows"
-      | "setProfileContract"
+    nameOrSignatureOrTopic: "follow" | "getFollows" | "setProfileContract"
   ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "follow",
     values: [DataTypes.CreateFollowDataStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "followersCount",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "followingCount",
-    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getFollows",
@@ -89,14 +74,6 @@ export interface IFollowNFTInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "follow", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "followersCount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "followingCount",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "getFollows", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setProfileContract",
@@ -138,16 +115,6 @@ export interface IFollowNFT extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    followersCount(
-      profileId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    followingCount(
-      profileId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     getFollows(
       tokenIds: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
@@ -164,16 +131,6 @@ export interface IFollowNFT extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  followersCount(
-    profileId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  followingCount(
-    profileId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   getFollows(
     tokenIds: PromiseOrValue<BigNumberish>[],
     overrides?: CallOverrides
@@ -187,16 +144,6 @@ export interface IFollowNFT extends BaseContract {
   callStatic: {
     follow(
       createFollowData: DataTypes.CreateFollowDataStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    followersCount(
-      profileId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    followingCount(
-      profileId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -219,16 +166,6 @@ export interface IFollowNFT extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    followersCount(
-      profileId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    followingCount(
-      profileId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getFollows(
       tokenIds: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
@@ -244,16 +181,6 @@ export interface IFollowNFT extends BaseContract {
     follow(
       createFollowData: DataTypes.CreateFollowDataStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    followersCount(
-      profileId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    followingCount(
-      profileId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getFollows(

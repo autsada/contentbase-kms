@@ -6,6 +6,7 @@
 import express from "express"
 
 import {
+  setFollowContractOnProfileContract,
   setProfileContractOnPublishContract,
   setLikeContractOnPublishContract,
   setProfileContractOnFollowContract,
@@ -22,6 +23,11 @@ import { authMiddleware } from "../middlewares/auth"
 
 export const adminRouter = express.Router()
 
+adminRouter.post(
+  "/set/profile-follow",
+  authMiddleware,
+  setFollowContractOnProfileContract
+)
 adminRouter.post(
   "/set/publish-profile",
   authMiddleware,

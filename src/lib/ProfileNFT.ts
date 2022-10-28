@@ -12,35 +12,12 @@ import {
   ProfileImageUpdatedEvent,
   DefaultProfileUpdatedEvent,
 } from "../typechain-types/contracts/profile/ProfileNFT"
-import { Role, CheckRoleParams } from "../types"
-
-/**
- * Input data required for creating a Profile NFT.
- * @param key {string} - wallet's key
- * @param data.handle {string} - a handle of the profile
- * @param data.imageURI {string} - a profile image uri
- */
-export interface CreateProfileInput {
-  key: string
-  data: {
-    handle: string
-    imageURI: string
-  }
-}
-
-/**
- * Input data required for creating update Profile image.
- * @param key {string} - wallet's key
- * @param data.tokenId {number} - an id of a Profile NFT
- * @param data.imageURI {string} - a profile image uri
- */
-export interface UpdateProfileImageInput {
-  key: string
-  data: {
-    tokenId: number
-    imageURI: string
-  }
-}
+import {
+  Role,
+  CheckRoleParams,
+  CreateProfileInput,
+  UpdateProfileImageInput,
+} from "../types"
 
 /**
  * Get conract using signer.
@@ -81,6 +58,18 @@ export async function checkUserRole({ role, address, key }: CheckRoleParams) {
 }
 
 /**
+ * The function to set Follow contract.
+ * @notice Profile contract needs to communicate with Follow contract
+ * @dev this function is for Admin only
+ * @param key - wallet's key
+ * @param address - Follow contract address
+ */
+export async function setFollowContract(key: string, address: string) {
+  const profileContract = getProfileContractBySigner(key)
+  await profileContract.setFollowContractAddress(address)
+}
+
+/**
  * The function to create Profile NFT.
  * @dev see CreateProfileInput
  * @return token {Profile object}
@@ -114,7 +103,7 @@ export async function createProfile(input: CreateProfileInput) {
 
     if (profileCreatedEvent) {
       if (profileCreatedEvent.args) {
-        const [{ tokenId, handle, imageURI, owner }, _] =
+        const [{ tokenId, handle, imageURI, owner, following, followers }, _] =
           profileCreatedEvent.args as ProfileCreatedEvent["args"]
 
         token = {
@@ -122,6 +111,8 @@ export async function createProfile(input: CreateProfileInput) {
           owner,
           handle,
           imageURI,
+          following: following.toNumber(),
+          followers: followers.toNumber(),
         }
       }
     }
@@ -158,7 +149,7 @@ export async function updateProfile(input: UpdateProfileImageInput) {
 
     if (profileCreatedEvent) {
       if (profileCreatedEvent.args) {
-        const [{ tokenId, owner, handle, imageURI }, _] =
+        const [{ tokenId, owner, handle, imageURI, followers, following }, _] =
           profileCreatedEvent.args as ProfileImageUpdatedEvent["args"]
 
         updatedToken = {
@@ -166,6 +157,8 @@ export async function updateProfile(input: UpdateProfileImageInput) {
           owner,
           handle,
           imageURI,
+          following: following.toNumber(),
+          followers: followers.toNumber(),
         }
       }
     }
@@ -195,7 +188,7 @@ export async function setDefaultProfile(key: string, tokenId: number) {
 
     if (profileCreatedEvent) {
       if (profileCreatedEvent.args) {
-        const [{ tokenId, owner, handle, imageURI }, _] =
+        const [{ tokenId, owner, handle, imageURI, following, followers }, _] =
           profileCreatedEvent.args as DefaultProfileUpdatedEvent["args"]
 
         token = {
@@ -203,6 +196,8 @@ export async function setDefaultProfile(key: string, tokenId: number) {
           owner,
           handle,
           imageURI,
+          following: following.toNumber(),
+          followers: followers.toNumber(),
         }
       }
     }

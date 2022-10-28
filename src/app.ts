@@ -21,6 +21,7 @@ app.use("/publishes", router.publishesRouter)
 app.use("/follows", router.followsRouter)
 app.use("/likes", router.likesRouter)
 app.use("/admin", router.adminRouter)
+app.use("/activities", router.activitiesRouter)
 
 // Create the HTTP server
 const httpServer = http.createServer(app)
