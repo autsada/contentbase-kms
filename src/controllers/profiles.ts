@@ -67,7 +67,7 @@ export async function createProfileNft(req: Request, res: Response) {
       key,
       data: {
         handle: lowercasedHandle,
-        imageURI,
+        imageURI: imageURI || "",
       },
     })
 
