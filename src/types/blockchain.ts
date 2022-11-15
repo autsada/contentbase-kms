@@ -1,27 +1,4 @@
 /**
- * @param id {string} - a document id
- * @param key {string} - a blockchain wallet key (encrypted)
- * @param address {string} - a blockchain wallet address
- */
-export type Wallet = {
-  id: string
-  key: string
-  address: string
-}
-
-/**
- * @param id - a document id
- * @param address - a blockchain wallet address
- */
-export type Account = {
-  id: string
-  address: string
-  type: "traditional" | "wallet"
-  createdAt: string
-  updatedAt?: string | null
-}
-
-/**
  * Enum for contract's role.
  */
 export enum Role {
@@ -53,7 +30,7 @@ export type CreateProfileInput = {
 /**
  * Input data required for creating update Profile image.
  * @param key {string} - wallet's key
- * @param data.tokenId {number} - an id of a Profile NFT
+ * @param data.tokenId {number} - a profile token id to be updated
  * @param data.imageURI {string} - a profile image uri
  */
 export type UpdateProfileImageInput = {
@@ -61,6 +38,20 @@ export type UpdateProfileImageInput = {
   data: {
     tokenId: number
     imageURI: string
+  }
+}
+
+/**
+ * Input data required for creating a Follow NFT.
+ * @param key - a wallet's key
+ * @param data.follwerId - a profile id of the follwer
+ * @param data.follweeId - a profile id of the follwee
+ */
+export type CreateFollowInput = {
+  key: string
+  data: {
+    followerId: number
+    followeeId: number
   }
 }
 
@@ -82,23 +73,7 @@ export type ProfileToken = {
 }
 
 /**
- * See ProfileToken
- * @param id {string} - a database id
- * @param uid {string} - an owner auth uid
- * @param displayedHandle {string} - original unformatted handle, use dis to display on the UI
- * @createdAt {string}
- * @updatedAt {string}
- */
-export type ProfileDoc = ProfileToken & {
-  id: string
-  uid: string
-  displayedHandle: string
-  createdAt: string
-  updatedAt?: string | null
-}
-
-/**
- * Category of a publish token
+ * Category of the publish struct
  */
 export enum Category {
   Empty = "Empty",
@@ -127,7 +102,7 @@ export enum Category {
 /**
  * Input data required to create a Publish NFT.
  * @param key - a wallet's key
- * @param data.creatorId - a token id of the creator's profile
+ * @param data.creatorId - a profile id that user uses to create a publish
  * @param data.imageURI - a thumbnail image uri of the publish
  * @param data.contentURI - a content uri of the publish
  * @param data.metadataURI - a metadata file uri of the publish
@@ -145,7 +120,7 @@ export type CreatePublishInput = {
     contentURI: string
     metadataURI: string
     title: string
-    description?: string
+    description: string
     primaryCategory: Category
     secondaryCategory: Category
     tertiaryCategory: Category
@@ -156,9 +131,9 @@ export type CreatePublishInput = {
  * Input data required to update Publish.
  * @param key - a wallet's key
  * @param data.tokenId - a token id of the publish to be updated
- * @param data.creatorId - a token id of the creator's profile
+ * @param data.creatorId - a creator profile id
  * @param data.imageURI - a thumbnail image uri of the publish
- * @param data.contentURI - a uri of the publish
+ * @param data.contentURI - a content uri of the publish
  * @param data.metadataURI - a metadata file uri of the publish
  * @param data.title - a publish's title
  * @param data.description - a publish's description
@@ -171,14 +146,44 @@ export type UpdatePublishInput = {
   data: {
     tokenId: number
     creatorId: number
-    imageURI?: string
-    contentURI?: string
-    metadataURI?: string
-    title?: string
-    description?: string
-    primaryCategory?: Category
-    secondaryCategory?: Category
-    tertiaryCategory?: Category
+    imageURI: string
+    contentURI: string
+    metadataURI: string
+    title: string
+    description: string
+    primaryCategory: Category
+    secondaryCategory: Category
+    tertiaryCategory: Category
+  }
+}
+
+/**
+ * @param key - a wallet's key
+ * @param data.targetId {number} - a publish or comment token id
+ * @param data.creatorId {number} - a profile token id that creates a comment
+ * @param data.contentURI {string} - comment metadata uri
+ */
+export type CommentInput = {
+  key: string
+  data: {
+    targetId: number
+    creatorId: number
+    contentURI: string
+  }
+}
+
+/**
+ * @param key - a wallet's key
+ * @param data.tokenId {number} - a publish or comment token id
+ * @param data.creatorId {number} - a profile token id that creates a comment
+ * @param data.contentURI {string} - comment metadata uri
+ */
+export type UpdateCommentInput = {
+  key: string
+  data: {
+    tokenId: number
+    creatorId: number
+    contentURI: string
   }
 }
 
@@ -187,6 +192,7 @@ export type UpdatePublishInput = {
  * @param owner {address} - an address that owns the token
  * @param creatorId {uint256} - a profile token id of the creator
  * @param likes {uint256} - number of likes a publish has
+ * @param disLikes {uint256} - number of disLikes a publish has
  * @param imageURI {string} - a publish's thumbnail image uri
  * @param contentURI {string} - a publish's content uri, tipically it's a uri point to a video content
  * @param metadataURI {string} - a uri point to the publish's metadata json file that contain all information about a publish.
@@ -209,113 +215,8 @@ export type PublishToken = {
   owner: string
   creatorId: number
   likes: number
+  disLikes: number
   imageURI: string
   contentURI: string
   metadataURI: string
 }
-
-/**
- * See PublishToken
- * @param id {string} - a database id
- * @param uid {string} - an owner auth uid
- * @param title {string}
- * @param description {string}
- * @param primaryCategory {enum}
- * @param secondaryCategory {enum}
- * @param tertiaryCategory {enum}
- * @createdAt {string}
- * @updatedAt {string}
- */
-export type PublishDoc = PublishToken & {
-  id: string
-  uid: string
-  title: string
-  description: string
-  primaryCategory: Category
-  secondaryCategory: Category
-  tertiaryCategory: Category
-  createdAt: string
-  updatedAt?: string | null
-}
-
-/**
- * Input data required for creating a Follow NFT.
- * @param key - a wallet's key
- * @param data.follwerId - a profile id of the follwer
- * @param data.follweeId - a profile id of the follwee
- */
-export type CreateFollowInput = {
-  key: string
-  data: {
-    followerId: number
-    followeeId: number
-  }
-}
-
-/**
- * @param tokenId {uint256} - a token id
- * @param owner {address} - an address that owns the token.
- * @param followerId {uint256} - a Profile NFT id that follows followeeId.
- * @param followeeId {uint256} - a Profile NFT id that is being followed by followerId.
- */
-export type FollowToken = {
-  tokenId: number
-  owner: string
-  followeeId: number
-  followerId: number
-}
-
-// /**
-//  * See FollowToken
-//  * @param id {string} - a database id
-//  * @param uid {string} - an owner auth uid
-//  * @createdAt {string}
-//  * @updatedAt {string}
-//  */
-// export type FollowDoc = FollowToken & {
-//   id: string
-//   uid: string
-//   createdAt: string
-//   updatedAt?: string | null
-// }
-
-/**
- * Input data required for creating a Like NFT.
- * @param key - a wallet's key
- * @param data.profileId - a profile id of the caller
- * @param data.publishId - a publish id that the caller likes
- */
-export interface CreateLikeInput {
-  key: string
-  data: {
-    profileId: number
-    publishId: number
-  }
-}
-
-/**
- * @param tokenId {uint256} - a token id
- * @param owner {address} - an address that owns the token.
- * @param profileId {uint256} - a Profile NFT id that performs a like.
- * @param publishId {uint256} - a Publish NFT id that is being liked.
- */
-export type LikeToken = {
-  tokenId: number
-  owner: string
-  profileId: number
-  publishId: number
-}
-
-// /**
-//  * See LikeToken
-//  * @param id {string} - a database id
-//  * @param uid {string} - an owner auth uid
-//  * @createdAt {string}
-//  * @updatedAt {string}
-//  */
-// export type LikeDoc = LikeToken & {
-//   id: string
-//   uid: string
-//   createdAt: string
-//   updatedAt?: string | null
-// }

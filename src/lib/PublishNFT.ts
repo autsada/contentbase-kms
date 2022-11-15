@@ -5,18 +5,17 @@
 import { ethers, utils } from "ethers"
 
 import { getContractBySigner, getContractByProvider } from "./ethers"
-import PublishContract from "../abi/PublishContract.json"
-import { PublishNFT } from "../typechain-types"
-import {
-  PublishCreatedEvent,
-  PublishUpdatedEvent,
-} from "../typechain-types/contracts/publish/PublishNFT"
+import PublishContract from "../abi/ContentBasePublishV1.json"
+import { ContentBasePublishV1 as Publish } from "../typechain-types"
 import {
   Role,
   CheckRoleParams,
   Category,
   CreatePublishInput,
   UpdatePublishInput,
+  PublishToken,
+  CommentInput,
+  UpdateCommentInput,
 } from "../types"
 
 // A helper function to get Category index.
@@ -38,7 +37,7 @@ export function getPublishContractBySigner(key: string) {
     address: PublishContract.address,
     privateKey: key,
     contractInterface: PublishContract.abi,
-  }) as PublishNFT
+  }) as Publish
 }
 
 /**
@@ -48,11 +47,11 @@ export function getPublishContractByProvider() {
   return getContractByProvider({
     address: PublishContract.address,
     contractInterface: PublishContract.abi,
-  }) as PublishNFT
+  }) as Publish
 }
 
 /**
- * The function to check caller's role.
+ * A function to check caller's role.
  * @dev see CheckRoleParams
  * @return hasRole {boolean}
  */
@@ -68,33 +67,65 @@ export async function checkUserRole({ role, address, key }: CheckRoleParams) {
 }
 
 /**
- * The function to set Profile contract.
- * @notice Publish contract needs to communicate with Profile contract
+ * A function to update contract owner address stored on the Publish contract for use to withdraw fund to the owner.
  * @dev this function is for Admin only
  * @param key - wallet's key
- * @param address - Profile contract address
+ * @param ownerAddress - The owner wallet address
  */
-export async function setProfileContract(key: string, address: string) {
+export async function updatePlatformOwner(key: string, ownerAddress: string) {
   const publishContract = getPublishContractBySigner(key)
-  await publishContract.setProfileContract(address)
+  await publishContract.updatePlatformOwner(ownerAddress)
 }
 
 /**
- * The function to set Like contract.
- * @notice Publish contract needs to communicate with Like contract
+ * A function to update Profile contract address stored on the Publish contract in order for the Publish contract to communicate with the Profile contract
  * @dev this function is for Admin only
  * @param key - wallet's key
- * @param address - Like contract address
+ * @param contractAddress - Profile contract address
  */
-export async function setLikeContract(key: string, address: string) {
+export async function updateProfileContract(
+  key: string,
+  contractAddress: string
+) {
   const publishContract = getPublishContractBySigner(key)
-  await publishContract.setLikeContractAddress(address)
+  await publishContract.updateProfileContract(contractAddress)
 }
 
 /**
- * The function to create Publish NFT.
+ * A function to update like fee stored on the Publish contract.
+ * @dev this function is for Admin only
+ * @param key - wallet's key
+ * @param fee {number}
+ */
+export async function updateLikeFee(key: string, fee: number) {
+  const publishContract = getPublishContractBySigner(key)
+  await publishContract.updateLikeFee(fee)
+}
+
+/**
+ * A function to update platform fee stored on the Publish contract.
+ * @dev this function is for Admin only
+ * @param key - wallet's key
+ * @param fee {number}
+ */
+export async function updatePlatformFee(key: string, fee: number) {
+  const publishContract = getPublishContractBySigner(key)
+  await publishContract.updatePlatformFee(fee)
+}
+
+/**
+ * A function to withdraw funds from the Publish contract.
+ * @dev this function is for Admin only
+ * @param key - wallet's key
+ */
+export async function withdrawFunds(key: string) {
+  const publishContract = getPublishContractBySigner(key)
+  await publishContract.withdraw()
+}
+
+/**
+ * A function to create Publish NFT.
  * @param input - see CreatePublishInput
- * @return token {Publish object}
  */
 export async function createPublish(input: CreatePublishInput) {
   const {
@@ -113,7 +144,6 @@ export async function createPublish(input: CreatePublishInput) {
   } = input
 
   const publishContract = getPublishContractBySigner(key)
-
   // Make sure to pass down categories as numbers.
   const transaction = await publishContract.createPublish({
     creatorId,
@@ -121,66 +151,17 @@ export async function createPublish(input: CreatePublishInput) {
     contentURI,
     metadataURI,
     title,
-    description: description!,
+    description,
     primaryCategory: getIndexOfCategory(primaryCategory),
     secondaryCategory: getIndexOfCategory(secondaryCategory),
     tertiaryCategory: getIndexOfCategory(tertiaryCategory),
   })
-
-  const tx = await transaction.wait()
-
-  let token
-
-  if (tx.events) {
-    const publishCreatedEvent = tx.events.find(
-      (e) => e.event === "PublishCreated"
-    )
-
-    if (publishCreatedEvent) {
-      if (publishCreatedEvent.args) {
-        const [
-          {
-            tokenId,
-            creatorId,
-            owner,
-            imageURI,
-            contentURI,
-            metadataURI,
-            likes,
-          },
-          tokenOwner,
-          title,
-          description,
-          primaryCategory,
-          secondaryCategory,
-          tertiaryCategory,
-        ] = publishCreatedEvent.args as PublishCreatedEvent["args"]
-
-        token = {
-          tokenId: tokenId.toNumber(),
-          creatorId: creatorId.toNumber(),
-          owner,
-          imageURI,
-          contentURI,
-          metadataURI,
-          likes: likes.toNumber(),
-          title,
-          description,
-          primaryCategory: getKeyOfCategory(primaryCategory),
-          secondaryCategory: getKeyOfCategory(secondaryCategory),
-          tertiaryCategory: getKeyOfCategory(tertiaryCategory),
-        }
-      }
-    }
-  }
-
-  return token
+  await transaction.wait()
 }
 
 /**
- * The function to update Publish.
+ * A function to update a Publish.
  * @param input - see UpdatePublishInput
- * @return token {Publish object}
  */
 export async function updatePublish(input: UpdatePublishInput) {
   const {
@@ -200,188 +181,194 @@ export async function updatePublish(input: UpdatePublishInput) {
   } = input
 
   const publishContract = getPublishContractBySigner(key)
-
+  // Make sure to pass down categories as numbers.
   const transaction = await publishContract.updatePublish({
     tokenId,
     creatorId,
-    imageURI: imageURI!,
-    contentURI: contentURI!,
-    metadataURI: metadataURI!,
-    title: title!,
-    description: description!,
-    primaryCategory: getIndexOfCategory(primaryCategory!),
-    secondaryCategory: getIndexOfCategory(secondaryCategory!),
-    tertiaryCategory: getIndexOfCategory(tertiaryCategory!),
+    imageURI,
+    contentURI,
+    metadataURI,
+    title,
+    description: description || "",
+    primaryCategory: getIndexOfCategory(primaryCategory),
+    secondaryCategory: getIndexOfCategory(secondaryCategory),
+    tertiaryCategory: getIndexOfCategory(tertiaryCategory),
   })
-
-  const tx = await transaction.wait()
-  let updatedToken
-
-  if (tx.events) {
-    const publishUpdatedEvent = tx.events.find(
-      (e) => e.event === "PublishUpdated"
-    )
-
-    if (publishUpdatedEvent) {
-      if (publishUpdatedEvent.args) {
-        const [
-          {
-            owner,
-            tokenId,
-            creatorId,
-            imageURI,
-            contentURI,
-            metadataURI,
-            likes,
-          },
-          tokenOwner,
-          title,
-          description,
-          primaryCategory,
-          secondaryCategory,
-          tertiaryCategory,
-        ] = publishUpdatedEvent.args as PublishUpdatedEvent["args"]
-
-        updatedToken = {
-          owner,
-          tokenId: tokenId.toNumber(),
-          creatorId: creatorId.toNumber(),
-          imageURI,
-          contentURI,
-          metadataURI,
-          likes: likes.toNumber(),
-          title,
-          description,
-          primaryCategory: getKeyOfCategory(primaryCategory),
-          secondaryCategory: getKeyOfCategory(secondaryCategory),
-          tertiaryCategory: getKeyOfCategory(tertiaryCategory),
-        }
-      }
-    }
-  }
-
-  return updatedToken
+  await transaction.wait()
 }
 
 /**
- * The function to burn a publish token.
+ * A function to burn a publish token.
  * @param key {string} - wallet's key
- * @param tokenId {number} - a token id
+ * @param tokenId {number} - a publish token id
+ * @param creatorId {number} - a publish's creator id
  */
-export async function deletePublish(key: string, tokenId: number) {
+export async function deletePublish(
+  key: string,
+  tokenId: number,
+  creatorId: number
+) {
   const publishContract = getPublishContractBySigner(key)
-
-  await publishContract.burn(tokenId)
+  const transaction = await publishContract.deletePublish(tokenId, creatorId)
+  await transaction.wait()
 }
 
 /**
- * The function to get user's publishes
- * @param key a wallet private key
- * @param tokenIds an array of profile token ids
- * @dev for owner to fetch their own publishes
- * @dev tokenIds array length must not greater than 40
- * @return tokens {array of Publish object}
+ * A function to like a publish.
+ * @param key {string} - wallet's key
+ * @param publishId {number} - a publish token id
+ * @param profileId {number} - a profile token id
  */
-export async function fetchMyPublishes(key: string, tokenIds: number[]) {
-  const profileContract = getPublishContractBySigner(key)
-  const myPublishes = await profileContract.ownerPublishes(tokenIds)
-  const publishes = myPublishes.map(
-    ({
-      owner,
-      tokenId,
-      creatorId,
-      imageURI,
-      contentURI,
-      metadataURI,
-      likes,
-    }) => {
-      return {
-        owner,
-        tokenId: tokenId.toNumber(),
-        creatorId: creatorId.toNumber(),
-        imageURI,
-        contentURI,
-        metadataURI,
-        likes: likes.toNumber(),
-      }
-    }
-  )
-
-  return publishes
+export async function likePublish(
+  key: string,
+  publishId: number,
+  profileId: number
+) {
+  const publishContract = getPublishContractBySigner(key)
+  const transaction = await publishContract.likePublish(publishId, profileId)
+  await transaction.wait()
 }
 
 /**
- * The function to get publishes by provided ids.
- * @param tokenIds an array of profile token ids
- * @dev can call by anybody
- * @dev tokenIds array length must not greater than 40
- * @return tokens {array of Publish object}
+ * A function to dis like a publish.
+ * @param key {string} - wallet's key
+ * @param publishId {number} - a publish token id
+ * @param profileId {number} - a profile token id
  */
-export async function fetchPublishes(tokenIds: number[]) {
-  const publishContract = getPublishContractByProvider()
-  const myPublishes = await publishContract.getPublishes(tokenIds)
-  const publishes = myPublishes.map(
-    ({
-      owner,
-      tokenId,
-      creatorId,
-      imageURI,
-      contentURI,
-      metadataURI,
-      likes,
-    }) => {
-      return {
-        owner,
-        tokenId: tokenId.toNumber(),
-        creatorId: creatorId.toNumber(),
-        imageURI,
-        contentURI,
-        metadataURI,
-        likes: likes.toNumber(),
-      }
-    }
-  )
-
-  return publishes
+export async function disLikePublish(
+  key: string,
+  publishId: number,
+  profileId: number
+) {
+  const publishContract = getPublishContractBySigner(key)
+  const transaction = await publishContract.disLikePublish(publishId, profileId)
+  await transaction.wait()
 }
 
 /**
- * The function to get Publish by provided id.
+ * A function to get Publish by provided id.
  * @param publishId a token id of the publish
  * @return token {Publish object}
  */
-export async function fetchPublish(publishId: number) {
+export async function fetchPublish(publishId: number): Promise<PublishToken> {
   const publishContract = getPublishContractByProvider()
   const {
     owner,
-    tokenId,
     creatorId,
     imageURI,
     contentURI,
     metadataURI,
     likes,
-  } = await publishContract.publishById(publishId)
+    disLikes,
+  } = await publishContract.getPublishById(publishId)
 
   return {
+    tokenId: publishId,
     owner,
-    tokenId: tokenId.toNumber(),
     creatorId: creatorId.toNumber(),
     imageURI,
     contentURI,
     metadataURI,
-    likes: likes.toNumber(),
+    likes,
+    disLikes,
   }
 }
 
 /**
- * The function to get total publishes count.
- * @return count {number}
+ * A function to create a comment.
+ * @param input - see CommentInput
  */
-export async function totalPublishesCount() {
-  const publishContract = getPublishContractByProvider()
-  const result = await publishContract.publishesCount()
+export async function createComment(input: CommentInput) {
+  const {
+    key,
+    data: { targetId, creatorId, contentURI },
+  } = input
 
-  return result.toNumber()
+  const publishContract = getPublishContractBySigner(key)
+  const transaction = await publishContract.createComment({
+    targetId,
+    creatorId,
+    contentURI,
+  })
+  await transaction.wait()
+}
+
+/**
+ * A function to update a comment.
+ * @param input - see UpdateCommentInput
+ */
+export async function updateComment(input: UpdateCommentInput) {
+  const {
+    key,
+    data: { tokenId, creatorId, contentURI },
+  } = input
+
+  const publishContract = getPublishContractBySigner(key)
+  const transaction = await publishContract.updateComment({
+    tokenId,
+    creatorId,
+    newContentURI: contentURI,
+  })
+  await transaction.wait()
+}
+
+/**
+ * A function to delete a comment.
+ * @param key {string} - wallet's key
+ * @param tokenId {number} - an id of the comment to be deleted.
+ * @param creatorId {number} - an id of the profile that created the comment.
+ */
+export async function deleteComment(
+  key: string,
+  tokenId: number,
+  creatorId: number
+) {
+  const publishContract = getPublishContractBySigner(key)
+  const transaction = await publishContract.deleteComment(tokenId, creatorId)
+  await transaction.wait()
+}
+
+/**
+ * A function to like a comment.
+ * @param key {string} - wallet's key
+ * @param commentId {number} - a publish token id
+ * @param profileId {number} - a profile token id
+ */
+export async function likeComment(
+  key: string,
+  commentId: number,
+  profileId: number
+) {
+  const publishContract = getPublishContractBySigner(key)
+  const transaction = await publishContract.likeComment(commentId, profileId)
+  await transaction.wait()
+}
+
+/**
+ * A function to dis like a comment.
+ * @param key {string} - wallet's key
+ * @param commentId {number} - a publish token id
+ * @param profileId {number} - a profile token id
+ */
+export async function disLikeComment(
+  key: string,
+  commentId: number,
+  profileId: number
+) {
+  const publishContract = getPublishContractBySigner(key)
+  const transaction = await publishContract.disLikeComment(commentId, profileId)
+  await transaction.wait()
+}
+
+/**
+ * A function to get token uri.
+ * @param tokenId {number} a token id
+ * @return uri {string}
+ */
+export async function getTokenURI(tokenId: number): Promise<string> {
+  const publishContract = getPublishContractByProvider()
+  const uri = await publishContract.tokenURI(tokenId)
+  return uri
 }
 
 /**
@@ -389,7 +376,9 @@ export async function totalPublishesCount() {
  * @dev see CreatePublishInput
  * @return gas {number} - amount in ether
  */
-export async function estimateCreatePublishGas(input: CreatePublishInput) {
+export async function estimateGasForCreatePublishTxn(
+  input: CreatePublishInput
+) {
   const {
     key,
     data: {
@@ -412,11 +401,49 @@ export async function estimateCreatePublishGas(input: CreatePublishInput) {
     contentURI,
     metadataURI,
     title,
-    description: description || "",
+    description,
     primaryCategory: getIndexOfCategory(primaryCategory),
     secondaryCategory: getIndexOfCategory(secondaryCategory),
     tertiaryCategory: getIndexOfCategory(tertiaryCategory),
   })
 
+  return ethers.utils.formatEther(gasInWei)
+}
+
+/**
+ * The function to estimate gas used to like a publish.
+ * @param key {string} - wallet's key
+ * @param publishId {number} - a publish token id
+ * @param profileId {number} - a profile token id
+ */
+export async function estimateGasForLikePublishTxn(
+  key: string,
+  publishId: number,
+  profileId: number
+) {
+  const publishContract = getPublishContractBySigner(key)
+  const gasInWei = await publishContract.estimateGas.likePublish(
+    publishId,
+    profileId
+  )
+  return ethers.utils.formatEther(gasInWei)
+}
+
+/**
+ * The function to estimate gas used to like a comment.
+ * @param key {string} - wallet's key
+ * @param commentId {number} - a publish token id
+ * @param profileId {number} - a profile token id
+ */
+export async function estimateGasForLikeCommentTxn(
+  key: string,
+  commentId: number,
+  profileId: number
+) {
+  const publishContract = getPublishContractBySigner(key)
+  const gasInWei = await publishContract.estimateGas.likeComment(
+    commentId,
+    profileId
+  )
   return ethers.utils.formatEther(gasInWei)
 }

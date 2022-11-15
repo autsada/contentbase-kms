@@ -4,3 +4,4 @@ node_modules
 test.js
 kmsServiceAccount.json
 .DS_Store
+src/typechain-types

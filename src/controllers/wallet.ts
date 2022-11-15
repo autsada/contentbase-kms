@@ -3,7 +3,7 @@ import { Request, Response } from "express"
 import { generateWallet, getBalance } from "../lib/ethers"
 import { walletsCollection, accountsCollection } from "../config/firebase"
 import { createDocWithId, getDocById } from "../lib/firebase"
-import type { Account, Wallet } from "../types/firestore-types"
+import type { Account, Wallet } from "../types"
 
 const badRequestErrMessage = "Bad Request"
 const forbiddenErrMessage = "Forbidden"
@@ -23,13 +23,10 @@ export async function createWallet(req: Request, res: Response) {
     })
 
     // If user already has a wallet.
-    if (walletDoc) {
-      // If an account has an address field it means that this account already has a wallet.
+    if (walletDoc && walletDoc.address && walletDoc.key)
       throw new Error("You already have a wallet")
-    }
 
     const wallet = await generateWallet()
-
     // Create a new doc in "wallets" collection.
     await createDocWithId<typeof wallet>({
       collectionName: walletsCollection,

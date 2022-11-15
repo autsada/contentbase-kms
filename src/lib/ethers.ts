@@ -18,13 +18,21 @@ export function getAlchemyProvider() {
   return new ethers.providers.AlchemyProvider(network, ALCHEMY_API_KEY)
 }
 
+export function getProvider() {
+  return NODE_ENV === "development"
+    ? getJsonRpcProvider()
+    : getAlchemyProvider()
+}
+
 export function getSigner(privateKey: string) {
-  const provider =
-    NODE_ENV === "development" ? getJsonRpcProvider() : getAlchemyProvider()
+  const provider = getProvider()
 
   return new ethers.Wallet(privateKey, provider)
 }
 
+/**
+ * Provider Contract is for read-only
+ */
 export function getContractByProvider({
   address,
   contractInterface,
@@ -32,12 +40,14 @@ export function getContractByProvider({
   address: string
   contractInterface: ethers.ContractInterface
 }) {
-  const provider =
-    NODE_ENV === "development" ? getJsonRpcProvider() : getAlchemyProvider()
+  const provider = getProvider()
 
   return new ethers.Contract(address, contractInterface, provider)
 }
 
+/**
+ * For write functionalities use Signer Contract
+ */
 export function getContractBySigner({
   address,
   privateKey,
@@ -57,8 +67,7 @@ export function getContractBySigner({
  *
  */
 export async function getBalance(address: string) {
-  const provider =
-    NODE_ENV === "development" ? getJsonRpcProvider() : getAlchemyProvider()
+  const provider = getProvider()
 
   const balanceInWei = await provider.getBalance(address)
 

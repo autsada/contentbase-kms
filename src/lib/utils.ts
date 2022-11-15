@@ -1,4 +1,6 @@
-import CryptoJs from 'crypto-js'
+import CryptoJs from "crypto-js"
+
+import { Category } from "../types"
 
 const { KMS_ENCRYPT_KEY, KMS_ACCESS_KEY } = process.env
 
@@ -35,4 +37,14 @@ export function decryptObject(text: string) {
  */
 export function checkAuth(token: string) {
   return token === KMS_ACCESS_KEY
+}
+
+// A helper function to get Category index.
+export function getIndexOfCategory(cat: Category) {
+  return Object.keys(Category).indexOf(cat)
+}
+
+// A helper function to get Category key.
+export function getKeyOfCategory(index: number) {
+  return Object.keys(Category)[index]
 }

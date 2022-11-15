@@ -1,2 +1,2 @@
-export * from "./firestore-types"
+export * from "./blockchain"
 export * from "./general"

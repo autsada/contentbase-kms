@@ -2,7 +2,7 @@ import type { Request, Response } from "express"
 
 import { accountsCollection, activitiesCollection } from "../config/firebase"
 import { searchDocByField, updateDocById } from "../lib/firebase"
-import type { Account } from "../types/firestore-types"
+import type { Account } from "../types"
 import type { WebHookRequestBody, AddressActivity } from "../types"
 
 export async function updateActivity(req: Request, res: Response) {

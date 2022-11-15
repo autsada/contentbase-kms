@@ -1,7 +1,7 @@
 import { firestore } from "firebase-admin"
 
 import { db, walletsCollection } from "../config/firebase"
-import type { Wallet } from "../types/firestore-types"
+import type { Wallet } from "../types"
 
 type Args<T = Record<string, any>> = {
   collectionName: string
