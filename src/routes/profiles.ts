@@ -22,8 +22,6 @@ profilesRouter.post("/update/uid/:uid", authMiddleware, setProfileImage)
 profilesRouter.post("/default/uid/:uid", authMiddleware, setProfileAsDefault)
 profilesRouter.post("/follow/uid/:uid", authMiddleware, followProfile)
 profilesRouter.post("/handle/verify", authMiddleware, verifyProfileHandle)
-profilesRouter.get("/default/uid/:uid", authMiddleware, getUserDefaultProfile)
-profilesRouter.get("/token-uri/:tokenId", authMiddleware, getProfileTokenURI)
 profilesRouter.post(
   "/gas/profile/uid/:uid",
   authMiddleware,
@@ -33,4 +31,10 @@ profilesRouter.post(
   "/gas/follow/uid/:uid",
   authMiddleware,
   estimateGasFollowProfile
+)
+profilesRouter.get("/default/uid/:uid", authMiddleware, getUserDefaultProfile)
+profilesRouter.get(
+  "/token-uri/tokenId/:tokenId",
+  authMiddleware,
+  getProfileTokenURI
 )

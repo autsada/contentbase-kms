@@ -4,7 +4,13 @@ import crypto from "crypto"
 import { encrypt } from "./kms"
 import { encryptString } from "./utils"
 
-const { BLOCKCHAIN_LOCAL_URL, NODE_ENV, ALCHEMY_API_KEY } = process.env
+const {
+  BLOCKCHAIN_LOCAL_URL,
+  NODE_ENV,
+  ALCHEMY_API_KEY,
+  BLOCKCHAIN_WS_LOCAL_URL,
+  BLOCKCHAIN_WS_TESTNET_URL,
+} = process.env
 
 export function getJsonRpcProvider() {
   const url = BLOCKCHAIN_LOCAL_URL!
@@ -28,6 +34,17 @@ export function getSigner(privateKey: string) {
   const provider = getProvider()
 
   return new ethers.Wallet(privateKey, provider)
+}
+
+export function getWsProvider() {
+  const wsURL =
+    NODE_ENV === "development"
+      ? BLOCKCHAIN_WS_LOCAL_URL!
+      : NODE_ENV === "staging"
+      ? BLOCKCHAIN_WS_TESTNET_URL!
+      : ""
+
+  return new ethers.providers.WebSocketProvider(wsURL)
 }
 
 /**
@@ -60,6 +77,21 @@ export function getContractBySigner({
   const signer = getSigner(privateKey)
 
   return new ethers.Contract(address, contractInterface, signer)
+}
+
+/**
+ * Get contract for listening to events.
+ */
+export function getContractForWs({
+  address,
+  contractInterface,
+}: {
+  address: string
+  contractInterface: ethers.ContractInterface
+}) {
+  const wsProvider = getWsProvider()
+
+  return new ethers.Contract(address, contractInterface, wsProvider)
 }
 
 /**

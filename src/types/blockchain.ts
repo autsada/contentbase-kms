@@ -18,12 +18,14 @@ export type CheckRoleParams = {
  * @param key {string} - wallet's key
  * @param data.handle {string} - a handle of the profile
  * @param data.imageURI {string} - a profile image uri
+ * @param data.originalHandle {string} - an unformatted handle
  */
 export type CreateProfileInput = {
   key: string
   data: {
     handle: string
     imageURI: string
+    originalHandle: string
   }
 }
 
@@ -219,4 +221,14 @@ export type PublishToken = {
   imageURI: string
   contentURI: string
   metadataURI: string
+}
+
+export type CommentToken = {
+  tokenId: number
+  owner: string
+  creatorId: number
+  targetId: number
+  likes: number
+  disLikes: number
+  contentURI: string
 }

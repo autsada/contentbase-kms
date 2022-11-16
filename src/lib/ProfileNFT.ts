@@ -4,7 +4,11 @@
 
 import { ethers, utils } from "ethers"
 
-import { getContractBySigner, getContractByProvider } from "./ethers"
+import {
+  getContractBySigner,
+  getContractByProvider,
+  getContractForWs,
+} from "./ethers"
 import ProfileContract from "../abi/ContentBaseProfileV1.json"
 import { ContentBaseProfileV1 as Profile } from "../typechain-types"
 import {
@@ -39,6 +43,16 @@ export function getProfileContractByProvider() {
 }
 
 /**
+ * Get contract for listening to events
+ */
+export function getProfileContractForWs() {
+  return getContractForWs({
+    address: ProfileContract.address,
+    contractInterface: ProfileContract.abi,
+  }) as Profile
+}
+
+/**
  * The function to check caller's role.
  * @dev see CheckRoleParams
  * @return hasRole {boolean}
@@ -61,7 +75,7 @@ export async function checkUserRole({ role, address, key }: CheckRoleParams) {
 export async function createProfile(input: CreateProfileInput) {
   const {
     key,
-    data: { handle, imageURI },
+    data: { handle, imageURI, originalHandle },
   } = input
 
   // Validate the handle.
@@ -69,7 +83,11 @@ export async function createProfile(input: CreateProfileInput) {
   if (!isHandleValid) throw new Error("Handle is invalid or taken")
 
   const profileContract = getProfileContractBySigner(key)
-  const transaction = await profileContract.createProfile(handle, imageURI)
+  const transaction = await profileContract.createProfile(
+    handle,
+    imageURI,
+    originalHandle
+  )
   await transaction.wait()
 }
 
@@ -171,12 +189,13 @@ export async function estimateGasForCreateProfileTxn(
 ) {
   const {
     key,
-    data: { handle, imageURI },
+    data: { handle, imageURI, originalHandle },
   } = input
   const profileContract = getProfileContractBySigner(key)
   const gasInWei = await profileContract.estimateGas.createProfile(
     handle,
-    imageURI
+    imageURI,
+    originalHandle
   )
 
   return ethers.utils.formatEther(gasInWei)

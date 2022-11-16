@@ -49,7 +49,8 @@ export async function checkRole(req: Request, res: Response) {
 export async function createProfileNft(req: Request, res: Response) {
   try {
     const { uid } = req.params as { uid: string }
-    const { handle, imageURI } = req.body as CreateProfileInput["data"]
+    const { handle, imageURI, originalHandle } =
+      req.body as CreateProfileInput["data"]
     // Validate input.
     // imageURI can be empty.
     if (!uid || !handle) throw new Error("User input error")
@@ -68,6 +69,7 @@ export async function createProfileNft(req: Request, res: Response) {
       data: {
         handle: lowercasedHandle,
         imageURI: imageURI || "",
+        originalHandle: handle,
       },
     })
 
@@ -196,9 +198,7 @@ export async function getUserDefaultProfile(req: Request, res: Response) {
 
     res.status(200).json({ token })
   } catch (error) {
-    // In case NOT FOUND, getDefaultProfile will throw, it's needed to return 200 so the process can continue.
-    res.status(200).json({ token: null })
-    // res.status(500).send((error as any).message)
+    res.status(500).send((error as any).message)
   }
 }
 
@@ -222,7 +222,8 @@ export async function getProfileTokenURI(req: Request, res: Response) {
 export async function estimateGasCreateProfileNft(req: Request, res: Response) {
   try {
     const { uid } = req.params as { uid: string }
-    const { handle, imageURI } = req.body as CreateProfileInput["data"]
+    const { handle, imageURI, originalHandle } =
+      req.body as CreateProfileInput["data"]
     // Validate input.
     if (!uid || !handle) throw new Error("User input error")
     // Get encrypted key
@@ -231,7 +232,7 @@ export async function estimateGasCreateProfileNft(req: Request, res: Response) {
     const key = await decrypt(encryptedKey)
     const estimatedGas = await estimateGasForCreateProfileTxn({
       key,
-      data: { handle, imageURI },
+      data: { handle, imageURI, originalHandle },
     })
 
     res.status(200).json({ gas: estimatedGas })

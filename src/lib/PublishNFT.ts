@@ -16,6 +16,7 @@ import {
   PublishToken,
   CommentInput,
   UpdateCommentInput,
+  CommentToken,
 } from "../types"
 
 // A helper function to get Category index.
@@ -189,7 +190,7 @@ export async function updatePublish(input: UpdatePublishInput) {
     contentURI,
     metadataURI,
     title,
-    description: description || "",
+    description,
     primaryCategory: getIndexOfCategory(primaryCategory),
     secondaryCategory: getIndexOfCategory(secondaryCategory),
     tertiaryCategory: getIndexOfCategory(tertiaryCategory),
@@ -246,7 +247,7 @@ export async function disLikePublish(
 }
 
 /**
- * A function to get Publish by provided id.
+ * A function to get Publish struct by provided id.
  * @param publishId a token id of the publish
  * @return token {Publish object}
  */
@@ -361,6 +362,27 @@ export async function disLikeComment(
 }
 
 /**
+ * A function to get Comment struct by provided id.
+ * @param commentId a token id of the publish
+ * @return token {Comment object}
+ */
+export async function fetchComment(commentId: number): Promise<CommentToken> {
+  const publishContract = getPublishContractByProvider()
+  const { owner, creatorId, targetId, contentURI, likes, disLikes } =
+    await publishContract.getCommentById(commentId)
+
+  return {
+    tokenId: commentId,
+    owner,
+    creatorId: creatorId.toNumber(),
+    targetId: targetId.toNumber(),
+    contentURI,
+    likes,
+    disLikes,
+  }
+}
+
+/**
  * A function to get token uri.
  * @param tokenId {number} a token id
  * @return uri {string}
@@ -446,4 +468,44 @@ export async function estimateGasForLikeCommentTxn(
     profileId
   )
   return ethers.utils.formatEther(gasInWei)
+}
+
+/**
+ * A function to get the platform owner address.
+ * @returns owner {string}
+ */
+export async function getPlatformOwnerAddress() {
+  const publishContract = getPublishContractByProvider()
+  const owner = await publishContract.platformOwner()
+  return owner
+}
+
+/**
+ * A function to get the profile contract address.
+ * @returns address {string}
+ */
+export async function getProfileContractAddress() {
+  const publishContract = getPublishContractByProvider()
+  const address = await publishContract.profileContract()
+  return address
+}
+
+/**
+ * A function to get the like fee.
+ * @returns fee {number}
+ */
+export async function getLikeFee() {
+  const publishContract = getPublishContractByProvider()
+  const fee = await publishContract.likeFee()
+  return fee.toNumber()
+}
+
+/**
+ * A function to get the platfrom fee.
+ * @returns fee {number}
+ */
+export async function getPlatformFee() {
+  const publishContract = getPublishContractByProvider()
+  const fee = await publishContract.platformFee()
+  return fee.toNumber()
 }

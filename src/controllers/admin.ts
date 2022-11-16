@@ -10,6 +10,7 @@ import {
   updateProfileContract,
   updateLikeFee,
   updatePlatformFee,
+  withdrawFunds,
 } from "../lib/PublishNFT"
 
 const { ADMIN_PRIVATE_KEY } = process.env
@@ -69,6 +70,18 @@ export async function setPlatformFee(req: Request, res: Response) {
     }
     await updatePlatformFee(ADMIN_PRIVATE_KEY!, fee)
 
+    res.status(200).json({ status: "Ok" })
+  } catch (error) {
+    res.status(500).send((error as any).message)
+  }
+}
+
+/**
+ * The route to withdraw funds.
+ */
+export async function withdraw(req: Request, res: Response) {
+  try {
+    await withdrawFunds(ADMIN_PRIVATE_KEY!)
     res.status(200).json({ status: "Ok" })
   } catch (error) {
     res.status(500).send((error as any).message)

@@ -13,10 +13,14 @@ import {
   deleteCommentNft,
   likeCommentNft,
   disLikeCommentNft,
-  getPublishTokenURI,
+  getComment,
+  tokenURI,
   estimateGasCreatePublishNft,
   estimateGasLikePublishNft,
-  estimateGasLikeCommentNft,
+  likeFee,
+  platformFee,
+  platformOwner,
+  profileContract,
 } from "../controllers/publishes"
 import { authMiddleware } from "../middlewares/auth"
 
@@ -27,8 +31,7 @@ publishesRouter.post("/create/uid/:uid", authMiddleware, createPublishNft)
 publishesRouter.post("/update/uid/:uid", authMiddleware, updatePublishNft)
 publishesRouter.post("/delete/uid/:uid", authMiddleware, deleteUserPublish)
 publishesRouter.post("/like/uid/:uid", authMiddleware, likePublishNft)
-publishesRouter.post("/dislike/uid/:uid", authMiddleware, disLikePublishNft)
-publishesRouter.get("/publishId/:publishId", authMiddleware, getPublish)
+publishesRouter.post("/disLike/uid/:uid", authMiddleware, disLikePublishNft)
 publishesRouter.post(
   "/comment/create/uid/:uid",
   authMiddleware,
@@ -46,11 +49,10 @@ publishesRouter.post(
 )
 publishesRouter.post("/comment/like/uid/:uid", authMiddleware, likeCommentNft)
 publishesRouter.post(
-  "/comment/dislike/uid/:uid",
+  "/comment/disLike/uid/:uid",
   authMiddleware,
   disLikeCommentNft
 )
-publishesRouter.get("/token-uri/:tokenId", authMiddleware, getPublishTokenURI)
 publishesRouter.post(
   "/gas/publish/create/uid/:uid",
   authMiddleware,
@@ -61,8 +63,10 @@ publishesRouter.post(
   authMiddleware,
   estimateGasLikePublishNft
 )
-publishesRouter.post(
-  "/gas/comment/like/uid/:uid",
-  authMiddleware,
-  estimateGasLikeCommentNft
-)
+publishesRouter.get("/publishId/:publishId", authMiddleware, getPublish)
+publishesRouter.get("/comment/commentId/:commentId", authMiddleware, getComment)
+publishesRouter.get("/token-uri/tokenId/:tokenId", authMiddleware, tokenURI)
+publishesRouter.get("/address/owner", authMiddleware, platformOwner)
+publishesRouter.get("/address/profile", authMiddleware, profileContract)
+publishesRouter.get("/fee/like", authMiddleware, likeFee)
+publishesRouter.get("/fee/platform", authMiddleware, platformFee)

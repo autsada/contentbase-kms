@@ -10,6 +10,7 @@ import {
   setProfileContract,
   setLikeFee,
   setPlatformFee,
+  withdraw,
 } from "../controllers/admin"
 import { authMiddleware } from "../middlewares/auth"
 
@@ -22,3 +23,4 @@ adminRouter.post("/address/owner", authMiddleware, setPlatformOwner)
 adminRouter.post("/address/profile", authMiddleware, setProfileContract)
 adminRouter.post("/fee/like", authMiddleware, setLikeFee)
 adminRouter.post("/fee/platform", authMiddleware, setPlatformFee)
+adminRouter.post("/funds/withdraw", authMiddleware, withdraw)

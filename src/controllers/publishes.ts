@@ -18,6 +18,11 @@ import {
   estimateGasForCreatePublishTxn,
   estimateGasForLikePublishTxn,
   estimateGasForLikeCommentTxn,
+  getLikeFee,
+  getPlatformFee,
+  getPlatformOwnerAddress,
+  getProfileContractAddress,
+  fetchComment,
 } from "../lib/PublishNFT"
 import { decrypt } from "../lib/kms"
 import {
@@ -250,22 +255,6 @@ export async function disLikePublishNft(req: Request, res: Response) {
 }
 
 /**
- * The route to get one publish.
- */
-export async function getPublish(req: Request, res: Response) {
-  try {
-    const { publishId } = req.params as { publishId: string }
-    // Validate input.
-    if (!publishId) throw new Error("User input error.")
-    const token = await fetchPublish(Number(publishId))
-
-    res.status(200).json({ token })
-  } catch (error) {
-    res.status(200).json({ token: null })
-  }
-}
-
-/**
  * The route to create a comment NFT.
  * @dev see CommentInput
  */
@@ -407,9 +396,41 @@ export async function disLikeCommentNft(req: Request, res: Response) {
 }
 
 /**
+ * The route to get one publish.
+ */
+export async function getPublish(req: Request, res: Response) {
+  try {
+    const { publishId } = req.params as { publishId: string }
+    // Validate input.
+    if (!publishId) throw new Error("User input error.")
+    const token = await fetchPublish(Number(publishId))
+
+    res.status(200).json({ token })
+  } catch (error) {
+    res.status(200).json({ token: null })
+  }
+}
+
+/**
+ * The route to get one comment.
+ */
+export async function getComment(req: Request, res: Response) {
+  try {
+    const { commentId } = req.params as { commentId: string }
+    // Validate input.
+    if (!commentId) throw new Error("User input error.")
+    const token = await fetchComment(Number(commentId))
+
+    res.status(200).json({ token })
+  } catch (error) {
+    res.status(200).json({ token: null })
+  }
+}
+
+/**
  * The route to get Publish | Comment token uri.
  */
-export async function getPublishTokenURI(req: Request, res: Response) {
+export async function tokenURI(req: Request, res: Response) {
   try {
     const { tokenId } = req.params as { tokenId: string }
     // Validate input.
@@ -449,7 +470,6 @@ export async function estimateGasCreatePublishNft(req: Request, res: Response) {
       !contentURI ||
       !metadataURI ||
       !title ||
-      !description ||
       !primaryCategory ||
       !secondaryCategory ||
       !tertiaryCategory
@@ -510,29 +530,52 @@ export async function estimateGasLikePublishNft(req: Request, res: Response) {
 }
 
 /**
- * The route to estimate gas used to like Comment NFT.
+ * The route to get the platform owner address.
  */
-export async function estimateGasLikeCommentNft(req: Request, res: Response) {
+export async function platformOwner(req: Request, res: Response) {
   try {
-    const { uid } = req.params as { uid: string }
-    const { commentId, profileId } = req.body as {
-      commentId: number
-      profileId: number
-    }
-    // Validate input.
-    // description can be empty.
-    if (!uid || !commentId || !profileId) throw new Error("User input error")
-    // Get encrypted key
-    const { key: encryptedKey } = await getWallet(uid)
-    // 1. Decrypt the key
-    const key = await decrypt(encryptedKey)
-    const estimatedGas = await estimateGasForLikeCommentTxn(
-      key,
-      Number(commentId),
-      Number(profileId)
-    )
+    const address = await getPlatformOwnerAddress()
 
-    res.status(200).json({ gas: estimatedGas })
+    res.status(200).json({ address })
+  } catch (error) {
+    res.status(500).send((error as any).message)
+  }
+}
+
+/**
+ * The route to get the profile contract address.
+ */
+export async function profileContract(req: Request, res: Response) {
+  try {
+    const address = await getProfileContractAddress()
+
+    res.status(200).json({ address })
+  } catch (error) {
+    res.status(500).send((error as any).message)
+  }
+}
+
+/**
+ * The route to get the like fee.
+ */
+export async function likeFee(req: Request, res: Response) {
+  try {
+    const fee = await getLikeFee()
+
+    res.status(200).json({ fee })
+  } catch (error) {
+    res.status(500).send((error as any).message)
+  }
+}
+
+/**
+ * The route to get the platform fee.
+ */
+export async function platformFee(req: Request, res: Response) {
+  try {
+    const fee = await getPlatformFee()
+
+    res.status(200).json({ fee })
   } catch (error) {
     res.status(500).send((error as any).message)
   }
