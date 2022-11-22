@@ -1,5 +1,5 @@
 {
-  "name": "content_base_kms",
+  "name": "ctb-kms-service",
   "version": "1.0.0",
   "description": "",
   "main": "dist/app.js",
