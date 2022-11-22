@@ -35,7 +35,7 @@ export function decryptObject(text: string) {
  * @notice Verify if token is correct
  *
  */
-export function checkAuth(token: string) {
+export function checkAccessKey(token: string) {
   return token === KMS_ACCESS_KEY
 }
 

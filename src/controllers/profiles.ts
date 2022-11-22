@@ -27,9 +27,9 @@ import {
  */
 export async function checkRole(req: Request, res: Response) {
   try {
-    const { uid } = req.params
+    const { uid } = req
     const { role } = req.body as { role: Role }
-    if (!role) throw new Error("User input error")
+    if (!uid || !role) throw new Error("User input error")
     // Get encrypted key
     const { key: encryptedKey, address } = await getWallet(uid)
     // 1. Decrypt the key
@@ -48,7 +48,7 @@ export async function checkRole(req: Request, res: Response) {
  */
 export async function createProfileNft(req: Request, res: Response) {
   try {
-    const { uid } = req.params as { uid: string }
+    const { uid } = req
     const { handle, imageURI, originalHandle } =
       req.body as CreateProfileInput["data"]
     // Validate input.
@@ -85,9 +85,7 @@ export async function createProfileNft(req: Request, res: Response) {
  */
 export async function setProfileImage(req: Request, res: Response) {
   try {
-    const { uid } = req.params as {
-      uid: string
-    }
+    const { uid } = req
     const { tokenId, imageURI } = req.body as UpdateProfileImageInput["data"]
     // Validate input.
     if (!uid || !tokenId || !imageURI) throw new Error("User input error")
@@ -115,9 +113,7 @@ export async function setProfileImage(req: Request, res: Response) {
  */
 export async function setProfileAsDefault(req: Request, res: Response) {
   try {
-    const { uid } = req.params as {
-      uid: string
-    }
+    const { uid } = req
     const { handle } = req.body as { handle: string }
     // Validate input
     if (!uid || !handle) throw new Error("User input error")
@@ -140,9 +136,7 @@ export async function setProfileAsDefault(req: Request, res: Response) {
  */
 export async function followProfile(req: Request, res: Response) {
   try {
-    const { uid } = req.params as {
-      uid: string
-    }
+    const { uid } = req
     const { followerId, followeeId } = req.body as CreateFollowInput["data"]
     // Validate input.
     if (!uid || !followerId || !followeeId) throw new Error("User input error")
@@ -186,7 +180,7 @@ export async function verifyProfileHandle(req: Request, res: Response) {
  */
 export async function getUserDefaultProfile(req: Request, res: Response) {
   try {
-    const { uid } = req.params as { uid: string }
+    const { uid } = req
     // Validate input.
     if (!uid) throw new Error("User input error.")
     // Get encrypted key
@@ -221,7 +215,7 @@ export async function getProfileTokenURI(req: Request, res: Response) {
  */
 export async function estimateGasCreateProfileNft(req: Request, res: Response) {
   try {
-    const { uid } = req.params as { uid: string }
+    const { uid } = req
     const { handle, imageURI, originalHandle } =
       req.body as CreateProfileInput["data"]
     // Validate input.
@@ -247,9 +241,7 @@ export async function estimateGasCreateProfileNft(req: Request, res: Response) {
  */
 export async function estimateGasFollowProfile(req: Request, res: Response) {
   try {
-    const { uid } = req.params as {
-      uid: string
-    }
+    const { uid } = req
     const { followerId, followeeId } = req.body as CreateFollowInput["data"]
     // Validate input.
     if (!uid || !followerId || !followeeId) throw new Error("User input error")

@@ -26,40 +26,24 @@ import { authMiddleware } from "../middlewares/auth"
 
 export const publishesRouter = express.Router()
 
-publishesRouter.post("/role/uid/:uid", authMiddleware, checkRole)
-publishesRouter.post("/create/uid/:uid", authMiddleware, createPublishNft)
-publishesRouter.post("/update/uid/:uid", authMiddleware, updatePublishNft)
-publishesRouter.post("/delete/uid/:uid", authMiddleware, deleteUserPublish)
-publishesRouter.post("/like/uid/:uid", authMiddleware, likePublishNft)
-publishesRouter.post("/disLike/uid/:uid", authMiddleware, disLikePublishNft)
+publishesRouter.post("/role", authMiddleware, checkRole)
+publishesRouter.post("/create", authMiddleware, createPublishNft)
+publishesRouter.post("/update", authMiddleware, updatePublishNft)
+publishesRouter.post("/delete", authMiddleware, deleteUserPublish)
+publishesRouter.post("/like", authMiddleware, likePublishNft)
+publishesRouter.post("/disLike", authMiddleware, disLikePublishNft)
+publishesRouter.post("/comment/create", authMiddleware, createCommentNft)
+publishesRouter.post("/comment/update", authMiddleware, updateCommentNft)
+publishesRouter.post("/comment/delete", authMiddleware, deleteCommentNft)
+publishesRouter.post("/comment/like", authMiddleware, likeCommentNft)
+publishesRouter.post("/comment/disLike", authMiddleware, disLikeCommentNft)
 publishesRouter.post(
-  "/comment/create/uid/:uid",
-  authMiddleware,
-  createCommentNft
-)
-publishesRouter.post(
-  "/comment/update/uid/:uid",
-  authMiddleware,
-  updateCommentNft
-)
-publishesRouter.post(
-  "/comment/delete/uid/:uid",
-  authMiddleware,
-  deleteCommentNft
-)
-publishesRouter.post("/comment/like/uid/:uid", authMiddleware, likeCommentNft)
-publishesRouter.post(
-  "/comment/disLike/uid/:uid",
-  authMiddleware,
-  disLikeCommentNft
-)
-publishesRouter.post(
-  "/gas/publish/create/uid/:uid",
+  "/gas/publish/create",
   authMiddleware,
   estimateGasCreatePublishNft
 )
 publishesRouter.post(
-  "/gas/publish/like/uid/:uid",
+  "/gas/publish/like",
   authMiddleware,
   estimateGasLikePublishNft
 )

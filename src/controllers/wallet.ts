@@ -14,7 +14,7 @@ const forbiddenErrMessage = "Forbidden"
  */
 export async function createWallet(req: Request, res: Response) {
   try {
-    const { uid } = req.body as { uid: string }
+    const { uid } = req
     if (!uid) throw new Error(badRequestErrMessage)
 
     const walletDoc = await getDocById<Wallet>({
@@ -37,15 +37,15 @@ export async function createWallet(req: Request, res: Response) {
       },
     })
 
-    // Create a new doc (or update if it already exists) in "accounts" colleciton
-    await createDocWithId<Partial<Account>>({
-      collectionName: accountsCollection,
-      docId: uid,
-      data: {
-        address: wallet.address.toLowerCase(),
-        type: "traditional",
-      },
-    })
+    // // Create a new doc (or update if it already exists) in "accounts" colleciton
+    // await createDocWithId<Partial<Account>>({
+    //   collectionName: accountsCollection,
+    //   docId: uid,
+    //   data: {
+    //     address: wallet.address.toLowerCase(),
+    //     type: "traditional",
+    //   },
+    // })
 
     res.status(200).json({ address: wallet.address })
   } catch (error) {

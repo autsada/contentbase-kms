@@ -16,23 +16,15 @@ import { authMiddleware } from "../middlewares/auth"
 
 export const profilesRouter = express.Router()
 
-profilesRouter.post("/role/uid/:uid", authMiddleware, checkRole)
-profilesRouter.post("/create/uid/:uid", authMiddleware, createProfileNft)
-profilesRouter.post("/update/uid/:uid", authMiddleware, setProfileImage)
-profilesRouter.post("/default/uid/:uid", authMiddleware, setProfileAsDefault)
-profilesRouter.post("/follow/uid/:uid", authMiddleware, followProfile)
+profilesRouter.post("/role", authMiddleware, checkRole)
+profilesRouter.post("/create", authMiddleware, createProfileNft)
+profilesRouter.post("/update", authMiddleware, setProfileImage)
+profilesRouter.post("/default", authMiddleware, setProfileAsDefault)
+profilesRouter.post("/follow", authMiddleware, followProfile)
 profilesRouter.post("/handle/verify", authMiddleware, verifyProfileHandle)
-profilesRouter.post(
-  "/gas/profile/uid/:uid",
-  authMiddleware,
-  estimateGasCreateProfileNft
-)
-profilesRouter.post(
-  "/gas/follow/uid/:uid",
-  authMiddleware,
-  estimateGasFollowProfile
-)
-profilesRouter.get("/default/uid/:uid", authMiddleware, getUserDefaultProfile)
+profilesRouter.post("/gas/profile", authMiddleware, estimateGasCreateProfileNft)
+profilesRouter.post("/gas/follow", authMiddleware, estimateGasFollowProfile)
+profilesRouter.get("/default", authMiddleware, getUserDefaultProfile)
 profilesRouter.get(
   "/token-uri/tokenId/:tokenId",
   authMiddleware,

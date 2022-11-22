@@ -1,24 +1,40 @@
 import { Request, Response, NextFunction } from "express"
 
-import { checkAuth } from "../lib/utils"
+import { checkAccessKey } from "../lib/utils"
+import { verifyIdToken } from "../lib/firebase"
 
-export function authMiddleware(
+export async function authMiddleware(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  // Get x-access-key header
-  const accessKey = req.headers["x-access-key"]
-  if (!accessKey) {
-    res.status(401).send("Un Authorized")
-  } else {
-    const token = typeof accessKey === "string" ? accessKey : accessKey[0]
-    const hasAuth = checkAuth(token)
+  try {
+    // Get x-access-key header.
+    const accessKey = req.headers["x-access-key"]
+    // // Get Firebase auth id token.
+    // const idToken = req.headers["id-token"]
 
-    if (hasAuth) {
-      next()
-    } else {
+    if (!accessKey) {
       res.status(401).send("Un Authorized")
+    } else {
+      // Verify access key.
+      const key = typeof accessKey === "string" ? accessKey : accessKey[0]
+      const hasAccesskey = checkAccessKey(key)
+
+      // // Verify id token.
+      // const token = typeof idToken === "string" ? idToken : accessKey[0]
+      // const user = await verifyIdToken(token)
+
+      if (hasAccesskey) {
+        // req.uid = user?.uid
+        req.uid = "abc123"
+        // req.uid = "xyz987"
+        next()
+      } else {
+        res.status(401).send("Un Authorized")
+      }
     }
+  } catch (error) {
+    res.status(500).send("Server Error")
   }
 }

@@ -39,9 +39,9 @@ import {
  */
 export async function checkRole(req: Request, res: Response) {
   try {
-    const { uid } = req.params
+    const { uid } = req
     const { role } = req.body as { role: Role }
-    if (!role) throw new Error("User input error")
+    if (!uid || !role) throw new Error("User input error")
     // Get encrypted key
     const { key: encryptedKey, address } = await getWallet(uid)
     // 1. Decrypt the key
@@ -60,7 +60,7 @@ export async function checkRole(req: Request, res: Response) {
  */
 export async function createPublishNft(req: Request, res: Response) {
   try {
-    const { uid } = req.params as { uid: string }
+    const { uid } = req
     const {
       creatorId,
       imageURI,
@@ -118,9 +118,7 @@ export async function createPublishNft(req: Request, res: Response) {
  */
 export async function updatePublishNft(req: Request, res: Response) {
   try {
-    const { uid } = req.params as {
-      uid: string
-    }
+    const { uid } = req
     const {
       tokenId,
       creatorId,
@@ -181,9 +179,7 @@ export async function updatePublishNft(req: Request, res: Response) {
  */
 export async function deleteUserPublish(req: Request, res: Response) {
   try {
-    const { uid } = req.params as {
-      uid: string
-    }
+    const { uid } = req
     const { publishId, creatorId } = req.body as {
       publishId: number
       creatorId: number
@@ -207,9 +203,7 @@ export async function deleteUserPublish(req: Request, res: Response) {
  */
 export async function likePublishNft(req: Request, res: Response) {
   try {
-    const { uid } = req.params as {
-      uid: string
-    }
+    const { uid } = req
     const { publishId, profileId } = req.body as {
       publishId: number
       profileId: number
@@ -233,9 +227,7 @@ export async function likePublishNft(req: Request, res: Response) {
  */
 export async function disLikePublishNft(req: Request, res: Response) {
   try {
-    const { uid } = req.params as {
-      uid: string
-    }
+    const { uid } = req
     const { publishId, profileId } = req.body as {
       publishId: number
       profileId: number
@@ -260,7 +252,7 @@ export async function disLikePublishNft(req: Request, res: Response) {
  */
 export async function createCommentNft(req: Request, res: Response) {
   try {
-    const { uid } = req.params as { uid: string }
+    const { uid } = req
     const { targetId, creatorId, contentURI } = req.body as CommentInput["data"]
     // Validate input.
     if (!uid || !targetId || !creatorId || !contentURI)
@@ -291,7 +283,7 @@ export async function createCommentNft(req: Request, res: Response) {
  */
 export async function updateCommentNft(req: Request, res: Response) {
   try {
-    const { uid } = req.params as { uid: string }
+    const { uid } = req
     const { tokenId, creatorId, contentURI } =
       req.body as UpdateCommentInput["data"]
     // Validate input.
@@ -322,9 +314,7 @@ export async function updateCommentNft(req: Request, res: Response) {
  */
 export async function deleteCommentNft(req: Request, res: Response) {
   try {
-    const { uid } = req.params as {
-      uid: string
-    }
+    const { uid } = req
     const { commentId, creatorId } = req.body as {
       commentId: number
       creatorId: number
@@ -348,9 +338,7 @@ export async function deleteCommentNft(req: Request, res: Response) {
  */
 export async function likeCommentNft(req: Request, res: Response) {
   try {
-    const { uid } = req.params as {
-      uid: string
-    }
+    const { uid } = req
     const { commentId, profileId } = req.body as {
       commentId: number
       profileId: number
@@ -374,9 +362,7 @@ export async function likeCommentNft(req: Request, res: Response) {
  */
 export async function disLikeCommentNft(req: Request, res: Response) {
   try {
-    const { uid } = req.params as {
-      uid: string
-    }
+    const { uid } = req
     const { commentId, profileId } = req.body as {
       commentId: number
       profileId: number
@@ -449,7 +435,7 @@ export async function tokenURI(req: Request, res: Response) {
  */
 export async function estimateGasCreatePublishNft(req: Request, res: Response) {
   try {
-    const { uid } = req.params as { uid: string }
+    const { uid } = req
     const {
       creatorId,
       imageURI,
@@ -505,7 +491,7 @@ export async function estimateGasCreatePublishNft(req: Request, res: Response) {
  */
 export async function estimateGasLikePublishNft(req: Request, res: Response) {
   try {
-    const { uid } = req.params as { uid: string }
+    const { uid } = req
     const { publishId, profileId } = req.body as {
       publishId: number
       profileId: number

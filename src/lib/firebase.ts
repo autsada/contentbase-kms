@@ -1,7 +1,16 @@
 import { firestore } from "firebase-admin"
 
-import { db, walletsCollection } from "../config/firebase"
+import { db, auth, walletsCollection } from "../config/firebase"
 import type { Wallet } from "../types"
+
+// Verify Firebase auth id token.
+export async function verifyIdToken(token: string) {
+  const decodedToken = await auth.verifyIdToken(token)
+  if (!decodedToken) return null
+
+  // Get user.
+  return auth.getUser(decodedToken.uid)
+}
 
 type Args<T = Record<string, any>> = {
   collectionName: string
