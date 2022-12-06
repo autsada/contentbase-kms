@@ -20,7 +20,8 @@ function initializeFirebaseAdmin() {
   return !getApps.length
     ? initializeApp({
         credential:
-          NODE_ENV === "production" || NODE_ENV === "staging"
+          // NODE_ENV === "production" || NODE_ENV === "staging"
+          NODE_ENV === "production"
             ? applicationDefault()
             : admin.credential.cert({
                 projectId: FIREBASE_PROJECT_ID,
@@ -40,5 +41,3 @@ export const auth = getAuth(firebaseApp)
 export const walletsCollection = "wallets"
 export const accountsCollection = "accounts"
 export const activitiesCollection = "activities"
-export const profilesCollection = "profiles"
-export const publishesCollection = "publishes"

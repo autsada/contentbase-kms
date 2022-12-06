@@ -6,13 +6,11 @@ import {
   createProfile,
   updateProfileImage,
   setDefaultProfile,
-  follow,
   verifyHandle,
   getDefaultProfile,
   getTokenURI,
   estimateGasForCreateProfileTxn,
-  estimateGasForFollowTxn,
-} from "../lib/ProfileNFT"
+} from "../lib/profileNFT"
 import { decrypt } from "../lib/kms"
 import {
   CreateProfileInput,
@@ -46,17 +44,16 @@ export async function checkRole(req: Request, res: Response) {
  * A route to create Profile NFT.
  * @dev see CreateProfileInput
  */
-export async function createProfileNft(req: Request, res: Response) {
+export async function createProfileNFT(req: Request, res: Response) {
   try {
     const { uid } = req
-    const { handle, imageURI, originalHandle } =
-      req.body as CreateProfileInput["data"]
+    const { handle, imageURI } = req.body as CreateProfileInput["data"]
     // Validate input.
     // imageURI can be empty.
     if (!uid || !handle) throw new Error("User input error")
     // Validate handle.
     // Make sure to lowercase the handle.
-    const lowercasedHandle = handle.toLocaleLowerCase()
+    const lowercasedHandle = handle.toLowerCase()
     const valid = await verifyHandle(lowercasedHandle)
     if (!valid) throw new Error("Handle is taken or invalid")
     // Get encrypted key
@@ -117,41 +114,14 @@ export async function setProfileAsDefault(req: Request, res: Response) {
     const { handle } = req.body as { handle: string }
     // Validate input
     if (!uid || !handle) throw new Error("User input error")
+    // Make sure to lowercase the handle.
+    const lowercasedHandle = handle.toLowerCase()
     // Get encrypted key
     const { key: encryptedKey } = await getWallet(uid)
     // 1. Decrypt the key
     const key = await decrypt(encryptedKey)
     // 2. Update profile
-    await setDefaultProfile(key, handle)
-
-    res.status(200).json({ status: "Ok" })
-  } catch (error) {
-    res.status(500).send((error as any).message)
-  }
-}
-
-/**
- * A route to follow a profile.
- * @dev see CreateFollowInput
- */
-export async function followProfile(req: Request, res: Response) {
-  try {
-    const { uid } = req
-    const { followerId, followeeId } = req.body as CreateFollowInput["data"]
-    // Validate input.
-    if (!uid || !followerId || !followeeId) throw new Error("User input error")
-    // Get encrypted key
-    const { key: encryptedKey } = await getWallet(uid)
-    // 1. Decrypt the key
-    const key = await decrypt(encryptedKey)
-    // 2. Follow
-    await follow({
-      key,
-      data: {
-        followerId,
-        followeeId,
-      },
-    })
+    await setDefaultProfile(key, lowercasedHandle)
 
     res.status(200).json({ status: "Ok" })
   } catch (error) {
@@ -171,6 +141,7 @@ export async function verifyProfileHandle(req: Request, res: Response) {
 
     res.status(200).json({ valid })
   } catch (error) {
+    console.log("error -->", error)
     res.status(200).json({ valid: false })
   }
 }
@@ -192,6 +163,7 @@ export async function getUserDefaultProfile(req: Request, res: Response) {
 
     res.status(200).json({ token })
   } catch (error) {
+    console.log("error -->", error)
     res.status(500).send((error as any).message)
   }
 }
@@ -213,45 +185,24 @@ export async function getProfileTokenURI(req: Request, res: Response) {
 /**
  * The route to estimate gas used to create Profile NFT.
  */
-export async function estimateGasCreateProfileNft(req: Request, res: Response) {
+export async function estimateGasCreateProfileNFT(req: Request, res: Response) {
   try {
     const { uid } = req
-    const { handle, imageURI, originalHandle } =
-      req.body as CreateProfileInput["data"]
+    const { handle, imageURI } = req.body as CreateProfileInput["data"]
     // Validate input.
     if (!uid || !handle) throw new Error("User input error")
+    // Validate handle.
+    // Make sure to lowercase the handle.
+    const lowercasedHandle = handle.toLowerCase()
+    const valid = await verifyHandle(lowercasedHandle)
+    if (!valid) throw new Error("Handle is taken or invalid")
     // Get encrypted key
     const { key: encryptedKey } = await getWallet(uid)
     // 1. Decrypt the key
     const key = await decrypt(encryptedKey)
     const estimatedGas = await estimateGasForCreateProfileTxn({
       key,
-      data: { handle, imageURI, originalHandle },
-    })
-
-    res.status(200).json({ gas: estimatedGas })
-  } catch (error) {
-    res.status(500).send((error as any).message)
-  }
-}
-
-/**
- * A route to estimate gas used to follow a profile.
- * @dev see CreateFollowInput
- */
-export async function estimateGasFollowProfile(req: Request, res: Response) {
-  try {
-    const { uid } = req
-    const { followerId, followeeId } = req.body as CreateFollowInput["data"]
-    // Validate input.
-    if (!uid || !followerId || !followeeId) throw new Error("User input error")
-    // Get encrypted key
-    const { key: encryptedKey } = await getWallet(uid)
-    // 1. Decrypt the key
-    const key = await decrypt(encryptedKey)
-    const estimatedGas = await estimateGasForFollowTxn({
-      key,
-      data: { followerId, followeeId },
+      data: { handle: lowercasedHandle, imageURI, originalHandle: handle },
     })
 
     res.status(200).json({ gas: estimatedGas })

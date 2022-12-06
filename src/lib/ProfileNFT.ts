@@ -4,11 +4,7 @@
 
 import { ethers, utils } from "ethers"
 
-import {
-  getContractBySigner,
-  getContractByProvider,
-  getContractForWs,
-} from "./ethers"
+import { getContractBySigner, getContractByProvider } from "./ethers"
 import ProfileContract from "../abi/ContentBaseProfileV1.json"
 import { ContentBaseProfileV1 as Profile } from "../typechain-types"
 import {
@@ -16,7 +12,6 @@ import {
   CheckRoleParams,
   CreateProfileInput,
   UpdateProfileImageInput,
-  CreateFollowInput,
   ProfileToken,
 } from "../types"
 
@@ -25,31 +20,25 @@ import {
  * @param key a wallet private key
  */
 export function getProfileContractBySigner(key: string) {
-  return getContractBySigner({
+  const contract = getContractBySigner({
     address: ProfileContract.address,
     privateKey: key,
     contractInterface: ProfileContract.abi,
   }) as Profile
+
+  return contract
 }
 
 /**
  * Get contract without key
  */
 export function getProfileContractByProvider() {
-  return getContractByProvider({
+  const contract = getContractByProvider({
     address: ProfileContract.address,
     contractInterface: ProfileContract.abi,
   }) as Profile
-}
 
-/**
- * Get contract for listening to events
- */
-export function getProfileContractForWs() {
-  return getContractForWs({
-    address: ProfileContract.address,
-    contractInterface: ProfileContract.abi,
-  }) as Profile
+  return contract
 }
 
 /**
@@ -85,7 +74,7 @@ export async function createProfile(input: CreateProfileInput) {
   const profileContract = getProfileContractBySigner(key)
   const transaction = await profileContract.createProfile(
     handle,
-    imageURI,
+    imageURI.toLowerCase(),
     originalHandle
   )
   await transaction.wait()
@@ -104,7 +93,7 @@ export async function updateProfileImage(input: UpdateProfileImageInput) {
   const profileContract = getProfileContractBySigner(key)
   const transaction = await profileContract.updateProfileImage(
     tokenId,
-    imageURI
+    imageURI.toLowerCase()
   )
   await transaction.wait()
 }
@@ -117,22 +106,6 @@ export async function updateProfileImage(input: UpdateProfileImageInput) {
 export async function setDefaultProfile(key: string, handle: string) {
   const profileContract = getProfileContractBySigner(key)
   const transaction = await profileContract.setDefaultProfile(handle)
-  await transaction.wait()
-}
-
-/**
- * The function to follow a Profile (and create Follow NFT).
- * @param input - see CreateFollowInput
- * @return token {Follow object}
- */
-export async function follow(input: CreateFollowInput) {
-  const {
-    key,
-    data: { followerId, followeeId },
-  } = input
-
-  const profileContract = getProfileContractBySigner(key)
-  const transaction = await profileContract.follow(followerId, followeeId)
   await transaction.wait()
 }
 
@@ -155,7 +128,7 @@ export async function verifyHandle(handle: string) {
  */
 export async function getDefaultProfile(key: string): Promise<ProfileToken> {
   const profileContract = getProfileContractBySigner(key)
-  const [profileId, { owner, handle, imageURI, followers, following }] =
+  const [profileId, { owner, handle, imageURI }] =
     await profileContract.getDefaultProfile()
 
   return {
@@ -163,8 +136,6 @@ export async function getDefaultProfile(key: string): Promise<ProfileToken> {
     owner,
     handle,
     imageURI,
-    followers,
-    following,
   }
 }
 
@@ -196,25 +167,6 @@ export async function estimateGasForCreateProfileTxn(
     handle,
     imageURI,
     originalHandle
-  )
-
-  return ethers.utils.formatEther(gasInWei)
-}
-
-/**
- * The function to estimate gas used to create a profile token.
- * @dev see CreateProfileInput
- * @return gas {number} - amount in ether
- */
-export async function estimateGasForFollowTxn(input: CreateFollowInput) {
-  const {
-    key,
-    data: { followerId, followeeId },
-  } = input
-  const profileContract = getProfileContractBySigner(key)
-  const gasInWei = await profileContract.estimateGas.follow(
-    followerId,
-    followeeId
   )
 
   return ethers.utils.formatEther(gasInWei)

@@ -15,6 +15,8 @@ export async function updateActivity(req: Request, res: Response) {
       const fromAddress = activity.fromAddress.toLowerCase()
       const toAddress = activity.toAddress.toLowerCase()
 
+      // TODO: Remove connection to `accounts` collection instead connect to public APIs to query accounts (as we move `acounts` from Firestore to Cloud SQL).
+
       const fromUserDocs = await searchDocByField<Account>({
         collectionName: accountsCollection,
         fieldName: "address",

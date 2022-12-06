@@ -11,8 +11,8 @@ export async function authMiddleware(
   try {
     // Get x-access-key header.
     const accessKey = req.headers["x-access-key"]
-    // // Get Firebase auth id token.
-    // const idToken = req.headers["id-token"]
+    // Get Firebase auth id token.
+    const idToken = req.headers["id-token"]
 
     if (!accessKey) {
       res.status(401).send("Un Authorized")
@@ -21,20 +21,19 @@ export async function authMiddleware(
       const key = typeof accessKey === "string" ? accessKey : accessKey[0]
       const hasAccesskey = checkAccessKey(key)
 
-      // // Verify id token.
-      // const token = typeof idToken === "string" ? idToken : accessKey[0]
-      // const user = await verifyIdToken(token)
+      // Verify id token.
+      const token = typeof idToken === "string" ? idToken : accessKey[0]
+      const user = await verifyIdToken(token)
 
       if (hasAccesskey) {
-        // req.uid = user?.uid
-        req.uid = "abc123"
-        // req.uid = "xyz987"
+        req.uid = user?.uid
         next()
       } else {
         res.status(401).send("Un Authorized")
       }
     }
   } catch (error) {
+    console.log("error -->", error)
     res.status(500).send("Server Error")
   }
 }

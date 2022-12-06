@@ -1,9 +1,9 @@
 import { Request, Response } from "express"
 
 import { generateWallet, getBalance } from "../lib/ethers"
-import { walletsCollection, accountsCollection } from "../config/firebase"
+import { walletsCollection } from "../config/firebase"
 import { createDocWithId, getDocById } from "../lib/firebase"
-import type { Account, Wallet } from "../types"
+import type { Wallet } from "../types"
 
 const badRequestErrMessage = "Bad Request"
 const forbiddenErrMessage = "Forbidden"
@@ -36,16 +36,6 @@ export async function createWallet(req: Request, res: Response) {
         key: wallet.key,
       },
     })
-
-    // // Create a new doc (or update if it already exists) in "accounts" colleciton
-    // await createDocWithId<Partial<Account>>({
-    //   collectionName: accountsCollection,
-    //   docId: uid,
-    //   data: {
-    //     address: wallet.address.toLowerCase(),
-    //     type: "traditional",
-    //   },
-    // })
 
     res.status(200).json({ address: wallet.address })
   } catch (error) {

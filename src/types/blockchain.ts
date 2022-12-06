@@ -62,16 +62,12 @@ export type CreateFollowInput = {
  * @param owner {string} - a blockchain wallet address that owns the token
  * @param handle {string} - a unique name of the profile
  * @param imageURI {string} - a profile's image uri (can be empty string)
- * @param following {number} - total number of following of the profile
- * @param followers {number} - total number of followers of the profile
  */
 export type ProfileToken = {
   tokenId: number
   owner: string
   handle: string
   imageURI: string
-  following: number
-  followers: number
 }
 
 /**
@@ -160,36 +156,6 @@ export type UpdatePublishInput = {
 }
 
 /**
- * @param key - a wallet's key
- * @param data.targetId {number} - a publish or comment token id
- * @param data.creatorId {number} - a profile token id that creates a comment
- * @param data.contentURI {string} - comment metadata uri
- */
-export type CommentInput = {
-  key: string
-  data: {
-    targetId: number
-    creatorId: number
-    contentURI: string
-  }
-}
-
-/**
- * @param key - a wallet's key
- * @param data.tokenId {number} - a publish or comment token id
- * @param data.creatorId {number} - a profile token id that creates a comment
- * @param data.contentURI {string} - comment metadata uri
- */
-export type UpdateCommentInput = {
-  key: string
-  data: {
-    tokenId: number
-    creatorId: number
-    contentURI: string
-  }
-}
-
-/**
  * @param tokenId {uint256} - a token id
  * @param owner {address} - an address that owns the token
  * @param creatorId {uint256} - a profile token id of the creator
@@ -216,19 +182,57 @@ export type PublishToken = {
   tokenId: number
   owner: string
   creatorId: number
-  likes: number
-  disLikes: number
   imageURI: string
   contentURI: string
   metadataURI: string
+}
+
+/**
+ * @param key - a wallet's key
+ * @param data.publishId {number} - a publish token id
+ * @param data.creatorId {number} - a profile token id that creates a comment
+ * @param data.contentURI {string} - comment metadata uri
+ * @param data.text {string} - text
+ * @param data.mediaURI {string} - media comment
+ */
+export type CommentInput = {
+  key: string
+  data: {
+    parentId: number
+    creatorId: number
+    contentURI: string
+    text: string
+    mediaURI: string
+  }
+}
+
+/**
+ * @param key - a wallet's key
+ * @param data.tokenId {number} - a publish or comment token id
+ * @param data.creatorId {number} - a profile token id that creates a comment
+ * @param data.contentURI {string} - comment metadata uri
+ */
+export type UpdateCommentInput = {
+  key: string
+  data: {
+    tokenId: number
+    creatorId: number
+    contentURI: string
+    text: string
+    mediaURI: string
+  }
+}
+
+export enum CommentType {
+  PUBLISH = "PUBLISH",
+  COMMENT = "COMMENT",
 }
 
 export type CommentToken = {
   tokenId: number
   owner: string
   creatorId: number
-  targetId: number
-  likes: number
-  disLikes: number
+  parentId: number
+  commentType: CommentType
   contentURI: string
 }

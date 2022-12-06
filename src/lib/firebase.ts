@@ -1,7 +1,10 @@
 import { firestore } from "firebase-admin"
+import axios from "axios"
 
 import { db, auth, walletsCollection } from "../config/firebase"
 import type { Wallet } from "../types"
+
+const { FIREBASE_API_KEY } = process.env
 
 // Verify Firebase auth id token.
 export async function verifyIdToken(token: string) {
@@ -186,4 +189,26 @@ export async function getWallet(uid: string) {
   if (!wallet) throw new Error("Forbidden")
 
   return wallet
+}
+
+export async function createIdTokenfromCustomToken(uid: string) {
+  try {
+    const customToken = await auth.createCustomToken(uid)
+
+    const res = await axios({
+      url: `https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyCustomToken?key=${FIREBASE_API_KEY}`,
+      method: "post",
+      data: {
+        token: customToken,
+        returnSecureToken: true,
+      },
+    })
+
+    const idToken = res.data.idToken
+    console.log("token -->", idToken)
+
+    return idToken
+  } catch (e) {
+    console.log(e)
+  }
 }

@@ -5,16 +5,58 @@
 
 import { Request, Response } from "express"
 
+import { updateProfileContract as updateProfileForFollow } from "../lib/followNFT"
+import { updateProfileContract as updateProfileForPublish } from "../lib/publishNFT"
 import {
   updatePlatformOwner,
-  updateProfileContract,
+  updateProfileContract as updateProfileForLike,
+  updatePublishContract as updatePublishForLike,
   updateLikeFee,
   updatePlatformFee,
   withdrawFunds,
-} from "../lib/PublishNFT"
+} from "../lib/likeNFT"
+import {
+  updateProfileContract as updateProfileForComment,
+  updatePublishContract as updatePublishForComment,
+} from "../lib/commentNFT"
 
 const { ADMIN_PRIVATE_KEY } = process.env
 
+/**
+ * The route to store/update a Profile contract address on the Follow contract.
+ */
+export async function setProfileForFollow(req: Request, res: Response) {
+  try {
+    const { contractAddress } = req.body as {
+      contractAddress: string
+    }
+    await updateProfileForFollow(ADMIN_PRIVATE_KEY!, contractAddress)
+
+    res.status(200).json({ status: "Ok" })
+  } catch (error) {
+    res.status(500).send((error as any).message)
+  }
+}
+
+/**
+ * The route to store/update a Profile contract address on the Publish contract.
+ */
+export async function setProfileForPublish(req: Request, res: Response) {
+  try {
+    const { contractAddress } = req.body as {
+      contractAddress: string
+    }
+    await updateProfileForPublish(ADMIN_PRIVATE_KEY!, contractAddress)
+
+    res.status(200).json({ status: "Ok" })
+  } catch (error) {
+    res.status(500).send((error as any).message)
+  }
+}
+
+/**
+ * The route to store/update a platform owner address on the Like contract.
+ */
 export async function setPlatformOwner(req: Request, res: Response) {
   try {
     const { ownerAddress } = req.body as {
@@ -29,14 +71,14 @@ export async function setPlatformOwner(req: Request, res: Response) {
 }
 
 /**
- * The route to store/update a profile contract address on the publish contract.
+ * The route to store/update a Profile contract address on the Like contract.
  */
-export async function setProfileContract(req: Request, res: Response) {
+export async function setProfileForLike(req: Request, res: Response) {
   try {
     const { contractAddress } = req.body as {
       contractAddress: string
     }
-    await updateProfileContract(ADMIN_PRIVATE_KEY!, contractAddress)
+    await updateProfileForLike(ADMIN_PRIVATE_KEY!, contractAddress)
 
     res.status(200).json({ status: "Ok" })
   } catch (error) {
@@ -45,7 +87,23 @@ export async function setProfileContract(req: Request, res: Response) {
 }
 
 /**
- * The route to store/update a like fee on the publish contract.
+ * The route to store/update a Publish contract address on the Like contract.
+ */
+export async function setPublishForLike(req: Request, res: Response) {
+  try {
+    const { contractAddress } = req.body as {
+      contractAddress: string
+    }
+    await updatePublishForLike(ADMIN_PRIVATE_KEY!, contractAddress)
+
+    res.status(200).json({ status: "Ok" })
+  } catch (error) {
+    res.status(500).send((error as any).message)
+  }
+}
+
+/**
+ * The route to store/update a like fee on the Like contract.
  */
 export async function setLikeFee(req: Request, res: Response) {
   try {
@@ -61,7 +119,7 @@ export async function setLikeFee(req: Request, res: Response) {
 }
 
 /**
- * The route to store/update a platform fee on the publish contract.
+ * The route to store/update a platform fee on the Like contract.
  */
 export async function setPlatformFee(req: Request, res: Response) {
   try {
@@ -77,11 +135,43 @@ export async function setPlatformFee(req: Request, res: Response) {
 }
 
 /**
- * The route to withdraw funds.
+ * The route to withdraw funds to the platform owner from the Like contract.
  */
 export async function withdraw(req: Request, res: Response) {
   try {
     await withdrawFunds(ADMIN_PRIVATE_KEY!)
+    res.status(200).json({ status: "Ok" })
+  } catch (error) {
+    res.status(500).send((error as any).message)
+  }
+}
+
+/**
+ * The route to store/update a Profile contract address on the Comment contract.
+ */
+export async function setProfileForComment(req: Request, res: Response) {
+  try {
+    const { contractAddress } = req.body as {
+      contractAddress: string
+    }
+    await updateProfileForComment(ADMIN_PRIVATE_KEY!, contractAddress)
+
+    res.status(200).json({ status: "Ok" })
+  } catch (error) {
+    res.status(500).send((error as any).message)
+  }
+}
+
+/**
+ * The route to store/update a Publish contract address on the Comment contract.
+ */
+export async function setPublishForComment(req: Request, res: Response) {
+  try {
+    const { contractAddress } = req.body as {
+      contractAddress: string
+    }
+    await updatePublishForComment(ADMIN_PRIVATE_KEY!, contractAddress)
+
     res.status(200).json({ status: "Ok" })
   } catch (error) {
     res.status(500).send((error as any).message)
