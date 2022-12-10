@@ -105,7 +105,7 @@ export async function updatePublishContract(
 export async function commentOnPublish(input: CommentInput) {
   const {
     key,
-    data: { parentId, creatorId, contentURI, text, mediaURI },
+    data: { parentId, creatorId, contentURI, text },
   } = input
 
   const commentContract = getCommentContractBySigner(key)
@@ -114,7 +114,6 @@ export async function commentOnPublish(input: CommentInput) {
     creatorId,
     contentURI: contentURI.toLowerCase(),
     text,
-    mediaURI: mediaURI.toLowerCase(),
   })
   await transaction.wait()
 }
@@ -126,7 +125,7 @@ export async function commentOnPublish(input: CommentInput) {
 export async function commentOnComment(input: CommentInput) {
   const {
     key,
-    data: { parentId, creatorId, contentURI, text, mediaURI },
+    data: { parentId, creatorId, contentURI, text },
   } = input
 
   const commentContract = getCommentContractBySigner(key)
@@ -135,7 +134,6 @@ export async function commentOnComment(input: CommentInput) {
     creatorId,
     contentURI: contentURI.toLowerCase(),
     text,
-    mediaURI: mediaURI.toLowerCase(),
   })
   await transaction.wait()
 }
@@ -147,7 +145,7 @@ export async function commentOnComment(input: CommentInput) {
 export async function updateComment(input: UpdateCommentInput) {
   const {
     key,
-    data: { tokenId, creatorId, contentURI, text, mediaURI },
+    data: { tokenId, creatorId, contentURI, text },
   } = input
 
   const commentContract = getCommentContractBySigner(key)
@@ -156,7 +154,6 @@ export async function updateComment(input: UpdateCommentInput) {
     creatorId,
     contentURI: contentURI.toLowerCase(),
     text,
-    mediaURI: mediaURI.toLowerCase(),
   })
   await transaction.wait()
 }

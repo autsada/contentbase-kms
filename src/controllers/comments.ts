@@ -45,10 +45,10 @@ export async function checkRole(req: Request, res: Response) {
 export async function commentPublish(req: Request, res: Response) {
   try {
     const { uid } = req
-    const { parentId, creatorId, contentURI, text, mediaURI } =
+    const { parentId, creatorId, contentURI, text } =
       req.body as CommentInput["data"]
     // Validate input.
-    if (!uid || !parentId || !creatorId || !contentURI || (!text && !mediaURI))
+    if (!uid || !parentId || !creatorId || !contentURI || !text)
       throw new Error("User input error")
     // Get encrypted key
     const { key: encryptedKey, address } = await getWallet(uid)
@@ -61,8 +61,7 @@ export async function commentPublish(req: Request, res: Response) {
         parentId,
         creatorId,
         contentURI,
-        text: text || "",
-        mediaURI: mediaURI || "",
+        text,
       },
     })
 
@@ -81,10 +80,10 @@ export async function commentPublish(req: Request, res: Response) {
 export async function commentComment(req: Request, res: Response) {
   try {
     const { uid } = req
-    const { parentId, creatorId, contentURI, text, mediaURI } =
+    const { parentId, creatorId, contentURI, text } =
       req.body as CommentInput["data"]
     // Validate input.
-    if (!uid || !parentId || !creatorId || !contentURI || (!text && !mediaURI))
+    if (!uid || !parentId || !creatorId || !contentURI || !text)
       throw new Error("User input error")
     // Get encrypted key
     const { key: encryptedKey, address } = await getWallet(uid)
@@ -97,8 +96,7 @@ export async function commentComment(req: Request, res: Response) {
         parentId,
         creatorId,
         contentURI,
-        text: text || "",
-        mediaURI: mediaURI || "",
+        text,
       },
     })
 
@@ -117,10 +115,10 @@ export async function commentComment(req: Request, res: Response) {
 export async function updateCommentNFT(req: Request, res: Response) {
   try {
     const { uid } = req
-    const { tokenId, creatorId, contentURI, text, mediaURI } =
+    const { tokenId, creatorId, contentURI, text } =
       req.body as UpdateCommentInput["data"]
     // Validate input.
-    if (!uid || !tokenId || !creatorId || !contentURI || (!text && !mediaURI))
+    if (!uid || !tokenId || !creatorId || !contentURI || !text)
       throw new Error("User input error")
     // Get encrypted key
     const { key: encryptedKey, address } = await getWallet(uid)
@@ -133,8 +131,7 @@ export async function updateCommentNFT(req: Request, res: Response) {
         tokenId,
         creatorId,
         contentURI,
-        text: text || "",
-        mediaURI: mediaURI || "",
+        text,
       },
     })
 

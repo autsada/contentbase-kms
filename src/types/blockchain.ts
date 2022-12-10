@@ -193,7 +193,6 @@ export type PublishToken = {
  * @param data.creatorId {number} - a profile token id that creates a comment
  * @param data.contentURI {string} - comment metadata uri
  * @param data.text {string} - text
- * @param data.mediaURI {string} - media comment
  */
 export type CommentInput = {
   key: string
@@ -202,7 +201,6 @@ export type CommentInput = {
     creatorId: number
     contentURI: string
     text: string
-    mediaURI: string
   }
 }
 
@@ -211,6 +209,7 @@ export type CommentInput = {
  * @param data.tokenId {number} - a publish or comment token id
  * @param data.creatorId {number} - a profile token id that creates a comment
  * @param data.contentURI {string} - comment metadata uri
+ * @param data.text {string} - text
  */
 export type UpdateCommentInput = {
   key: string
@@ -219,7 +218,6 @@ export type UpdateCommentInput = {
     creatorId: number
     contentURI: string
     text: string
-    mediaURI: string
   }
 }
 
