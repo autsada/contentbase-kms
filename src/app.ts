@@ -7,7 +7,6 @@ import http from "http"
 
 import "./config/firebase"
 import * as router from "./routes"
-import { createIdTokenfromCustomToken } from "./lib/firebase"
 
 const { PORT } = process.env
 
@@ -31,8 +30,3 @@ const httpServer = http.createServer(app)
 httpServer.listen({ port: PORT || 8000 }, () => {
   console.log(`Server ready at port: ${PORT}`)
 })
-
-// createIdTokenfromCustomToken("K2K85T4o0JNWUjkarDkUjLxNhcB2")
-// createIdTokenfromCustomToken("2HEFRzVUJBOFGJohNYzx5xUr42Z2")
-// createIdTokenfromCustomToken("JhSuD3P0gTNPXFwd7EoCbPzqxNF3")
-// createIdTokenfromCustomToken("vHa6ZB9H2kNo2OCun0hqRr5OaTi1")
