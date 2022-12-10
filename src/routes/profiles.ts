@@ -21,8 +21,4 @@ profilesRouter.post("/default", authMiddleware, setProfileAsDefault)
 profilesRouter.post("/handle/verify", verifyProfileHandle)
 profilesRouter.post("/gas/create", authMiddleware, estimateGasCreateProfileNFT)
 profilesRouter.get("/default", authMiddleware, getUserDefaultProfile)
-profilesRouter.get(
-  "/token-uri/tokenId/:tokenId",
-  authMiddleware,
-  getProfileTokenURI
-)
+profilesRouter.get("/token-uri/tokenId/:tokenId", getProfileTokenURI)
