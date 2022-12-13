@@ -1,8 +1,8 @@
 import express from "express"
 
 import { updateActivity } from "../controllers/activities"
-import { authMiddleware } from "../middlewares/auth"
 
 export const activitiesRouter = express.Router()
 
-activitiesRouter.post("/update", authMiddleware, updateActivity)
+// This route doesn't need to have auth middleware as it will be called from the webhook route of contentbase server.
+activitiesRouter.post("/update", updateActivity)
