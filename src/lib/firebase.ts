@@ -67,22 +67,6 @@ export async function getDocById<T extends Record<string, any>>({
 }
 
 /**
- * Create a new doc with generated id.
- * @param input.collectionName
- * @param input.data
- * @returns
- */
-export function createDoc<T extends Record<string, any>>({
-  collectionName,
-  data,
-}: Pick<Args<T>, "collectionName" | "data">) {
-  return db.collection(collectionName).add({
-    ...data,
-    createdAt: new Date(),
-  })
-}
-
-/**
  * Create a new doc with pre-defined id.
  * @param input.collectionName
  * @param input.docId
@@ -128,50 +112,6 @@ export function updateDocById<T extends Record<string, any>>({
       },
       { merge: true }
     )
-}
-
-/**
- * Delete a doc by id.
- * @param input.collectionName
- * @param input.docId
- * @returns
- */
-export async function deleteDocById({
-  collectionName,
-  docId,
-}: Pick<Args, "collectionName" | "docId">) {
-  const result = await db.collection(collectionName).doc(docId).delete()
-
-  return result
-}
-
-/**
- * Search doc by field name.
- * @param input.collectionName
- * @param input.fieldName
- * @param input.fieldValue
- * @returns
- */
-export async function searchDocByField<T extends Record<string, any>>({
-  collectionName,
-  fieldName,
-  fieldValue,
-}: Pick<Args, "collectionName" | "fieldName" | "fieldValue">) {
-  const snapshots = await db
-    .collection(collectionName)
-    .where(fieldName, "==", fieldValue)
-    .get()
-
-  let docs: T[] = []
-
-  if (snapshots.empty) return []
-
-  snapshots.forEach((snapshot) => {
-    const data = snapshotToDoc<T>(snapshot)
-    docs.push(data)
-  })
-
-  return docs
 }
 
 // ===== "wallets" collection ===== //

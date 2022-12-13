@@ -38,5 +38,4 @@ export const auth = getAuth(firebaseApp)
 
 // Collections
 export const walletsCollection = "wallets"
-export const accountsCollection = "accounts"
 export const activitiesCollection = "activities"

@@ -9,18 +9,6 @@ export type Wallet = {
   address: string
 }
 
-/**
- * @param id - a document id
- * @param address - a blockchain wallet address
- */
-export type Account = {
-  id: string
-  address: string
-  type: "traditional" | "wallet"
-  createdAt: string
-  updatedAt?: string | null
-}
-
 export type Environment = "production" | "development"
 
 /**

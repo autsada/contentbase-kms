@@ -1,8 +1,7 @@
 import type { Request, Response } from "express"
 
-import { accountsCollection, activitiesCollection } from "../config/firebase"
-import { searchDocByField, updateDocById } from "../lib/firebase"
-import type { Account } from "../types"
+import { activitiesCollection } from "../config/firebase"
+import { updateDocById } from "../lib/firebase"
 import type { WebHookRequestBody, AddressActivity } from "../types"
 
 export async function updateActivity(req: Request, res: Response) {
@@ -15,40 +14,31 @@ export async function updateActivity(req: Request, res: Response) {
       const fromAddress = activity.fromAddress.toLowerCase()
       const toAddress = activity.toAddress.toLowerCase()
 
-      // TODO: Remove connection to `accounts` collection instead connect to public APIs to query accounts (as we move `acounts` from Firestore to Cloud SQL).
-
-      const fromUserDocs = await searchDocByField<Account>({
-        collectionName: accountsCollection,
-        fieldName: "address",
-        fieldValue: fromAddress,
+      // Update sender's activity
+      await updateDocById<Omit<AddressActivity, "id">>({
+        collectionName: activitiesCollection,
+        docId: fromAddress,
+        data: {
+          event: activity.category,
+          fromAddress,
+          toAddress,
+          value: activity.value || 0,
+          isAcknowledged: false,
+        },
       })
 
-      const toUserDocs = await searchDocByField<Account>({
-        collectionName: accountsCollection,
-        fieldName: "address",
-        fieldValue: toAddress,
+      // Update receiver's activity
+      await updateDocById<Omit<AddressActivity, "id">>({
+        collectionName: activitiesCollection,
+        docId: toAddress,
+        data: {
+          event: activity.category,
+          fromAddress,
+          toAddress,
+          value: activity.value || 0,
+          isAcknowledged: false,
+        },
       })
-
-      // Combine the users array
-      const relatedUsers = [...fromUserDocs, ...toUserDocs]
-
-      // Update activity of these users in Firestore
-      // Use Promise.allSettled because if one item rejects it will not reject the rest
-      await Promise.allSettled(
-        relatedUsers.map((user) => {
-          return updateDocById<Omit<AddressActivity, "id">>({
-            collectionName: activitiesCollection,
-            docId: user.id,
-            data: {
-              event: activity.category,
-              fromAddress,
-              toAddress,
-              value: activity.value || 0,
-              isAcknowledged: false,
-            },
-          })
-        })
-      )
     }
 
     res.status(200).end()
