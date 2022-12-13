@@ -21,6 +21,7 @@ import { authMiddleware } from "../middlewares/auth"
 
 export const adminRouter = express.Router()
 
+// TODO: add a middleware to allow only admin user to access this route.
 adminRouter.post("/key/create/master", authMiddleware, generateCryptoKey)
 
 //  All the below routes will be used in development only. In production connect to the blockchain directly from the UI.
