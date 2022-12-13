@@ -53,6 +53,7 @@ export async function createCryptoKey() {
 }
 
 export async function encrypt(text: string) {
+  console.time("kms-encrypt")
   // Build the key name
   const keyName = client.cryptoKeyPath(
     KMS_PROJECT_ID!,
@@ -104,11 +105,13 @@ export async function encrypt(text: string) {
       throw new Error("Encrypt: response corrupted in-transit")
     }
 
+    console.timeEnd("kms-encrypt")
     return Buffer.from(ciphertext).toString("base64")
   }
 }
 
 export async function decrypt(key: string) {
+  console.time("kms-decrypt")
   // Build the key name
   const keyName = client.cryptoKeyPath(
     KMS_PROJECT_ID!,
@@ -160,6 +163,7 @@ export async function decrypt(key: string) {
 
     const plaintext = decryptString(kmsDecrypted)
 
+    console.timeEnd("kms-decrypt")
     return plaintext
   }
 }

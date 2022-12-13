@@ -5,8 +5,10 @@ import { Category, CommentType } from "../types"
 const { KMS_ENCRYPT_KEY, KMS_ACCESS_KEY } = process.env
 
 export function encryptString(text: string): string {
+  console.time("string-encrypt")
   const encrypted = CryptoJs.AES.encrypt(text, KMS_ENCRYPT_KEY!).toString()
 
+  console.timeEnd("string-encrypt")
   return encrypted
 }
 
