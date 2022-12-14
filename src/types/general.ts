@@ -9,7 +9,7 @@ export type Wallet = {
   address: string
 }
 
-export type Environment = "production" | "development"
+export type Environment = "production" | "development" | "staging"
 
 /**
  * Alchemy webhooks types
