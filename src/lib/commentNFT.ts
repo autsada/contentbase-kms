@@ -5,7 +5,9 @@
 import { utils } from "ethers"
 
 import { getContractBySigner, getContractByProvider } from "./ethers"
-import CommentContract from "../abi/ContentBaseCommentV1.json"
+import DevCommentContract from "../abi/localhost/ContentBaseCommentV1.json"
+import StagingCommentContract from "../abi/testnet/ContentBaseCommentV1.json"
+import ProdCommentContract from "../abi/mainnet/ContentBaseCommentV1.json"
 import { ContentBaseCommentV1 as Comment } from "../typechain-types"
 import {
   Role,
@@ -15,8 +17,12 @@ import {
   UpdateCommentInput,
   CommentToken,
   CommentType,
+  Environment,
 } from "../types"
 import { getKeyOfCommentType } from "./utils"
+
+const { NODE_ENV } = process.env
+const env = NODE_ENV as Environment
 
 // A helper function to get Category index.
 export function getIndexOfCategory(cat: Category) {
@@ -34,9 +40,19 @@ export function getKeyOfCategory(index: number) {
  */
 export function getCommentContractBySigner(key: string) {
   const contract = getContractBySigner({
-    address: CommentContract.address,
     privateKey: key,
-    contractInterface: CommentContract.abi,
+    address:
+      env === "production"
+        ? ProdCommentContract.address
+        : env === "staging"
+        ? StagingCommentContract.address
+        : DevCommentContract.address,
+    contractInterface:
+      env === "production"
+        ? ProdCommentContract.abi
+        : env === "staging"
+        ? StagingCommentContract.abi
+        : DevCommentContract.abi,
   }) as Comment
 
   return contract
@@ -47,8 +63,18 @@ export function getCommentContractBySigner(key: string) {
  */
 export function getCommentContractByProvider() {
   const contract = getContractByProvider({
-    address: CommentContract.address,
-    contractInterface: CommentContract.abi,
+    address:
+      env === "production"
+        ? ProdCommentContract.address
+        : env === "staging"
+        ? StagingCommentContract.address
+        : DevCommentContract.address,
+    contractInterface:
+      env === "production"
+        ? ProdCommentContract.abi
+        : env === "staging"
+        ? StagingCommentContract.abi
+        : DevCommentContract.abi,
   }) as Comment
 
   return contract

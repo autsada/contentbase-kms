@@ -5,7 +5,9 @@
 import { ethers, utils } from "ethers"
 
 import { getContractBySigner, getContractByProvider } from "./ethers"
-import PublishContract from "../abi/ContentBasePublishV1.json"
+import DevPublishContract from "../abi/localhost/ContentBasePublishV1.json"
+import StagingPublishContract from "../abi/testnet/ContentBasePublishV1.json"
+import ProdPublishContract from "../abi/mainnet/ContentBasePublishV1.json"
 import { ContentBasePublishV1 as Publish } from "../typechain-types"
 import {
   Role,
@@ -13,8 +15,12 @@ import {
   CreatePublishInput,
   UpdatePublishInput,
   PublishToken,
+  Environment,
 } from "../types"
 import { getIndexOfCategory } from "./utils"
+
+const { NODE_ENV } = process.env
+const env = NODE_ENV as Environment
 
 /**
  * Get conract using signer.
@@ -22,9 +28,19 @@ import { getIndexOfCategory } from "./utils"
  */
 export function getPublishContractBySigner(key: string) {
   const contract = getContractBySigner({
-    address: PublishContract.address,
     privateKey: key,
-    contractInterface: PublishContract.abi,
+    address:
+      env === "production"
+        ? ProdPublishContract.address
+        : env === "staging"
+        ? StagingPublishContract.address
+        : DevPublishContract.address,
+    contractInterface:
+      env === "production"
+        ? ProdPublishContract.abi
+        : env === "staging"
+        ? StagingPublishContract.abi
+        : DevPublishContract.abi,
   }) as Publish
 
   return contract
@@ -35,8 +51,18 @@ export function getPublishContractBySigner(key: string) {
  */
 export function getPublishContractByProvider() {
   const contract = getContractByProvider({
-    address: PublishContract.address,
-    contractInterface: PublishContract.abi,
+    address:
+      env === "production"
+        ? ProdPublishContract.address
+        : env === "staging"
+        ? StagingPublishContract.address
+        : DevPublishContract.address,
+    contractInterface:
+      env === "production"
+        ? ProdPublishContract.abi
+        : env === "staging"
+        ? StagingPublishContract.abi
+        : DevPublishContract.abi,
   }) as Publish
 
   return contract

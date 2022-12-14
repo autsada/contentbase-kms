@@ -5,7 +5,9 @@
 import { ethers, utils } from "ethers"
 
 import { getContractBySigner, getContractByProvider } from "./ethers"
-import ProfileContract from "../abi/ContentBaseProfileV1.json"
+import DevProfileContract from "../abi/localhost/ContentBaseProfileV1.json"
+import StagingProfileContract from "../abi/testnet/ContentBaseProfileV1.json"
+import ProdProfileContract from "../abi/mainnet/ContentBaseProfileV1.json"
 import { ContentBaseProfileV1 as Profile } from "../typechain-types"
 import {
   Role,
@@ -13,7 +15,11 @@ import {
   CreateProfileInput,
   UpdateProfileImageInput,
   ProfileToken,
+  Environment,
 } from "../types"
+
+const { NODE_ENV } = process.env
+const env = NODE_ENV as Environment
 
 /**
  * Get conract using signer.
@@ -21,9 +27,19 @@ import {
  */
 export function getProfileContractBySigner(key: string) {
   const contract = getContractBySigner({
-    address: ProfileContract.address,
     privateKey: key,
-    contractInterface: ProfileContract.abi,
+    address:
+      env === "production"
+        ? ProdProfileContract.address
+        : env === "staging"
+        ? StagingProfileContract.address
+        : DevProfileContract.address,
+    contractInterface:
+      env === "production"
+        ? ProdProfileContract.abi
+        : env === "staging"
+        ? StagingProfileContract.abi
+        : DevProfileContract.abi,
   }) as Profile
 
   return contract
@@ -34,8 +50,18 @@ export function getProfileContractBySigner(key: string) {
  */
 export function getProfileContractByProvider() {
   const contract = getContractByProvider({
-    address: ProfileContract.address,
-    contractInterface: ProfileContract.abi,
+    address:
+      env === "production"
+        ? ProdProfileContract.address
+        : env === "staging"
+        ? StagingProfileContract.address
+        : DevProfileContract.address,
+    contractInterface:
+      env === "production"
+        ? ProdProfileContract.abi
+        : env === "staging"
+        ? StagingProfileContract.abi
+        : DevProfileContract.abi,
   }) as Profile
 
   return contract

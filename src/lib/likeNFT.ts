@@ -5,9 +5,14 @@
 import { ethers, utils } from "ethers"
 
 import { getContractBySigner, getContractByProvider } from "./ethers"
-import LikeContract from "../abi/ContentBaseLikeV1.json"
+import DevLikeContract from "../abi/localhost/ContentBaseLikeV1.json"
+import StagingLikeContract from "../abi/testnet/ContentBaseLikeV1.json"
+import ProdLikeContract from "../abi/mainnet/ContentBaseLikeV1.json"
 import { ContentBaseLikeV1 as Like } from "../typechain-types"
-import { Role, CheckRoleParams } from "../types"
+import { Role, CheckRoleParams, Environment } from "../types"
+
+const { NODE_ENV } = process.env
+const env = NODE_ENV as Environment
 
 /**
  * Get conract using signer.
@@ -15,9 +20,19 @@ import { Role, CheckRoleParams } from "../types"
  */
 export function getLikeContractBySigner(key: string) {
   const contract = getContractBySigner({
-    address: LikeContract.address,
     privateKey: key,
-    contractInterface: LikeContract.abi,
+    address:
+      env === "production"
+        ? ProdLikeContract.address
+        : env === "staging"
+        ? StagingLikeContract.address
+        : DevLikeContract.address,
+    contractInterface:
+      env === "production"
+        ? ProdLikeContract.abi
+        : env === "staging"
+        ? StagingLikeContract.abi
+        : DevLikeContract.abi,
   }) as Like
 
   return contract
@@ -28,8 +43,18 @@ export function getLikeContractBySigner(key: string) {
  */
 export function getLikeContractByProvider() {
   const contract = getContractByProvider({
-    address: LikeContract.address,
-    contractInterface: LikeContract.abi,
+    address:
+      env === "production"
+        ? ProdLikeContract.address
+        : env === "staging"
+        ? StagingLikeContract.address
+        : DevLikeContract.address,
+    contractInterface:
+      env === "production"
+        ? ProdLikeContract.abi
+        : env === "staging"
+        ? StagingLikeContract.abi
+        : DevLikeContract.abi,
   }) as Like
 
   return contract

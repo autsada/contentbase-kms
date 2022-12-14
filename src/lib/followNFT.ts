@@ -5,9 +5,14 @@
 import { ethers, utils } from "ethers"
 
 import { getContractBySigner, getContractByProvider } from "./ethers"
-import FollowContract from "../abi/ContentBaseFollowV1.json"
+import DevFollowContract from "../abi/localhost/ContentBaseFollowV1.json"
+import StagingFollowContract from "../abi/testnet/ContentBaseFollowV1.json"
+import ProdFollowContract from "../abi/mainnet/ContentBaseFollowV1.json"
 import { ContentBaseFollowV1 as Follow } from "../typechain-types"
-import { Role, CheckRoleParams, CreateFollowInput } from "../types"
+import { Role, CheckRoleParams, CreateFollowInput, Environment } from "../types"
+
+const { NODE_ENV } = process.env
+const env = NODE_ENV as Environment
 
 /**
  * Get conract using signer.
@@ -15,9 +20,19 @@ import { Role, CheckRoleParams, CreateFollowInput } from "../types"
  */
 export function getFollowContractBySigner(key: string) {
   const contract = getContractBySigner({
-    address: FollowContract.address,
     privateKey: key,
-    contractInterface: FollowContract.abi,
+    address:
+      env === "production"
+        ? ProdFollowContract.address
+        : env === "staging"
+        ? StagingFollowContract.address
+        : DevFollowContract.address,
+    contractInterface:
+      env === "production"
+        ? ProdFollowContract.abi
+        : env === "staging"
+        ? StagingFollowContract.abi
+        : DevFollowContract.abi,
   }) as Follow
 
   return contract
@@ -28,8 +43,18 @@ export function getFollowContractBySigner(key: string) {
  */
 export function getFollowContractByProvider() {
   const contract = getContractByProvider({
-    address: FollowContract.address,
-    contractInterface: FollowContract.abi,
+    address:
+      env === "production"
+        ? ProdFollowContract.address
+        : env === "staging"
+        ? StagingFollowContract.address
+        : DevFollowContract.address,
+    contractInterface:
+      env === "production"
+        ? ProdFollowContract.abi
+        : env === "staging"
+        ? StagingFollowContract.abi
+        : DevFollowContract.abi,
   }) as Follow
 
   return contract
