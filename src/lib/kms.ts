@@ -74,7 +74,7 @@ export async function encrypt(text: string) {
     const ciphertext = encryptResponse.ciphertext
     if (!ciphertext) throw new Error("No cipher text")
 
-    console.timeEnd("kms-encrypt dev")
+    console.timeEnd("kms-encrypt")
     return Buffer.from(ciphertext).toString("base64")
   } else {
     // Optional, but recommended: compute plaintext's CRC32C.
@@ -106,7 +106,7 @@ export async function encrypt(text: string) {
       throw new Error("Encrypt: response corrupted in-transit")
     }
 
-    console.timeEnd("kms-encrypt prod")
+    console.timeEnd("kms-encrypt")
     return Buffer.from(ciphertext).toString("base64")
   }
 }
@@ -135,7 +135,7 @@ export async function decrypt(key: string) {
 
     const plaintext = decryptString(kmsDecrypted)
 
-    console.timeEnd("kms-decrypt dev")
+    console.timeEnd("kms-decrypt")
     return plaintext
   } else {
     // Optional, but recommended: compute ciphertext's CRC32C.
@@ -165,7 +165,7 @@ export async function decrypt(key: string) {
 
     const plaintext = decryptString(kmsDecrypted)
 
-    console.timeEnd("kms-decrypt prod")
+    console.timeEnd("kms-decrypt")
     return plaintext
   }
 }
