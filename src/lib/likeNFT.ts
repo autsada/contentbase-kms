@@ -166,8 +166,10 @@ export async function likePublish(
   if (!liked) {
     // A. The call is for `like`.
     // Need to send some ethers as a support money to the creator of the publish.
+    const likeFee = await getLikeFee()
+
     const transaction = await likeContract.likePublish(publishId, profileId, {
-      value: utils.parseEther("0.002"),
+      value: utils.parseEther(`${likeFee}`),
     })
     await transaction.wait()
   } else {
@@ -250,7 +252,7 @@ export async function getPublishContractAddress() {
 export async function getLikeFee() {
   const likeContract = getLikeContractByProvider()
   const fee = await likeContract.likeFee()
-  return utils.formatEther(fee)
+  return Number(utils.formatEther(fee))
 }
 
 /**
