@@ -42,7 +42,6 @@ export async function createWallet(req: Request, res: Response) {
     })
 
     // Create a new account in the public database.
-    console.log("token -->", API_ACCESS_TOKEN)
     await axios({
       method: "post",
       url: `${PUBLIC_API_URL}/account/create`,
