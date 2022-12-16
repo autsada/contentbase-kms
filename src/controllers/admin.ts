@@ -11,7 +11,6 @@ import {
   updatePlatformOwner,
   updateProfileContract as updateProfileForLike,
   updatePublishContract as updatePublishForLike,
-  updateLikeFee,
   updatePlatformFee,
   withdrawFunds,
 } from "../lib/likeNFT"
@@ -95,22 +94,6 @@ export async function setPublishForLike(req: Request, res: Response) {
       contractAddress: string
     }
     await updatePublishForLike(ADMIN_PRIVATE_KEY!, contractAddress)
-
-    res.status(200).json({ status: "Ok" })
-  } catch (error) {
-    res.status(500).send((error as any).message)
-  }
-}
-
-/**
- * The route to store/update a like fee on the Like contract.
- */
-export async function setLikeFee(req: Request, res: Response) {
-  try {
-    const { fee } = req.body as {
-      fee: number
-    }
-    await updateLikeFee(ADMIN_PRIVATE_KEY!, fee)
 
     res.status(200).json({ status: "Ok" })
   } catch (error) {

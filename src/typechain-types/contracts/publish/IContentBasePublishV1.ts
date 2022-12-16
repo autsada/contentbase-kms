@@ -34,6 +34,7 @@ export declare namespace DataTypes {
     primaryCategory: PromiseOrValue<BigNumberish>;
     secondaryCategory: PromiseOrValue<BigNumberish>;
     tertiaryCategory: PromiseOrValue<BigNumberish>;
+    kind: PromiseOrValue<BigNumberish>;
   };
 
   export type CreatePublishDataStructOutput = [
@@ -43,6 +44,7 @@ export declare namespace DataTypes {
     string,
     string,
     string,
+    number,
     number,
     number,
     number
@@ -56,6 +58,7 @@ export declare namespace DataTypes {
     primaryCategory: number;
     secondaryCategory: number;
     tertiaryCategory: number;
+    kind: number;
   };
 
   export type PublishStruct = {
@@ -120,7 +123,7 @@ export declare namespace DataTypes {
 
 export interface IContentBasePublishV1Interface extends utils.Interface {
   functions: {
-    "createPublish((uint256,string,string,string,string,string,uint8,uint8,uint8))": FunctionFragment;
+    "createPublish((uint256,string,string,string,string,string,uint8,uint8,uint8,uint8))": FunctionFragment;
     "deletePublish(uint256,uint256)": FunctionFragment;
     "getProfileContract()": FunctionFragment;
     "getPublishById(uint256)": FunctionFragment;

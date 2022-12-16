@@ -8,8 +8,8 @@ import {
   getPlatformOwner,
   getProfileContract,
   getPublishContract,
-  likeFee,
   platformFee,
+  getLikeFee,
 } from "../controllers/likes"
 import { authMiddleware } from "../middlewares/auth"
 
@@ -22,5 +22,5 @@ likesRouter.post("/gas/like", authMiddleware, estimateGasLikePublishNFT)
 likesRouter.get("/platform-owner", getPlatformOwner)
 likesRouter.get("/profile-contract", getProfileContract)
 likesRouter.get("/publish-contract", getPublishContract)
-likesRouter.get("/fee/like", likeFee)
+likesRouter.get("/fee/like", getLikeFee)
 likesRouter.get("/fee/platform", platformFee)

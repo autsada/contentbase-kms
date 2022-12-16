@@ -11,7 +11,6 @@ import {
   setPlatformOwner,
   setProfileForLike,
   setPublishForLike,
-  setLikeFee,
   setPlatformFee,
   withdraw,
   setProfileForComment,
@@ -30,7 +29,6 @@ adminRouter.post("/set/profile-publish", authMiddleware, setProfileForPublish)
 adminRouter.post("/set/owner", authMiddleware, setPlatformOwner)
 adminRouter.post("/set/profile-like", authMiddleware, setProfileForLike)
 adminRouter.post("/set/publish-like", authMiddleware, setPublishForLike)
-adminRouter.post("/set/fee/like", authMiddleware, setLikeFee)
 adminRouter.post("/set/fee/platform", authMiddleware, setPlatformFee)
 adminRouter.post("/withdraw", authMiddleware, withdraw)
 adminRouter.post("/set/profile-comment", authMiddleware, setProfileForComment)

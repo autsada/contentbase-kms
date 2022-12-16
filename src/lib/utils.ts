@@ -1,6 +1,6 @@
 import CryptoJs from "crypto-js"
 
-import { Category, CommentType } from "../types"
+import { Category, CommentType, PublishKind } from "../types"
 
 const { KMS_ENCRYPT_KEY, KMS_ACCESS_KEY } = process.env
 
@@ -59,4 +59,14 @@ export function getIndexOfCommentType(ct: CommentType) {
 // A helper function to get CommentType key.
 export function getKeyOfCommentType(index: number) {
   return Object.keys(CommentType)[index]
+}
+
+// A helper function to get Publish kind.
+export function getIndexOfPublishKind(kind: PublishKind) {
+  return Object.keys(PublishKind).indexOf(kind)
+}
+
+// A helper function to get Publish kind.
+export function getKeyOfPublishKind(index: number) {
+  return Object.keys(PublishKind)[index]
 }

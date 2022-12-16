@@ -39,6 +39,7 @@ export declare namespace DataTypes {
     primaryCategory: PromiseOrValue<BigNumberish>;
     secondaryCategory: PromiseOrValue<BigNumberish>;
     tertiaryCategory: PromiseOrValue<BigNumberish>;
+    kind: PromiseOrValue<BigNumberish>;
   };
 
   export type CreatePublishDataStructOutput = [
@@ -48,6 +49,7 @@ export declare namespace DataTypes {
     string,
     string,
     string,
+    number,
     number,
     number,
     number
@@ -61,6 +63,7 @@ export declare namespace DataTypes {
     primaryCategory: number;
     secondaryCategory: number;
     tertiaryCategory: number;
+    kind: number;
   };
 
   export type PublishStruct = {
@@ -131,7 +134,7 @@ export interface ContentBasePublishV1Interface extends utils.Interface {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "burn(uint256)": FunctionFragment;
-    "createPublish((uint256,string,string,string,string,string,uint8,uint8,uint8))": FunctionFragment;
+    "createPublish((uint256,string,string,string,string,string,uint8,uint8,uint8,uint8))": FunctionFragment;
     "deletePublish(uint256,uint256)": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "getProfileContract()": FunctionFragment;
@@ -447,7 +450,7 @@ export interface ContentBasePublishV1Interface extends utils.Interface {
     "ApprovalForAll(address,address,bool)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "PublishCreated(uint256,uint256,address,string,string,string,string,string,uint8,uint8,uint8,uint256)": EventFragment;
+    "PublishCreated(uint256,uint256,address,string,string,string,string,string,uint8,uint8,uint8,uint8,uint256)": EventFragment;
     "PublishDeleted(uint256,uint256,address,uint256)": EventFragment;
     "PublishUpdated(uint256,uint256,address,string,string,string,string,string,uint8,uint8,uint8,uint256)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
@@ -536,6 +539,7 @@ export interface PublishCreatedEventObject {
   primaryCategory: number;
   secondaryCategory: number;
   tertiaryCategory: number;
+  kind: number;
   timestamp: BigNumber;
 }
 export type PublishCreatedEvent = TypedEvent<
@@ -548,6 +552,7 @@ export type PublishCreatedEvent = TypedEvent<
     string,
     string,
     string,
+    number,
     number,
     number,
     number,
@@ -1228,7 +1233,7 @@ export interface ContentBasePublishV1 extends BaseContract {
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
-    "PublishCreated(uint256,uint256,address,string,string,string,string,string,uint8,uint8,uint8,uint256)"(
+    "PublishCreated(uint256,uint256,address,string,string,string,string,string,uint8,uint8,uint8,uint8,uint256)"(
       tokenId?: PromiseOrValue<BigNumberish> | null,
       creatorId?: PromiseOrValue<BigNumberish> | null,
       owner?: PromiseOrValue<string> | null,
@@ -1240,6 +1245,7 @@ export interface ContentBasePublishV1 extends BaseContract {
       primaryCategory?: null,
       secondaryCategory?: null,
       tertiaryCategory?: null,
+      kind?: null,
       timestamp?: null
     ): PublishCreatedEventFilter;
     PublishCreated(
@@ -1254,6 +1260,7 @@ export interface ContentBasePublishV1 extends BaseContract {
       primaryCategory?: null,
       secondaryCategory?: null,
       tertiaryCategory?: null,
+      kind?: null,
       timestamp?: null
     ): PublishCreatedEventFilter;
 

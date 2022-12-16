@@ -1,4 +1,5 @@
 import { Request, Response } from "express"
+import { utils } from "ethers"
 
 import { getWallet } from "../lib/firebase"
 import {
@@ -9,7 +10,7 @@ import {
   getPlatformOwnerAddress,
   getProfileContractAddress,
   getPublishContractAddress,
-  getLikeFee,
+  calculateLikeFee,
   getPlatformFee,
 } from "../lib/likeNFT"
 import { decrypt } from "../lib/kms"
@@ -49,16 +50,13 @@ export async function likePublishNFT(req: Request, res: Response) {
     // Validate input.
     if (!uid || !publishId || !profileId) throw new Error("User input error")
     // Get encrypted key
-    const { key: encryptedKey, address } = await getWallet(uid)
+    const { key: encryptedKey } = await getWallet(uid)
     // 1. Decrypt the key
     const key = await decrypt(encryptedKey)
     await likePublish(key, Number(publishId), Number(profileId))
 
-    // TODO: add a check to verify if the address owns the given `profileId`. To do so we need to query a profile by `profileId` from the public APIs and compare the profile's address with the address above.
-
     res.status(200).json({ status: "Ok" })
   } catch (error) {
-    console.log("error -->", error)
     res.status(500).send((error as any).message)
   }
 }
@@ -158,11 +156,11 @@ export async function getPublishContract(req: Request, res: Response) {
 /**
  * The route to get the like fee.
  */
-export async function likeFee(req: Request, res: Response) {
+export async function getLikeFee(req: Request, res: Response) {
   try {
-    const fee = await getLikeFee()
+    const fee = await calculateLikeFee()
 
-    res.status(200).json({ fee })
+    res.status(200).json({ fee: utils.formatEther(fee) })
   } catch (error) {
     res.status(500).send((error as any).message)
   }

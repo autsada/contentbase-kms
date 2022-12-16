@@ -116,17 +116,6 @@ export async function updatePublishContract(
 }
 
 /**
- * A function to update like fee stored on the Publish contract.
- * @dev this function is for Admin only
- * @param key - wallet's key
- * @param fee {number}
- */
-export async function updateLikeFee(key: string, fee: number) {
-  const likeContract = getLikeContractBySigner(key)
-  await likeContract.updateLikeFee(utils.parseEther(`${fee}`))
-}
-
-/**
  * A function to update platform fee stored on the Publish contract.
  * @dev this function is for Admin only
  * @param key - wallet's key
@@ -166,10 +155,10 @@ export async function likePublish(
   if (!liked) {
     // A. The call is for `like`.
     // Need to send some ethers as a support money to the creator of the publish.
-    const likeFee = await getLikeFee()
+    const likeFee = await calculateLikeFee()
 
     const transaction = await likeContract.likePublish(publishId, profileId, {
-      value: utils.parseEther(`${likeFee}`),
+      value: likeFee,
     })
     await transaction.wait()
   } else {
@@ -246,16 +235,6 @@ export async function getPublishContractAddress() {
 }
 
 /**
- * A function to get the like fee.
- * @returns fee {number}
- */
-export async function getLikeFee() {
-  const likeContract = getLikeContractByProvider()
-  const fee = await likeContract.likeFee()
-  return Number(utils.formatEther(fee))
-}
-
-/**
  * A function to get the platfrom fee.
  * @returns fee {number}
  */
@@ -274,4 +253,11 @@ export async function getPlatformFee() {
 export async function checkLikedPublish(profileId: number, publishId: number) {
   const likeContract = getLikeContractByProvider()
   return likeContract.checkLikedPublish(profileId, publishId)
+}
+
+export async function calculateLikeFee() {
+  const likeContract = getLikeContractByProvider()
+  const fee = await likeContract.calculateLikeFee()
+
+  return fee
 }

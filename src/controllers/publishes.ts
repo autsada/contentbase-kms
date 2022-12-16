@@ -52,6 +52,7 @@ export async function createPublishNFT(req: Request, res: Response) {
       primaryCategory,
       secondaryCategory,
       tertiaryCategory,
+      kind,
     } = req.body as CreatePublishInput["data"]
     // Validate input.
     // description can be empty.
@@ -64,7 +65,8 @@ export async function createPublishNFT(req: Request, res: Response) {
       !title ||
       !primaryCategory ||
       !secondaryCategory ||
-      !tertiaryCategory
+      !tertiaryCategory ||
+      !kind
     )
       throw new Error("User input error")
     // Get encrypted key
@@ -84,6 +86,7 @@ export async function createPublishNFT(req: Request, res: Response) {
         primaryCategory,
         secondaryCategory,
         tertiaryCategory,
+        kind,
       },
     })
 
@@ -234,6 +237,7 @@ export async function estimateGasCreatePublishNFT(req: Request, res: Response) {
       primaryCategory,
       secondaryCategory,
       tertiaryCategory,
+      kind,
     } = req.body as CreatePublishInput["data"]
     // Validate input.
     // description can be empty.
@@ -246,7 +250,8 @@ export async function estimateGasCreatePublishNFT(req: Request, res: Response) {
       !title ||
       !primaryCategory ||
       !secondaryCategory ||
-      !tertiaryCategory
+      !tertiaryCategory ||
+      !kind
     )
       throw new Error("User input error")
     // Get encrypted key
@@ -265,6 +270,7 @@ export async function estimateGasCreatePublishNFT(req: Request, res: Response) {
         primaryCategory,
         secondaryCategory,
         tertiaryCategory,
+        kind,
       },
     })
 

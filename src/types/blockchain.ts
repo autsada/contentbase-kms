@@ -98,6 +98,17 @@ export enum Category {
 }
 
 /**
+ * Pubish's kind
+ */
+export enum PublishKind {
+  Video = "Video",
+  Short = "Short",
+  Audio = "Audio",
+  Blog = "Blog",
+  Post = "Post",
+}
+
+/**
  * Input data required to create a Publish NFT.
  * @param key - a wallet's key
  * @param data.creatorId - a profile id that user uses to create a publish
@@ -109,6 +120,7 @@ export enum Category {
  * @param data.primaryCategory - a publish's primaryCategory
  * @param data.secondaryCategory - a publish's secondaryCategory
  * @param data.tertiaryCategory - a publish's tertiaryCategory
+ * @param data.kind - a publish's kind
  */
 export type CreatePublishInput = {
   key: string
@@ -122,6 +134,7 @@ export type CreatePublishInput = {
     primaryCategory: Category
     secondaryCategory: Category
     tertiaryCategory: Category
+    kind: PublishKind
   }
 }
 

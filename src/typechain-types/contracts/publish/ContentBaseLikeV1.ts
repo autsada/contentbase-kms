@@ -36,9 +36,11 @@ export interface ContentBaseLikeV1Interface extends utils.Interface {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "burn(uint256)": FunctionFragment;
+    "calculateLikeFee()": FunctionFragment;
     "checkDisLikedPublish(uint256,uint256)": FunctionFragment;
     "checkLikedPublish(uint256,uint256)": FunctionFragment;
     "disLikePublish(uint256,uint256)": FunctionFragment;
+    "ethToUsdPriceFeedContract()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "getProfileContract()": FunctionFragment;
     "getPublishContract()": FunctionFragment;
@@ -47,7 +49,6 @@ export interface ContentBaseLikeV1Interface extends utils.Interface {
     "hasRole(bytes32,address)": FunctionFragment;
     "initialize(address,address)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
-    "likeFee()": FunctionFragment;
     "likePublish(uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
@@ -65,9 +66,9 @@ export interface ContentBaseLikeV1Interface extends utils.Interface {
     "symbol()": FunctionFragment;
     "tokenURI(uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
-    "updateLikeFee(uint256)": FunctionFragment;
     "updatePlatformFee(uint256)": FunctionFragment;
     "updatePlatformOwner(address)": FunctionFragment;
+    "updatePriceFeedContract(address)": FunctionFragment;
     "updateProfileContract(address)": FunctionFragment;
     "updatePublishContract(address)": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
@@ -83,9 +84,11 @@ export interface ContentBaseLikeV1Interface extends utils.Interface {
       | "approve"
       | "balanceOf"
       | "burn"
+      | "calculateLikeFee"
       | "checkDisLikedPublish"
       | "checkLikedPublish"
       | "disLikePublish"
+      | "ethToUsdPriceFeedContract"
       | "getApproved"
       | "getProfileContract"
       | "getPublishContract"
@@ -94,7 +97,6 @@ export interface ContentBaseLikeV1Interface extends utils.Interface {
       | "hasRole"
       | "initialize"
       | "isApprovedForAll"
-      | "likeFee"
       | "likePublish"
       | "name"
       | "ownerOf"
@@ -112,9 +114,9 @@ export interface ContentBaseLikeV1Interface extends utils.Interface {
       | "symbol"
       | "tokenURI"
       | "transferFrom"
-      | "updateLikeFee"
       | "updatePlatformFee"
       | "updatePlatformOwner"
+      | "updatePriceFeedContract"
       | "updateProfileContract"
       | "updatePublishContract"
       | "upgradeTo"
@@ -147,6 +149,10 @@ export interface ContentBaseLikeV1Interface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "calculateLikeFee",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "checkDisLikedPublish",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
@@ -157,6 +163,10 @@ export interface ContentBaseLikeV1Interface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "disLikePublish",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "ethToUsdPriceFeedContract",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getApproved",
@@ -190,7 +200,6 @@ export interface ContentBaseLikeV1Interface extends utils.Interface {
     functionFragment: "isApprovedForAll",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "likeFee", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "likePublish",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
@@ -267,15 +276,15 @@ export interface ContentBaseLikeV1Interface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "updateLikeFee",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "updatePlatformFee",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "updatePlatformOwner",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updatePriceFeedContract",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -309,6 +318,10 @@ export interface ContentBaseLikeV1Interface extends utils.Interface {
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "calculateLikeFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "checkDisLikedPublish",
     data: BytesLike
   ): Result;
@@ -318,6 +331,10 @@ export interface ContentBaseLikeV1Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "disLikePublish",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "ethToUsdPriceFeedContract",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -343,7 +360,6 @@ export interface ContentBaseLikeV1Interface extends utils.Interface {
     functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "likeFee", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "likePublish",
     data: BytesLike
@@ -398,15 +414,15 @@ export interface ContentBaseLikeV1Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "updateLikeFee",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "updatePlatformFee",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "updatePlatformOwner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updatePriceFeedContract",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -665,6 +681,8 @@ export interface ContentBaseLikeV1 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[void]>;
 
+    calculateLikeFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     checkDisLikedPublish(
       profileId: PromiseOrValue<BigNumberish>,
       publishId: PromiseOrValue<BigNumberish>,
@@ -682,6 +700,8 @@ export interface ContentBaseLikeV1 extends BaseContract {
       profileId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    ethToUsdPriceFeedContract(overrides?: CallOverrides): Promise<[string]>;
 
     getApproved(
       tokenId: PromiseOrValue<BigNumberish>,
@@ -720,8 +740,6 @@ export interface ContentBaseLikeV1 extends BaseContract {
       operator: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
-
-    likeFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     likePublish(
       publishId: PromiseOrValue<BigNumberish>,
@@ -804,11 +822,6 @@ export interface ContentBaseLikeV1 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    updateLikeFee(
-      fee: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     updatePlatformFee(
       fee: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -816,6 +829,11 @@ export interface ContentBaseLikeV1 extends BaseContract {
 
     updatePlatformOwner(
       ownerAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    updatePriceFeedContract(
+      contractAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -867,6 +885,8 @@ export interface ContentBaseLikeV1 extends BaseContract {
     overrides?: CallOverrides
   ): Promise<void>;
 
+  calculateLikeFee(overrides?: CallOverrides): Promise<BigNumber>;
+
   checkDisLikedPublish(
     profileId: PromiseOrValue<BigNumberish>,
     publishId: PromiseOrValue<BigNumberish>,
@@ -884,6 +904,8 @@ export interface ContentBaseLikeV1 extends BaseContract {
     profileId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  ethToUsdPriceFeedContract(overrides?: CallOverrides): Promise<string>;
 
   getApproved(
     tokenId: PromiseOrValue<BigNumberish>,
@@ -922,8 +944,6 @@ export interface ContentBaseLikeV1 extends BaseContract {
     operator: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
-
-  likeFee(overrides?: CallOverrides): Promise<BigNumber>;
 
   likePublish(
     publishId: PromiseOrValue<BigNumberish>,
@@ -1006,11 +1026,6 @@ export interface ContentBaseLikeV1 extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  updateLikeFee(
-    fee: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   updatePlatformFee(
     fee: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1018,6 +1033,11 @@ export interface ContentBaseLikeV1 extends BaseContract {
 
   updatePlatformOwner(
     ownerAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  updatePriceFeedContract(
+    contractAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1069,6 +1089,8 @@ export interface ContentBaseLikeV1 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    calculateLikeFee(overrides?: CallOverrides): Promise<BigNumber>;
+
     checkDisLikedPublish(
       profileId: PromiseOrValue<BigNumberish>,
       publishId: PromiseOrValue<BigNumberish>,
@@ -1086,6 +1108,8 @@ export interface ContentBaseLikeV1 extends BaseContract {
       profileId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    ethToUsdPriceFeedContract(overrides?: CallOverrides): Promise<string>;
 
     getApproved(
       tokenId: PromiseOrValue<BigNumberish>,
@@ -1124,8 +1148,6 @@ export interface ContentBaseLikeV1 extends BaseContract {
       operator: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    likeFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     likePublish(
       publishId: PromiseOrValue<BigNumberish>,
@@ -1208,11 +1230,6 @@ export interface ContentBaseLikeV1 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    updateLikeFee(
-      fee: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     updatePlatformFee(
       fee: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1220,6 +1237,11 @@ export interface ContentBaseLikeV1 extends BaseContract {
 
     updatePlatformOwner(
       ownerAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updatePriceFeedContract(
+      contractAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1412,6 +1434,8 @@ export interface ContentBaseLikeV1 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    calculateLikeFee(overrides?: CallOverrides): Promise<BigNumber>;
+
     checkDisLikedPublish(
       profileId: PromiseOrValue<BigNumberish>,
       publishId: PromiseOrValue<BigNumberish>,
@@ -1429,6 +1453,8 @@ export interface ContentBaseLikeV1 extends BaseContract {
       profileId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    ethToUsdPriceFeedContract(overrides?: CallOverrides): Promise<BigNumber>;
 
     getApproved(
       tokenId: PromiseOrValue<BigNumberish>,
@@ -1467,8 +1493,6 @@ export interface ContentBaseLikeV1 extends BaseContract {
       operator: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    likeFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     likePublish(
       publishId: PromiseOrValue<BigNumberish>,
@@ -1551,11 +1575,6 @@ export interface ContentBaseLikeV1 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    updateLikeFee(
-      fee: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     updatePlatformFee(
       fee: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1563,6 +1582,11 @@ export interface ContentBaseLikeV1 extends BaseContract {
 
     updatePlatformOwner(
       ownerAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    updatePriceFeedContract(
+      contractAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1617,6 +1641,8 @@ export interface ContentBaseLikeV1 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    calculateLikeFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     checkDisLikedPublish(
       profileId: PromiseOrValue<BigNumberish>,
       publishId: PromiseOrValue<BigNumberish>,
@@ -1633,6 +1659,10 @@ export interface ContentBaseLikeV1 extends BaseContract {
       publishId: PromiseOrValue<BigNumberish>,
       profileId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    ethToUsdPriceFeedContract(
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getApproved(
@@ -1676,8 +1706,6 @@ export interface ContentBaseLikeV1 extends BaseContract {
       operator: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    likeFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     likePublish(
       publishId: PromiseOrValue<BigNumberish>,
@@ -1760,11 +1788,6 @@ export interface ContentBaseLikeV1 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    updateLikeFee(
-      fee: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     updatePlatformFee(
       fee: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1772,6 +1795,11 @@ export interface ContentBaseLikeV1 extends BaseContract {
 
     updatePlatformOwner(
       ownerAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updatePriceFeedContract(
+      contractAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

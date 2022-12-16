@@ -59,6 +59,11 @@ const _abi = [
             name: "tertiaryCategory",
             type: "uint8",
           },
+          {
+            internalType: "enum DataTypes.PublishKind",
+            name: "kind",
+            type: "uint8",
+          },
         ],
         internalType: "struct DataTypes.CreatePublishData",
         name: "createPublishData",

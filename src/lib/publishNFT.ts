@@ -17,7 +17,7 @@ import {
   PublishToken,
   Environment,
 } from "../types"
-import { getIndexOfCategory } from "./utils"
+import { getIndexOfCategory, getIndexOfPublishKind } from "./utils"
 
 const { NODE_ENV } = process.env
 const env = NODE_ENV as Environment
@@ -115,6 +115,7 @@ export async function createPublish(input: CreatePublishInput) {
       primaryCategory,
       secondaryCategory,
       tertiaryCategory,
+      kind,
     },
   } = input
 
@@ -130,6 +131,7 @@ export async function createPublish(input: CreatePublishInput) {
     primaryCategory: getIndexOfCategory(primaryCategory),
     secondaryCategory: getIndexOfCategory(secondaryCategory),
     tertiaryCategory: getIndexOfCategory(tertiaryCategory),
+    kind: getIndexOfPublishKind(kind),
   })
   await transaction.wait()
 }
@@ -249,6 +251,7 @@ export async function estimateGasForCreatePublishTxn(
       primaryCategory,
       secondaryCategory,
       tertiaryCategory,
+      kind,
     },
   } = input
   const publishContract = getPublishContractBySigner(key)
@@ -263,6 +266,7 @@ export async function estimateGasForCreatePublishTxn(
     primaryCategory: getIndexOfCategory(primaryCategory),
     secondaryCategory: getIndexOfCategory(secondaryCategory),
     tertiaryCategory: getIndexOfCategory(tertiaryCategory),
+    kind: getIndexOfPublishKind(kind),
   })
 
   return ethers.utils.formatEther(gasInWei)

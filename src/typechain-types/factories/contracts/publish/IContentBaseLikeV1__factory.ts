@@ -128,19 +128,6 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "updateLikeFee",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "fee",
-        type: "uint256",
-      },
-    ],
     name: "updatePlatformFee",
     outputs: [],
     stateMutability: "nonpayable",
@@ -155,6 +142,19 @@ const _abi = [
       },
     ],
     name: "updatePlatformOwner",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "contractAddress",
+        type: "address",
+      },
+    ],
+    name: "updatePriceFeedContract",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

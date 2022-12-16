@@ -32,9 +32,9 @@ export interface IContentBaseLikeV1Interface extends utils.Interface {
     "getProfileContract()": FunctionFragment;
     "getPublishContract()": FunctionFragment;
     "likePublish(uint256,uint256)": FunctionFragment;
-    "updateLikeFee(uint256)": FunctionFragment;
     "updatePlatformFee(uint256)": FunctionFragment;
     "updatePlatformOwner(address)": FunctionFragment;
+    "updatePriceFeedContract(address)": FunctionFragment;
     "updateProfileContract(address)": FunctionFragment;
     "updatePublishContract(address)": FunctionFragment;
     "withdraw()": FunctionFragment;
@@ -48,9 +48,9 @@ export interface IContentBaseLikeV1Interface extends utils.Interface {
       | "getProfileContract"
       | "getPublishContract"
       | "likePublish"
-      | "updateLikeFee"
       | "updatePlatformFee"
       | "updatePlatformOwner"
+      | "updatePriceFeedContract"
       | "updateProfileContract"
       | "updatePublishContract"
       | "withdraw"
@@ -81,15 +81,15 @@ export interface IContentBaseLikeV1Interface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "updateLikeFee",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "updatePlatformFee",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "updatePlatformOwner",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updatePriceFeedContract",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -127,15 +127,15 @@ export interface IContentBaseLikeV1Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "updateLikeFee",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "updatePlatformFee",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "updatePlatformOwner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updatePriceFeedContract",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -206,11 +206,6 @@ export interface IContentBaseLikeV1 extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    updateLikeFee(
-      fee: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     updatePlatformFee(
       fee: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -218,6 +213,11 @@ export interface IContentBaseLikeV1 extends BaseContract {
 
     updatePlatformOwner(
       ownerAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    updatePriceFeedContract(
+      contractAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -264,11 +264,6 @@ export interface IContentBaseLikeV1 extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  updateLikeFee(
-    fee: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   updatePlatformFee(
     fee: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -276,6 +271,11 @@ export interface IContentBaseLikeV1 extends BaseContract {
 
   updatePlatformOwner(
     ownerAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  updatePriceFeedContract(
+    contractAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -322,11 +322,6 @@ export interface IContentBaseLikeV1 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    updateLikeFee(
-      fee: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     updatePlatformFee(
       fee: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -334,6 +329,11 @@ export interface IContentBaseLikeV1 extends BaseContract {
 
     updatePlatformOwner(
       ownerAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updatePriceFeedContract(
+      contractAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -381,11 +381,6 @@ export interface IContentBaseLikeV1 extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    updateLikeFee(
-      fee: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     updatePlatformFee(
       fee: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -393,6 +388,11 @@ export interface IContentBaseLikeV1 extends BaseContract {
 
     updatePlatformOwner(
       ownerAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    updatePriceFeedContract(
+      contractAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -444,11 +444,6 @@ export interface IContentBaseLikeV1 extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    updateLikeFee(
-      fee: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     updatePlatformFee(
       fee: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -456,6 +451,11 @@ export interface IContentBaseLikeV1 extends BaseContract {
 
     updatePlatformOwner(
       ownerAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updatePriceFeedContract(
+      contractAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
