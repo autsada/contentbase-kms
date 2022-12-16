@@ -9,7 +9,7 @@ export async function updateActivity(req: Request, res: Response) {
     const body = req.body as WebHookRequestBody
     const activity = body.event.activity[0]
 
-    if (activity) {
+    if (activity && activity.value && activity.value > 0) {
       // Find users that relate to the activity
       const fromAddress = activity.fromAddress.toLowerCase()
       const toAddress = activity.toAddress.toLowerCase()
@@ -22,7 +22,7 @@ export async function updateActivity(req: Request, res: Response) {
           event: activity.category,
           fromAddress,
           toAddress,
-          value: activity.value || 0,
+          value: activity.value,
           isAcknowledged: false,
         },
       })
@@ -35,7 +35,7 @@ export async function updateActivity(req: Request, res: Response) {
           event: activity.category,
           fromAddress,
           toAddress,
-          value: activity.value || 0,
+          value: activity.value,
           isAcknowledged: false,
         },
       })
