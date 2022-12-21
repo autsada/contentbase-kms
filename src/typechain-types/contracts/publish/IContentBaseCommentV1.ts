@@ -27,19 +27,12 @@ export declare namespace DataTypes {
   export type CreateCommentDataStruct = {
     parentId: PromiseOrValue<BigNumberish>;
     creatorId: PromiseOrValue<BigNumberish>;
-    contentURI: PromiseOrValue<string>;
     text: PromiseOrValue<string>;
   };
 
-  export type CreateCommentDataStructOutput = [
-    BigNumber,
-    BigNumber,
-    string,
-    string
-  ] & {
+  export type CreateCommentDataStructOutput = [BigNumber, BigNumber, string] & {
     parentId: BigNumber;
     creatorId: BigNumber;
-    contentURI: string;
     text: string;
   };
 
@@ -48,7 +41,7 @@ export declare namespace DataTypes {
     creatorId: PromiseOrValue<BigNumberish>;
     parentId: PromiseOrValue<BigNumberish>;
     commentType: PromiseOrValue<BigNumberish>;
-    contentURI: PromiseOrValue<string>;
+    text: PromiseOrValue<string>;
   };
 
   export type CommentStructOutput = [
@@ -62,40 +55,33 @@ export declare namespace DataTypes {
     creatorId: BigNumber;
     parentId: BigNumber;
     commentType: number;
-    contentURI: string;
+    text: string;
   };
 
   export type UpdateCommentDataStruct = {
     tokenId: PromiseOrValue<BigNumberish>;
     creatorId: PromiseOrValue<BigNumberish>;
-    contentURI: PromiseOrValue<string>;
     text: PromiseOrValue<string>;
   };
 
-  export type UpdateCommentDataStructOutput = [
-    BigNumber,
-    BigNumber,
-    string,
-    string
-  ] & {
+  export type UpdateCommentDataStructOutput = [BigNumber, BigNumber, string] & {
     tokenId: BigNumber;
     creatorId: BigNumber;
-    contentURI: string;
     text: string;
   };
 }
 
 export interface IContentBaseCommentV1Interface extends utils.Interface {
   functions: {
-    "commentOnComment((uint256,uint256,string,string))": FunctionFragment;
-    "commentOnPublish((uint256,uint256,string,string))": FunctionFragment;
+    "commentOnComment((uint256,uint256,string))": FunctionFragment;
+    "commentOnPublish((uint256,uint256,string))": FunctionFragment;
     "deleteComment(uint256,uint256)": FunctionFragment;
     "disLikeComment(uint256,uint256)": FunctionFragment;
     "getCommentById(uint256)": FunctionFragment;
     "getProfileContract()": FunctionFragment;
     "getPublishContract()": FunctionFragment;
     "likeComment(uint256,uint256)": FunctionFragment;
-    "updateComment((uint256,uint256,string,string))": FunctionFragment;
+    "updateComment((uint256,uint256,string))": FunctionFragment;
     "updateProfileContract(address)": FunctionFragment;
     "updatePublishContract(address)": FunctionFragment;
   };

@@ -112,9 +112,7 @@ export enum PublishKind {
  * Input data required to create a Publish NFT.
  * @param key - a wallet's key
  * @param data.creatorId - a profile id that user uses to create a publish
- * @param data.imageURI - a thumbnail image uri of the publish
  * @param data.contentURI - a content uri of the publish
- * @param data.metadataURI - a metadata file uri of the publish
  * @param data.title - a publish's title
  * @param data.description - a publish's description
  * @param data.primaryCategory - a publish's primaryCategory
@@ -126,9 +124,7 @@ export type CreatePublishInput = {
   key: string
   data: {
     creatorId: number
-    imageURI: string
     contentURI: string
-    metadataURI: string
     title: string
     description: string
     primaryCategory: Category
@@ -143,9 +139,7 @@ export type CreatePublishInput = {
  * @param key - a wallet's key
  * @param data.tokenId - a token id of the publish to be updated
  * @param data.creatorId - a creator profile id
- * @param data.imageURI - a thumbnail image uri of the publish
  * @param data.contentURI - a content uri of the publish
- * @param data.metadataURI - a metadata file uri of the publish
  * @param data.title - a publish's title
  * @param data.description - a publish's description
  * @param data.primaryCategory - a publish's primaryCategory
@@ -157,9 +151,7 @@ export type UpdatePublishInput = {
   data: {
     tokenId: number
     creatorId: number
-    imageURI: string
     contentURI: string
-    metadataURI: string
     title: string
     description: string
     primaryCategory: Category
@@ -172,22 +164,17 @@ export type UpdatePublishInput = {
  * @param tokenId {uint256} - a token id
  * @param owner {address} - an address that owns the token
  * @param creatorId {uint256} - a profile token id of the creator
- * @param likes {uint256} - number of likes a publish has
- * @param disLikes {uint256} - number of disLikes a publish has
- * @param imageURI {string} - a publish's thumbnail image uri
  * @param contentURI {string} - a publish's content uri, tipically it's a uri point to a video content
- * @param metadataURI {string} - a uri point to the publish's metadata json file that contain all information about a publish.
- *
- * @dev Metadata Guild: the metadata json object must have these below fields, additional fields can be added.
+ * ContentURI structure
  * {
- *      name {string}: "A title of the publish",
- *      description {string}: "A description of the publish",
- *      image {string}: "A publish's thumbnail image, prefer ipfs storage"
+ *      name: <Publish's title>,
+ *      description: <Publish's description>,
+ *      image: <Publish's content uri>
  *      properties: {
- *          content: "A publish's content uri, prefer ipfs storage",
- *          primaryCategory {enum}: "See Category enum above - must NOT Empty",
- *          secondaryCategory {enum}: "See Category enum above - can be Empty",
- *          tertiaryCategory {enum}: "See Category enum above - can be Empty",
+ *          primaryCategory: <Publish's primary category>,
+ *          secondaryCategory: <Publish's secondary category>,
+ *          tertiaryCategory: <Publish's tertiary category>,
+ *          kind: <Publish's kind>,
  *      }
  * }
  */
@@ -195,16 +182,13 @@ export type PublishToken = {
   tokenId: number
   owner: string
   creatorId: number
-  imageURI: string
   contentURI: string
-  metadataURI: string
 }
 
 /**
  * @param key - a wallet's key
  * @param data.publishId {number} - a publish token id
  * @param data.creatorId {number} - a profile token id that creates a comment
- * @param data.contentURI {string} - comment metadata uri
  * @param data.text {string} - text
  */
 export type CommentInput = {
@@ -212,7 +196,6 @@ export type CommentInput = {
   data: {
     parentId: number
     creatorId: number
-    contentURI: string
     text: string
   }
 }
@@ -221,7 +204,6 @@ export type CommentInput = {
  * @param key - a wallet's key
  * @param data.tokenId {number} - a publish or comment token id
  * @param data.creatorId {number} - a profile token id that creates a comment
- * @param data.contentURI {string} - comment metadata uri
  * @param data.text {string} - text
  */
 export type UpdateCommentInput = {
@@ -229,7 +211,6 @@ export type UpdateCommentInput = {
   data: {
     tokenId: number
     creatorId: number
-    contentURI: string
     text: string
   }
 }
@@ -245,5 +226,5 @@ export type CommentToken = {
   creatorId: number
   parentId: number
   commentType: CommentType
-  contentURI: string
+  text: string
 }

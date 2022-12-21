@@ -32,19 +32,12 @@ export declare namespace DataTypes {
   export type CreateCommentDataStruct = {
     parentId: PromiseOrValue<BigNumberish>;
     creatorId: PromiseOrValue<BigNumberish>;
-    contentURI: PromiseOrValue<string>;
     text: PromiseOrValue<string>;
   };
 
-  export type CreateCommentDataStructOutput = [
-    BigNumber,
-    BigNumber,
-    string,
-    string
-  ] & {
+  export type CreateCommentDataStructOutput = [BigNumber, BigNumber, string] & {
     parentId: BigNumber;
     creatorId: BigNumber;
-    contentURI: string;
     text: string;
   };
 
@@ -53,7 +46,7 @@ export declare namespace DataTypes {
     creatorId: PromiseOrValue<BigNumberish>;
     parentId: PromiseOrValue<BigNumberish>;
     commentType: PromiseOrValue<BigNumberish>;
-    contentURI: PromiseOrValue<string>;
+    text: PromiseOrValue<string>;
   };
 
   export type CommentStructOutput = [
@@ -67,25 +60,18 @@ export declare namespace DataTypes {
     creatorId: BigNumber;
     parentId: BigNumber;
     commentType: number;
-    contentURI: string;
+    text: string;
   };
 
   export type UpdateCommentDataStruct = {
     tokenId: PromiseOrValue<BigNumberish>;
     creatorId: PromiseOrValue<BigNumberish>;
-    contentURI: PromiseOrValue<string>;
     text: PromiseOrValue<string>;
   };
 
-  export type UpdateCommentDataStructOutput = [
-    BigNumber,
-    BigNumber,
-    string,
-    string
-  ] & {
+  export type UpdateCommentDataStructOutput = [BigNumber, BigNumber, string] & {
     tokenId: BigNumber;
     creatorId: BigNumber;
-    contentURI: string;
     text: string;
   };
 }
@@ -98,8 +84,8 @@ export interface ContentBaseCommentV1Interface extends utils.Interface {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "burn(uint256)": FunctionFragment;
-    "commentOnComment((uint256,uint256,string,string))": FunctionFragment;
-    "commentOnPublish((uint256,uint256,string,string))": FunctionFragment;
+    "commentOnComment((uint256,uint256,string))": FunctionFragment;
+    "commentOnPublish((uint256,uint256,string))": FunctionFragment;
     "deleteComment(uint256,uint256)": FunctionFragment;
     "disLikeComment(uint256,uint256)": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
@@ -124,7 +110,7 @@ export interface ContentBaseCommentV1Interface extends utils.Interface {
     "symbol()": FunctionFragment;
     "tokenURI(uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
-    "updateComment((uint256,uint256,string,string))": FunctionFragment;
+    "updateComment((uint256,uint256,string))": FunctionFragment;
     "updateProfileContract(address)": FunctionFragment;
     "updatePublishContract(address)": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
@@ -443,13 +429,13 @@ export interface ContentBaseCommentV1Interface extends utils.Interface {
     "Approval(address,address,uint256)": EventFragment;
     "ApprovalForAll(address,address,bool)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
-    "CommentCreated(uint256,uint256,uint256,address,string,string,uint8,uint256)": EventFragment;
+    "CommentCreated(uint256,uint256,uint256,address,string,uint8,uint256)": EventFragment;
     "CommentDeleted(uint256,uint256,address,uint256)": EventFragment;
     "CommentDisLiked(uint256,uint256,uint256)": EventFragment;
     "CommentLiked(uint256,uint256,uint256)": EventFragment;
     "CommentUnLiked(uint256,uint256,uint256)": EventFragment;
     "CommentUndoDisLiked(uint256,uint256,uint256)": EventFragment;
-    "CommentUpdated(uint256,uint256,address,string,string,uint256)": EventFragment;
+    "CommentUpdated(uint256,uint256,address,string,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
@@ -527,13 +513,12 @@ export interface CommentCreatedEventObject {
   parentId: BigNumber;
   creatorId: BigNumber;
   owner: string;
-  contentURI: string;
   text: string;
   commentType: number;
   timestamp: BigNumber;
 }
 export type CommentCreatedEvent = TypedEvent<
-  [BigNumber, BigNumber, BigNumber, string, string, string, number, BigNumber],
+  [BigNumber, BigNumber, BigNumber, string, string, number, BigNumber],
   CommentCreatedEventObject
 >;
 
@@ -605,12 +590,11 @@ export interface CommentUpdatedEventObject {
   tokenId: BigNumber;
   creatorId: BigNumber;
   owner: string;
-  contentURI: string;
   text: string;
   timestamp: BigNumber;
 }
 export type CommentUpdatedEvent = TypedEvent<
-  [BigNumber, BigNumber, string, string, string, BigNumber],
+  [BigNumber, BigNumber, string, string, BigNumber],
   CommentUpdatedEventObject
 >;
 
@@ -1288,12 +1272,11 @@ export interface ContentBaseCommentV1 extends BaseContract {
       beacon?: PromiseOrValue<string> | null
     ): BeaconUpgradedEventFilter;
 
-    "CommentCreated(uint256,uint256,uint256,address,string,string,uint8,uint256)"(
+    "CommentCreated(uint256,uint256,uint256,address,string,uint8,uint256)"(
       tokenId?: PromiseOrValue<BigNumberish> | null,
       parentId?: PromiseOrValue<BigNumberish> | null,
       creatorId?: PromiseOrValue<BigNumberish> | null,
       owner?: null,
-      contentURI?: null,
       text?: null,
       commentType?: null,
       timestamp?: null
@@ -1303,7 +1286,6 @@ export interface ContentBaseCommentV1 extends BaseContract {
       parentId?: PromiseOrValue<BigNumberish> | null,
       creatorId?: PromiseOrValue<BigNumberish> | null,
       owner?: null,
-      contentURI?: null,
       text?: null,
       commentType?: null,
       timestamp?: null
@@ -1366,11 +1348,10 @@ export interface ContentBaseCommentV1 extends BaseContract {
       timestamp?: null
     ): CommentUndoDisLikedEventFilter;
 
-    "CommentUpdated(uint256,uint256,address,string,string,uint256)"(
+    "CommentUpdated(uint256,uint256,address,string,uint256)"(
       tokenId?: PromiseOrValue<BigNumberish> | null,
       creatorId?: PromiseOrValue<BigNumberish> | null,
       owner?: null,
-      contentURI?: null,
       text?: null,
       timestamp?: null
     ): CommentUpdatedEventFilter;
@@ -1378,7 +1359,6 @@ export interface ContentBaseCommentV1 extends BaseContract {
       tokenId?: PromiseOrValue<BigNumberish> | null,
       creatorId?: PromiseOrValue<BigNumberish> | null,
       owner?: null,
-      contentURI?: null,
       text?: null,
       timestamp?: null
     ): CommentUpdatedEventFilter;

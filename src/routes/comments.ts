@@ -9,7 +9,6 @@ import {
   likeCommentNFT,
   disLikeCommentNFT,
   getComment,
-  tokenURI,
   getProfileContract,
   getPublishContract,
 } from "../controllers/comments"
@@ -25,6 +24,5 @@ commentsRouter.post("/delete", authMiddleware, deleteCommentNFT)
 commentsRouter.post("/like", authMiddleware, likeCommentNFT)
 commentsRouter.post("/disLike", authMiddleware, disLikeCommentNFT)
 commentsRouter.get("/commentId/:commentId", getComment)
-commentsRouter.get("/token-uri/tokenId/:tokenId", tokenURI)
 commentsRouter.get("/profile-contract", getProfileContract)
 commentsRouter.get("/publish-contract", getPublishContract)

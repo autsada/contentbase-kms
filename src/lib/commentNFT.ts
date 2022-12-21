@@ -131,14 +131,13 @@ export async function updatePublishContract(
 export async function commentOnPublish(input: CommentInput) {
   const {
     key,
-    data: { parentId, creatorId, contentURI, text },
+    data: { parentId, creatorId, text },
   } = input
 
   const commentContract = getCommentContractBySigner(key)
   const transaction = await commentContract.commentOnPublish({
     parentId,
     creatorId,
-    contentURI: contentURI.toLowerCase(),
     text,
   })
   await transaction.wait()
@@ -151,14 +150,13 @@ export async function commentOnPublish(input: CommentInput) {
 export async function commentOnComment(input: CommentInput) {
   const {
     key,
-    data: { parentId, creatorId, contentURI, text },
+    data: { parentId, creatorId, text },
   } = input
 
   const commentContract = getCommentContractBySigner(key)
   const transaction = await commentContract.commentOnComment({
     parentId,
     creatorId,
-    contentURI: contentURI.toLowerCase(),
     text,
   })
   await transaction.wait()
@@ -171,14 +169,13 @@ export async function commentOnComment(input: CommentInput) {
 export async function updateComment(input: UpdateCommentInput) {
   const {
     key,
-    data: { tokenId, creatorId, contentURI, text },
+    data: { tokenId, creatorId, text },
   } = input
 
   const commentContract = getCommentContractBySigner(key)
   const transaction = await commentContract.updateComment({
     tokenId,
     creatorId,
-    contentURI: contentURI.toLowerCase(),
     text,
   })
   await transaction.wait()
@@ -239,7 +236,7 @@ export async function disLikeComment(
  */
 export async function fetchComment(commentId: number): Promise<CommentToken> {
   const commentContract = getCommentContractByProvider()
-  const { owner, creatorId, parentId, commentType, contentURI } =
+  const { owner, creatorId, parentId, commentType, text } =
     await commentContract.getCommentById(commentId)
 
   return {
@@ -248,19 +245,8 @@ export async function fetchComment(commentId: number): Promise<CommentToken> {
     creatorId: creatorId.toNumber(),
     parentId: parentId.toNumber(),
     commentType: getKeyOfCommentType(commentType) as CommentType,
-    contentURI,
+    text,
   }
-}
-
-/**
- * A function to get token uri.
- * @param tokenId {number} a token id
- * @return uri {string}
- */
-export async function getTokenURI(tokenId: number): Promise<string> {
-  const commentContract = getCommentContractByProvider()
-  const uri = await commentContract.tokenURI(tokenId)
-  return uri
 }
 
 /**

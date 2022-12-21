@@ -107,9 +107,7 @@ export async function createPublish(input: CreatePublishInput) {
     key,
     data: {
       creatorId,
-      imageURI,
       contentURI,
-      metadataURI,
       title,
       description,
       primaryCategory,
@@ -123,9 +121,7 @@ export async function createPublish(input: CreatePublishInput) {
   // Make sure to pass down categories as numbers.
   const transaction = await publishContract.createPublish({
     creatorId,
-    imageURI: imageURI.toLowerCase(),
     contentURI: contentURI.toLocaleLowerCase(),
-    metadataURI: metadataURI.toLowerCase(),
     title,
     description,
     primaryCategory: getIndexOfCategory(primaryCategory),
@@ -146,9 +142,7 @@ export async function updatePublish(input: UpdatePublishInput) {
     data: {
       tokenId,
       creatorId,
-      imageURI,
       contentURI,
-      metadataURI,
       title,
       description,
       primaryCategory,
@@ -162,9 +156,7 @@ export async function updatePublish(input: UpdatePublishInput) {
   const transaction = await publishContract.updatePublish({
     tokenId,
     creatorId,
-    imageURI: imageURI.toLowerCase(),
     contentURI: contentURI.toLocaleLowerCase(),
-    metadataURI: metadataURI.toLowerCase(),
     title,
     description,
     primaryCategory: getIndexOfCategory(primaryCategory),
@@ -207,16 +199,15 @@ export async function getProfileContractAddress() {
  */
 export async function fetchPublish(publishId: number): Promise<PublishToken> {
   const publishContract = getPublishContractByProvider()
-  const { owner, creatorId, imageURI, contentURI, metadataURI } =
-    await publishContract.getPublishById(publishId)
+  const { owner, creatorId, contentURI } = await publishContract.getPublishById(
+    publishId
+  )
 
   return {
     tokenId: publishId,
     owner,
     creatorId: creatorId.toNumber(),
-    imageURI,
     contentURI,
-    metadataURI,
   }
 }
 
@@ -243,9 +234,7 @@ export async function estimateGasForCreatePublishTxn(
     key,
     data: {
       creatorId,
-      imageURI,
       contentURI,
-      metadataURI,
       title,
       description,
       primaryCategory,
@@ -258,9 +247,7 @@ export async function estimateGasForCreatePublishTxn(
 
   const gasInWei = await publishContract.estimateGas.createPublish({
     creatorId,
-    imageURI,
     contentURI,
-    metadataURI,
     title,
     description,
     primaryCategory: getIndexOfCategory(primaryCategory),

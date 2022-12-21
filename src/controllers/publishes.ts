@@ -44,9 +44,7 @@ export async function createPublishNFT(req: Request, res: Response) {
     const { uid } = req
     const {
       creatorId,
-      imageURI,
       contentURI,
-      metadataURI,
       title,
       description,
       primaryCategory,
@@ -59,9 +57,7 @@ export async function createPublishNFT(req: Request, res: Response) {
     if (
       !uid ||
       !creatorId ||
-      !imageURI ||
       !contentURI ||
-      !metadataURI ||
       !title ||
       !primaryCategory ||
       !secondaryCategory ||
@@ -78,9 +74,7 @@ export async function createPublishNFT(req: Request, res: Response) {
       key,
       data: {
         creatorId,
-        imageURI,
         contentURI,
-        metadataURI,
         title,
         description: description || "", // use empty string if it's undefined.
         primaryCategory,
@@ -108,9 +102,7 @@ export async function updatePublishNFT(req: Request, res: Response) {
     const {
       tokenId,
       creatorId,
-      imageURI,
       contentURI,
-      metadataURI,
       title,
       description,
       primaryCategory,
@@ -123,9 +115,7 @@ export async function updatePublishNFT(req: Request, res: Response) {
       !uid ||
       !tokenId ||
       !creatorId ||
-      !imageURI ||
       !contentURI ||
-      !metadataURI ||
       !title ||
       !primaryCategory ||
       !secondaryCategory ||
@@ -143,9 +133,7 @@ export async function updatePublishNFT(req: Request, res: Response) {
       data: {
         tokenId,
         creatorId,
-        imageURI,
         contentURI,
-        metadataURI,
         title,
         description: description || "",
         primaryCategory,
@@ -229,9 +217,7 @@ export async function estimateGasCreatePublishNFT(req: Request, res: Response) {
     const { uid } = req
     const {
       creatorId,
-      imageURI,
       contentURI,
-      metadataURI,
       title,
       description,
       primaryCategory,
@@ -244,9 +230,7 @@ export async function estimateGasCreatePublishNFT(req: Request, res: Response) {
     if (
       !uid ||
       !creatorId ||
-      !imageURI ||
       !contentURI ||
-      !metadataURI ||
       !title ||
       !primaryCategory ||
       !secondaryCategory ||
@@ -262,9 +246,7 @@ export async function estimateGasCreatePublishNFT(req: Request, res: Response) {
       key,
       data: {
         creatorId,
-        imageURI,
         contentURI,
-        metadataURI,
         title,
         description: description || "",
         primaryCategory,

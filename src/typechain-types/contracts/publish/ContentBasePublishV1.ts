@@ -31,9 +31,7 @@ import type {
 export declare namespace DataTypes {
   export type CreatePublishDataStruct = {
     creatorId: PromiseOrValue<BigNumberish>;
-    imageURI: PromiseOrValue<string>;
     contentURI: PromiseOrValue<string>;
-    metadataURI: PromiseOrValue<string>;
     title: PromiseOrValue<string>;
     description: PromiseOrValue<string>;
     primaryCategory: PromiseOrValue<BigNumberish>;
@@ -47,17 +45,13 @@ export declare namespace DataTypes {
     string,
     string,
     string,
-    string,
-    string,
     number,
     number,
     number,
     number
   ] & {
     creatorId: BigNumber;
-    imageURI: string;
     contentURI: string;
-    metadataURI: string;
     title: string;
     description: string;
     primaryCategory: number;
@@ -69,31 +63,19 @@ export declare namespace DataTypes {
   export type PublishStruct = {
     owner: PromiseOrValue<string>;
     creatorId: PromiseOrValue<BigNumberish>;
-    imageURI: PromiseOrValue<string>;
     contentURI: PromiseOrValue<string>;
-    metadataURI: PromiseOrValue<string>;
   };
 
-  export type PublishStructOutput = [
-    string,
-    BigNumber,
-    string,
-    string,
-    string
-  ] & {
+  export type PublishStructOutput = [string, BigNumber, string] & {
     owner: string;
     creatorId: BigNumber;
-    imageURI: string;
     contentURI: string;
-    metadataURI: string;
   };
 
   export type UpdatePublishDataStruct = {
     tokenId: PromiseOrValue<BigNumberish>;
     creatorId: PromiseOrValue<BigNumberish>;
-    imageURI: PromiseOrValue<string>;
     contentURI: PromiseOrValue<string>;
-    metadataURI: PromiseOrValue<string>;
     title: PromiseOrValue<string>;
     description: PromiseOrValue<string>;
     primaryCategory: PromiseOrValue<BigNumberish>;
@@ -107,17 +89,13 @@ export declare namespace DataTypes {
     string,
     string,
     string,
-    string,
-    string,
     number,
     number,
     number
   ] & {
     tokenId: BigNumber;
     creatorId: BigNumber;
-    imageURI: string;
     contentURI: string;
-    metadataURI: string;
     title: string;
     description: string;
     primaryCategory: number;
@@ -134,7 +112,7 @@ export interface ContentBasePublishV1Interface extends utils.Interface {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "burn(uint256)": FunctionFragment;
-    "createPublish((uint256,string,string,string,string,string,uint8,uint8,uint8,uint8))": FunctionFragment;
+    "createPublish((uint256,string,string,string,uint8,uint8,uint8,uint8))": FunctionFragment;
     "deletePublish(uint256,uint256)": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "getProfileContract()": FunctionFragment;
@@ -159,7 +137,7 @@ export interface ContentBasePublishV1Interface extends utils.Interface {
     "tokenURI(uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
     "updateProfileContract(address)": FunctionFragment;
-    "updatePublish((uint256,uint256,string,string,string,string,string,uint8,uint8,uint8))": FunctionFragment;
+    "updatePublish((uint256,uint256,string,string,string,uint8,uint8,uint8))": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
   };
@@ -450,9 +428,9 @@ export interface ContentBasePublishV1Interface extends utils.Interface {
     "ApprovalForAll(address,address,bool)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "PublishCreated(uint256,uint256,address,string,string,string,string,string,uint8,uint8,uint8,uint8,uint256)": EventFragment;
+    "PublishCreated(uint256,uint256,address,string,string,string,uint8,uint8,uint8,uint8,uint256)": EventFragment;
     "PublishDeleted(uint256,uint256,address,uint256)": EventFragment;
-    "PublishUpdated(uint256,uint256,address,string,string,string,string,string,uint8,uint8,uint8,uint256)": EventFragment;
+    "PublishUpdated(uint256,uint256,address,string,string,string,uint8,uint8,uint8,uint256)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
@@ -531,9 +509,7 @@ export interface PublishCreatedEventObject {
   tokenId: BigNumber;
   creatorId: BigNumber;
   owner: string;
-  imageURI: string;
   contentURI: string;
-  metadataURI: string;
   title: string;
   description: string;
   primaryCategory: number;
@@ -546,8 +522,6 @@ export type PublishCreatedEvent = TypedEvent<
   [
     BigNumber,
     BigNumber,
-    string,
-    string,
     string,
     string,
     string,
@@ -580,9 +554,7 @@ export interface PublishUpdatedEventObject {
   tokenId: BigNumber;
   creatorId: BigNumber;
   owner: string;
-  imageURI: string;
   contentURI: string;
-  metadataURI: string;
   title: string;
   description: string;
   primaryCategory: number;
@@ -594,8 +566,6 @@ export type PublishUpdatedEvent = TypedEvent<
   [
     BigNumber,
     BigNumber,
-    string,
-    string,
     string,
     string,
     string,
@@ -1233,13 +1203,11 @@ export interface ContentBasePublishV1 extends BaseContract {
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
-    "PublishCreated(uint256,uint256,address,string,string,string,string,string,uint8,uint8,uint8,uint8,uint256)"(
+    "PublishCreated(uint256,uint256,address,string,string,string,uint8,uint8,uint8,uint8,uint256)"(
       tokenId?: PromiseOrValue<BigNumberish> | null,
       creatorId?: PromiseOrValue<BigNumberish> | null,
       owner?: PromiseOrValue<string> | null,
-      imageURI?: null,
       contentURI?: null,
-      metadataURI?: null,
       title?: null,
       description?: null,
       primaryCategory?: null,
@@ -1252,9 +1220,7 @@ export interface ContentBasePublishV1 extends BaseContract {
       tokenId?: PromiseOrValue<BigNumberish> | null,
       creatorId?: PromiseOrValue<BigNumberish> | null,
       owner?: PromiseOrValue<string> | null,
-      imageURI?: null,
       contentURI?: null,
-      metadataURI?: null,
       title?: null,
       description?: null,
       primaryCategory?: null,
@@ -1277,13 +1243,11 @@ export interface ContentBasePublishV1 extends BaseContract {
       timestamp?: null
     ): PublishDeletedEventFilter;
 
-    "PublishUpdated(uint256,uint256,address,string,string,string,string,string,uint8,uint8,uint8,uint256)"(
+    "PublishUpdated(uint256,uint256,address,string,string,string,uint8,uint8,uint8,uint256)"(
       tokenId?: PromiseOrValue<BigNumberish> | null,
       creatorId?: PromiseOrValue<BigNumberish> | null,
       owner?: null,
-      imageURI?: null,
       contentURI?: null,
-      metadataURI?: null,
       title?: null,
       description?: null,
       primaryCategory?: null,
@@ -1295,9 +1259,7 @@ export interface ContentBasePublishV1 extends BaseContract {
       tokenId?: PromiseOrValue<BigNumberish> | null,
       creatorId?: PromiseOrValue<BigNumberish> | null,
       owner?: null,
-      imageURI?: null,
       contentURI?: null,
-      metadataURI?: null,
       title?: null,
       description?: null,
       primaryCategory?: null,

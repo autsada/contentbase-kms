@@ -21,17 +21,7 @@ const _abi = [
           },
           {
             internalType: "string",
-            name: "imageURI",
-            type: "string",
-          },
-          {
-            internalType: "string",
             name: "contentURI",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "metadataURI",
             type: "string",
           },
           {
@@ -130,17 +120,7 @@ const _abi = [
           },
           {
             internalType: "string",
-            name: "imageURI",
-            type: "string",
-          },
-          {
-            internalType: "string",
             name: "contentURI",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "metadataURI",
             type: "string",
           },
         ],
@@ -219,17 +199,7 @@ const _abi = [
           },
           {
             internalType: "string",
-            name: "imageURI",
-            type: "string",
-          },
-          {
-            internalType: "string",
             name: "contentURI",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "metadataURI",
             type: "string",
           },
           {

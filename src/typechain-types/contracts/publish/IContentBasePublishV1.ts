@@ -26,9 +26,7 @@ import type {
 export declare namespace DataTypes {
   export type CreatePublishDataStruct = {
     creatorId: PromiseOrValue<BigNumberish>;
-    imageURI: PromiseOrValue<string>;
     contentURI: PromiseOrValue<string>;
-    metadataURI: PromiseOrValue<string>;
     title: PromiseOrValue<string>;
     description: PromiseOrValue<string>;
     primaryCategory: PromiseOrValue<BigNumberish>;
@@ -42,17 +40,13 @@ export declare namespace DataTypes {
     string,
     string,
     string,
-    string,
-    string,
     number,
     number,
     number,
     number
   ] & {
     creatorId: BigNumber;
-    imageURI: string;
     contentURI: string;
-    metadataURI: string;
     title: string;
     description: string;
     primaryCategory: number;
@@ -64,31 +58,19 @@ export declare namespace DataTypes {
   export type PublishStruct = {
     owner: PromiseOrValue<string>;
     creatorId: PromiseOrValue<BigNumberish>;
-    imageURI: PromiseOrValue<string>;
     contentURI: PromiseOrValue<string>;
-    metadataURI: PromiseOrValue<string>;
   };
 
-  export type PublishStructOutput = [
-    string,
-    BigNumber,
-    string,
-    string,
-    string
-  ] & {
+  export type PublishStructOutput = [string, BigNumber, string] & {
     owner: string;
     creatorId: BigNumber;
-    imageURI: string;
     contentURI: string;
-    metadataURI: string;
   };
 
   export type UpdatePublishDataStruct = {
     tokenId: PromiseOrValue<BigNumberish>;
     creatorId: PromiseOrValue<BigNumberish>;
-    imageURI: PromiseOrValue<string>;
     contentURI: PromiseOrValue<string>;
-    metadataURI: PromiseOrValue<string>;
     title: PromiseOrValue<string>;
     description: PromiseOrValue<string>;
     primaryCategory: PromiseOrValue<BigNumberish>;
@@ -102,17 +84,13 @@ export declare namespace DataTypes {
     string,
     string,
     string,
-    string,
-    string,
     number,
     number,
     number
   ] & {
     tokenId: BigNumber;
     creatorId: BigNumber;
-    imageURI: string;
     contentURI: string;
-    metadataURI: string;
     title: string;
     description: string;
     primaryCategory: number;
@@ -123,14 +101,14 @@ export declare namespace DataTypes {
 
 export interface IContentBasePublishV1Interface extends utils.Interface {
   functions: {
-    "createPublish((uint256,string,string,string,string,string,uint8,uint8,uint8,uint8))": FunctionFragment;
+    "createPublish((uint256,string,string,string,uint8,uint8,uint8,uint8))": FunctionFragment;
     "deletePublish(uint256,uint256)": FunctionFragment;
     "getProfileContract()": FunctionFragment;
     "getPublishById(uint256)": FunctionFragment;
     "publishExist(uint256)": FunctionFragment;
     "publishOwner(uint256)": FunctionFragment;
     "updateProfileContract(address)": FunctionFragment;
-    "updatePublish((uint256,uint256,string,string,string,string,string,uint8,uint8,uint8))": FunctionFragment;
+    "updatePublish((uint256,uint256,string,string,string,uint8,uint8,uint8))": FunctionFragment;
   };
 
   getFunction(
