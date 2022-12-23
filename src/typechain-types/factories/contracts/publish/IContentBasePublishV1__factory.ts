@@ -26,6 +26,11 @@ const _abi = [
           },
           {
             internalType: "string",
+            name: "contentRef",
+            type: "string",
+          },
+          {
+            internalType: "string",
             name: "title",
             type: "string",
           },
@@ -196,11 +201,6 @@ const _abi = [
             internalType: "uint256",
             name: "creatorId",
             type: "uint256",
-          },
-          {
-            internalType: "string",
-            name: "contentURI",
-            type: "string",
           },
           {
             internalType: "string",

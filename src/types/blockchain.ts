@@ -113,6 +113,7 @@ export enum PublishKind {
  * @param key - a wallet's key
  * @param data.creatorId - a profile id that user uses to create a publish
  * @param data.contentURI - a content uri of the publish
+ * @param data.contentRef - a path to the content that stored on the cloud or ipfs
  * @param data.title - a publish's title
  * @param data.description - a publish's description
  * @param data.primaryCategory - a publish's primaryCategory
@@ -125,6 +126,7 @@ export type CreatePublishInput = {
   data: {
     creatorId: number
     contentURI: string
+    contentRef: string
     title: string
     description: string
     primaryCategory: Category
@@ -139,7 +141,6 @@ export type CreatePublishInput = {
  * @param key - a wallet's key
  * @param data.tokenId - a token id of the publish to be updated
  * @param data.creatorId - a creator profile id
- * @param data.contentURI - a content uri of the publish
  * @param data.title - a publish's title
  * @param data.description - a publish's description
  * @param data.primaryCategory - a publish's primaryCategory
@@ -151,7 +152,6 @@ export type UpdatePublishInput = {
   data: {
     tokenId: number
     creatorId: number
-    contentURI: string
     title: string
     description: string
     primaryCategory: Category

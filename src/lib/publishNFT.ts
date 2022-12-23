@@ -108,6 +108,7 @@ export async function createPublish(input: CreatePublishInput) {
     data: {
       creatorId,
       contentURI,
+      contentRef,
       title,
       description,
       primaryCategory,
@@ -122,6 +123,7 @@ export async function createPublish(input: CreatePublishInput) {
   const transaction = await publishContract.createPublish({
     creatorId,
     contentURI: contentURI.toLocaleLowerCase(),
+    contentRef,
     title,
     description,
     primaryCategory: getIndexOfCategory(primaryCategory),
@@ -142,7 +144,6 @@ export async function updatePublish(input: UpdatePublishInput) {
     data: {
       tokenId,
       creatorId,
-      contentURI,
       title,
       description,
       primaryCategory,
@@ -156,7 +157,6 @@ export async function updatePublish(input: UpdatePublishInput) {
   const transaction = await publishContract.updatePublish({
     tokenId,
     creatorId,
-    contentURI: contentURI.toLocaleLowerCase(),
     title,
     description,
     primaryCategory: getIndexOfCategory(primaryCategory),
@@ -235,6 +235,7 @@ export async function estimateGasForCreatePublishTxn(
     data: {
       creatorId,
       contentURI,
+      contentRef,
       title,
       description,
       primaryCategory,
@@ -248,6 +249,7 @@ export async function estimateGasForCreatePublishTxn(
   const gasInWei = await publishContract.estimateGas.createPublish({
     creatorId,
     contentURI,
+    contentRef,
     title,
     description,
     primaryCategory: getIndexOfCategory(primaryCategory),

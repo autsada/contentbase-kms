@@ -27,6 +27,7 @@ export declare namespace DataTypes {
   export type CreatePublishDataStruct = {
     creatorId: PromiseOrValue<BigNumberish>;
     contentURI: PromiseOrValue<string>;
+    contentRef: PromiseOrValue<string>;
     title: PromiseOrValue<string>;
     description: PromiseOrValue<string>;
     primaryCategory: PromiseOrValue<BigNumberish>;
@@ -40,6 +41,7 @@ export declare namespace DataTypes {
     string,
     string,
     string,
+    string,
     number,
     number,
     number,
@@ -47,6 +49,7 @@ export declare namespace DataTypes {
   ] & {
     creatorId: BigNumber;
     contentURI: string;
+    contentRef: string;
     title: string;
     description: string;
     primaryCategory: number;
@@ -70,7 +73,6 @@ export declare namespace DataTypes {
   export type UpdatePublishDataStruct = {
     tokenId: PromiseOrValue<BigNumberish>;
     creatorId: PromiseOrValue<BigNumberish>;
-    contentURI: PromiseOrValue<string>;
     title: PromiseOrValue<string>;
     description: PromiseOrValue<string>;
     primaryCategory: PromiseOrValue<BigNumberish>;
@@ -83,14 +85,12 @@ export declare namespace DataTypes {
     BigNumber,
     string,
     string,
-    string,
     number,
     number,
     number
   ] & {
     tokenId: BigNumber;
     creatorId: BigNumber;
-    contentURI: string;
     title: string;
     description: string;
     primaryCategory: number;
@@ -101,14 +101,14 @@ export declare namespace DataTypes {
 
 export interface IContentBasePublishV1Interface extends utils.Interface {
   functions: {
-    "createPublish((uint256,string,string,string,uint8,uint8,uint8,uint8))": FunctionFragment;
+    "createPublish((uint256,string,string,string,string,uint8,uint8,uint8,uint8))": FunctionFragment;
     "deletePublish(uint256,uint256)": FunctionFragment;
     "getProfileContract()": FunctionFragment;
     "getPublishById(uint256)": FunctionFragment;
     "publishExist(uint256)": FunctionFragment;
     "publishOwner(uint256)": FunctionFragment;
     "updateProfileContract(address)": FunctionFragment;
-    "updatePublish((uint256,uint256,string,string,string,uint8,uint8,uint8))": FunctionFragment;
+    "updatePublish((uint256,uint256,string,string,uint8,uint8,uint8))": FunctionFragment;
   };
 
   getFunction(

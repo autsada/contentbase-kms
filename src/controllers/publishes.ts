@@ -45,6 +45,7 @@ export async function createPublishNFT(req: Request, res: Response) {
     const {
       creatorId,
       contentURI,
+      contentRef,
       title,
       description,
       primaryCategory,
@@ -58,6 +59,7 @@ export async function createPublishNFT(req: Request, res: Response) {
       !uid ||
       !creatorId ||
       !contentURI ||
+      !contentRef ||
       !title ||
       !primaryCategory ||
       !secondaryCategory ||
@@ -75,6 +77,7 @@ export async function createPublishNFT(req: Request, res: Response) {
       data: {
         creatorId,
         contentURI,
+        contentRef,
         title,
         description: description || "", // use empty string if it's undefined.
         primaryCategory,
@@ -102,7 +105,6 @@ export async function updatePublishNFT(req: Request, res: Response) {
     const {
       tokenId,
       creatorId,
-      contentURI,
       title,
       description,
       primaryCategory,
@@ -115,7 +117,6 @@ export async function updatePublishNFT(req: Request, res: Response) {
       !uid ||
       !tokenId ||
       !creatorId ||
-      !contentURI ||
       !title ||
       !primaryCategory ||
       !secondaryCategory ||
@@ -133,7 +134,6 @@ export async function updatePublishNFT(req: Request, res: Response) {
       data: {
         tokenId,
         creatorId,
-        contentURI,
         title,
         description: description || "",
         primaryCategory,
@@ -218,6 +218,7 @@ export async function estimateGasCreatePublishNFT(req: Request, res: Response) {
     const {
       creatorId,
       contentURI,
+      contentRef,
       title,
       description,
       primaryCategory,
@@ -231,6 +232,7 @@ export async function estimateGasCreatePublishNFT(req: Request, res: Response) {
       !uid ||
       !creatorId ||
       !contentURI ||
+      !contentRef ||
       !title ||
       !primaryCategory ||
       !secondaryCategory ||
@@ -247,6 +249,7 @@ export async function estimateGasCreatePublishNFT(req: Request, res: Response) {
       data: {
         creatorId,
         contentURI,
+        contentRef,
         title,
         description: description || "",
         primaryCategory,
