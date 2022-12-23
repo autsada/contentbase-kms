@@ -122,7 +122,7 @@ export async function createPublish(input: CreatePublishInput) {
   // Make sure to pass down categories as numbers.
   const transaction = await publishContract.createPublish({
     creatorId,
-    contentURI: contentURI.toLocaleLowerCase(),
+    contentURI,
     contentRef,
     title,
     description,
