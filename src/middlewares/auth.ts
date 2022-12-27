@@ -33,6 +33,6 @@ export async function authMiddleware(
       }
     }
   } catch (error) {
-    res.status(401).send("Auth Error")
+    next(error)
   }
 }
