@@ -1,4 +1,4 @@
-import { Request, Response } from "express"
+import type { Request, Response, NextFunction } from "express"
 
 import { getWallet } from "../lib/firebase"
 import {
@@ -23,7 +23,11 @@ import {
  * A route to check role.
  * @dev see CheckRoleParams
  */
-export async function checkRole(req: Request, res: Response) {
+export async function checkRole(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { uid } = req
     const { role } = req.body as { role: Role }
@@ -36,7 +40,7 @@ export async function checkRole(req: Request, res: Response) {
 
     res.status(200).json({ hasRole })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }
 
@@ -44,7 +48,11 @@ export async function checkRole(req: Request, res: Response) {
  * A route to create Profile NFT.
  * @dev see CreateProfileInput
  */
-export async function createProfileNFT(req: Request, res: Response) {
+export async function createProfileNFT(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { uid } = req
     const { handle, imageURI } = req.body as CreateProfileInput["data"]
@@ -72,7 +80,7 @@ export async function createProfileNFT(req: Request, res: Response) {
 
     res.status(200).json({ status: "Ok" })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }
 
@@ -80,7 +88,11 @@ export async function createProfileNFT(req: Request, res: Response) {
  * A route to set/update profile's image.
  * @dev see UpdateProfileImageInput
  */
-export async function setProfileImage(req: Request, res: Response) {
+export async function setProfileImage(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { uid } = req
     const { tokenId, imageURI } = req.body as UpdateProfileImageInput["data"]
@@ -101,14 +113,18 @@ export async function setProfileImage(req: Request, res: Response) {
 
     res.status(200).json({ status: "Ok" })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }
 
 /**
  * A route to set default profile.
  */
-export async function setProfileAsDefault(req: Request, res: Response) {
+export async function setProfileAsDefault(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { uid } = req
     const { handle } = req.body as { handle: string }
@@ -125,14 +141,18 @@ export async function setProfileAsDefault(req: Request, res: Response) {
 
     res.status(200).json({ status: "Ok" })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }
 
 /**
  * The route to verify handle.
  */
-export async function verifyProfileHandle(req: Request, res: Response) {
+export async function verifyProfileHandle(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { handle } = req.body as { handle: string }
     // Validate input.
@@ -141,7 +161,6 @@ export async function verifyProfileHandle(req: Request, res: Response) {
 
     res.status(200).json({ valid })
   } catch (error) {
-    console.log("error -->", error)
     res.status(200).json({ valid: false })
   }
 }
@@ -149,7 +168,11 @@ export async function verifyProfileHandle(req: Request, res: Response) {
 /**
  * The route to get user's default profile.
  */
-export async function getUserDefaultProfile(req: Request, res: Response) {
+export async function getUserDefaultProfile(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { uid } = req
     // Validate input.
@@ -163,29 +186,36 @@ export async function getUserDefaultProfile(req: Request, res: Response) {
 
     res.status(200).json({ token })
   } catch (error) {
-    console.log("error -->", error)
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }
 
 /**
  * The route to get a profile token uri.
  */
-export async function getProfileTokenURI(req: Request, res: Response) {
+export async function getProfileTokenURI(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { tokenId } = req.params as { tokenId: string }
     const uri = await getTokenURI(Number(tokenId))
 
     res.status(200).json({ uri })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }
 
 /**
  * The route to estimate gas used to create Profile NFT.
  */
-export async function estimateGasCreateProfileNFT(req: Request, res: Response) {
+export async function estimateGasCreateProfileNFT(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { uid } = req
     const { handle, imageURI } = req.body as CreateProfileInput["data"]
@@ -207,6 +237,6 @@ export async function estimateGasCreateProfileNFT(req: Request, res: Response) {
 
     res.status(200).json({ gas: estimatedGas })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }

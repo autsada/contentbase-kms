@@ -1,4 +1,4 @@
-import { Request, Response } from "express"
+import type { Request, Response, NextFunction } from "express"
 
 import { getWallet } from "../lib/firebase"
 import {
@@ -14,7 +14,11 @@ import { CreateFollowInput, Role } from "../types"
  * A route to check role.
  * @dev see CheckRoleParams
  */
-export async function checkRole(req: Request, res: Response) {
+export async function checkRole(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { uid } = req
     const { role } = req.body as { role: Role }
@@ -27,7 +31,7 @@ export async function checkRole(req: Request, res: Response) {
 
     res.status(200).json({ hasRole })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }
 
@@ -35,7 +39,11 @@ export async function checkRole(req: Request, res: Response) {
  * A route to follow a profile.
  * @dev see CreateFollowInput
  */
-export async function followProfile(req: Request, res: Response) {
+export async function followProfile(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { uid } = req
     const { followerId, followeeId } = req.body as CreateFollowInput["data"]
@@ -56,7 +64,7 @@ export async function followProfile(req: Request, res: Response) {
 
     res.status(200).json({ status: "Ok" })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }
 
@@ -64,7 +72,11 @@ export async function followProfile(req: Request, res: Response) {
  * A route to estimate gas used to follow a profile.
  * @dev see CreateFollowInput
  */
-export async function estimateGasFollowProfile(req: Request, res: Response) {
+export async function estimateGasFollowProfile(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { uid } = req
     const { followerId, followeeId } = req.body as CreateFollowInput["data"]
@@ -81,14 +93,18 @@ export async function estimateGasFollowProfile(req: Request, res: Response) {
 
     res.status(200).json({ gas: estimatedGas })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }
 
 /**
  * A route to get followers and following of a profile.
  */
-export async function getFollows(req: Request, res: Response) {
+export async function getFollows(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { uid } = req
     const { profileId } = req.params as { profileId: string }
@@ -96,6 +112,6 @@ export async function getFollows(req: Request, res: Response) {
     const { followers, following } = await getFollowCounts(Number(profileId))
     res.status(200).json({ followers, following })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }

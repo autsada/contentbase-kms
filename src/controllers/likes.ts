@@ -1,4 +1,4 @@
-import { Request, Response } from "express"
+import type { Request, Response, NextFunction } from "express"
 import { utils } from "ethers"
 
 import { getWallet } from "../lib/firebase"
@@ -20,7 +20,11 @@ import { Role } from "../types"
  * The route to check role.
  * @dev see CheckRoleParams
  */
-export async function checkRole(req: Request, res: Response) {
+export async function checkRole(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { uid } = req
     const { role } = req.body as { role: Role }
@@ -33,14 +37,18 @@ export async function checkRole(req: Request, res: Response) {
 
     res.status(200).json({ hasRole })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }
 
 /**
  * The route to like a publish.
  */
-export async function likePublishNFT(req: Request, res: Response) {
+export async function likePublishNFT(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { uid } = req
     const { publishId, profileId } = req.body as {
@@ -57,14 +65,18 @@ export async function likePublishNFT(req: Request, res: Response) {
 
     res.status(200).json({ status: "Ok" })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }
 
 /**
  * The route to dislike a publish.
  */
-export async function disLikePublishNFT(req: Request, res: Response) {
+export async function disLikePublishNFT(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { uid } = req
     const { publishId, profileId } = req.body as {
@@ -81,14 +93,18 @@ export async function disLikePublishNFT(req: Request, res: Response) {
 
     res.status(200).json({ status: "Ok" })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }
 
 /**
  * The route to estimate gas used to like Publish NFT.
  */
-export async function estimateGasLikePublishNFT(req: Request, res: Response) {
+export async function estimateGasLikePublishNFT(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { uid } = req
     const { publishId, profileId } = req.body as {
@@ -110,71 +126,91 @@ export async function estimateGasLikePublishNFT(req: Request, res: Response) {
 
     res.status(200).json({ gas: estimatedGas })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }
 
 /**
  * The route to get the platform owner address.
  */
-export async function getPlatformOwner(req: Request, res: Response) {
+export async function getPlatformOwner(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const address = await getPlatformOwnerAddress()
 
     res.status(200).json({ address })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }
 
 /**
  * The route to get the profile contract address.
  */
-export async function getProfileContract(req: Request, res: Response) {
+export async function getProfileContract(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const address = await getProfileContractAddress()
 
     res.status(200).json({ address })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }
 
 /**
  * The route to get the publish contract address.
  */
-export async function getPublishContract(req: Request, res: Response) {
+export async function getPublishContract(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const address = await getPublishContractAddress()
 
     res.status(200).json({ address })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }
 
 /**
  * The route to get the like fee.
  */
-export async function getLikeFee(req: Request, res: Response) {
+export async function getLikeFee(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const fee = await calculateLikeFee()
 
     res.status(200).json({ fee: utils.formatEther(fee) })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }
 
 /**
  * The route to get the platform fee.
  */
-export async function platformFee(req: Request, res: Response) {
+export async function platformFee(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const fee = await getPlatformFee()
 
     res.status(200).json({ fee })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }

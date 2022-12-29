@@ -7,6 +7,7 @@ import http from "http"
 
 import "./config/firebase"
 import * as router from "./routes"
+import { errorHandler } from "./middlewares/error"
 
 const { PORT } = process.env
 
@@ -23,6 +24,7 @@ app.use("/comments", router.commentsRouter)
 app.use("/likes", router.likesRouter)
 app.use("/admin", router.adminRouter)
 app.use("/activities", router.activitiesRouter)
+app.use(errorHandler)
 
 // Create the HTTP server
 const httpServer = http.createServer(app)

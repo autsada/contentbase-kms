@@ -1,4 +1,4 @@
-import { Request, Response } from "express"
+import type { Request, Response, NextFunction } from "express"
 
 import { getWallet } from "../lib/firebase"
 import {
@@ -18,7 +18,11 @@ import { CreatePublishInput, UpdatePublishInput, Role } from "../types"
  * The route to check role.
  * @dev see CheckRoleParams
  */
-export async function checkRole(req: Request, res: Response) {
+export async function checkRole(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { uid } = req
     const { role } = req.body as { role: Role }
@@ -31,7 +35,7 @@ export async function checkRole(req: Request, res: Response) {
 
     res.status(200).json({ hasRole })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }
 
@@ -39,7 +43,11 @@ export async function checkRole(req: Request, res: Response) {
  * The route to create Publish NFT.
  * @dev see CreatePublishInput
  */
-export async function createPublishNFT(req: Request, res: Response) {
+export async function createPublishNFT(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { uid } = req
     const {
@@ -91,7 +99,7 @@ export async function createPublishNFT(req: Request, res: Response) {
 
     res.status(200).json({ status: "Ok" })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }
 
@@ -99,7 +107,11 @@ export async function createPublishNFT(req: Request, res: Response) {
  * The route to update Publish NFT.
  * @dev see UpdatePublishInput
  */
-export async function updatePublishNFT(req: Request, res: Response) {
+export async function updatePublishNFT(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { uid } = req
     const {
@@ -146,14 +158,18 @@ export async function updatePublishNFT(req: Request, res: Response) {
 
     res.status(200).json({ status: "Ok" })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }
 
 /**
  * The route to delete Publish NFT.
  */
-export async function deletePublishNFT(req: Request, res: Response) {
+export async function deletePublishNFT(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { uid } = req
     const { publishId, creatorId } = req.body as {
@@ -172,14 +188,18 @@ export async function deletePublishNFT(req: Request, res: Response) {
 
     res.status(200).json({ status: "Ok" })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }
 
 /**
  * The route to get one publish.
  */
-export async function getPublish(req: Request, res: Response) {
+export async function getPublish(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { publishId } = req.params as { publishId: string }
     // Validate input.
@@ -195,7 +215,11 @@ export async function getPublish(req: Request, res: Response) {
 /**
  * The route to get Publish | Comment token uri.
  */
-export async function tokenURI(req: Request, res: Response) {
+export async function tokenURI(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { tokenId } = req.params as { tokenId: string }
     // Validate input.
@@ -204,7 +228,7 @@ export async function tokenURI(req: Request, res: Response) {
 
     res.status(200).json({ uri })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }
 
@@ -212,7 +236,11 @@ export async function tokenURI(req: Request, res: Response) {
  * The route to estimate gas used to create Publish NFT.
  * @dev see CreatePublishInput
  */
-export async function estimateGasCreatePublishNFT(req: Request, res: Response) {
+export async function estimateGasCreatePublishNFT(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { uid } = req
     const {
@@ -261,19 +289,23 @@ export async function estimateGasCreatePublishNFT(req: Request, res: Response) {
 
     res.status(200).json({ gas: estimatedGas })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }
 
 /**
  * The route to get the profile contract address.
  */
-export async function getProfileContract(req: Request, res: Response) {
+export async function getProfileContract(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const address = await getProfileContractAddress()
 
     res.status(200).json({ address })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }

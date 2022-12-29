@@ -1,4 +1,4 @@
-import type { Request, Response } from "express"
+import type { Request, Response, NextFunction } from "express"
 import axios from "axios"
 
 import { activitiesCollection } from "../config/firebase"
@@ -7,7 +7,11 @@ import type { WebHookRequestBody, AddressActivity } from "../types"
 
 const { PUBLIC_API_URL } = process.env
 
-export async function updateActivity(req: Request, res: Response) {
+export async function updateActivity(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const body = req.body as WebHookRequestBody
     const activity = body.event.activity[0]
@@ -54,7 +58,7 @@ export async function updateActivity(req: Request, res: Response) {
 
     res.status(200).end()
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }
 

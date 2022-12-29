@@ -1,4 +1,4 @@
-import { Request, Response } from "express"
+import type { Request, Response, NextFunction } from "express"
 import axios from "axios"
 
 import { generateWallet, generateWalletDev, getBalance } from "../lib/ethers"
@@ -15,7 +15,11 @@ const env = NODE_ENV as Environment
  * @dev The function to generate blockchain wallet.
  * @dev Required user's auth uid
  */
-export async function createWallet(req: Request, res: Response) {
+export async function createWallet(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { uid } = req
     if (!uid) throw new Error(badRequestErrMessage)
@@ -57,20 +61,24 @@ export async function createWallet(req: Request, res: Response) {
 
     res.status(200).json({ address: wallet.address })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }
 
 /**
  * @dev The function to get balance of the wallet
  */
-export async function getWalletBalance(req: Request, res: Response) {
+export async function getWalletBalance(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { address } = req.params as { address: string }
     const balance = await getBalance(address)
 
     res.status(200).json({ balance })
   } catch (error) {
-    res.status(500).send((error as any).message)
+    next(error)
   }
 }
